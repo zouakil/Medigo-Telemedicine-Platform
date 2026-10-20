@@ -1,0 +1,4 @@
+# Install separately on the Linux device connected to the I2C sensors.
+requests>=2.32.4,<3
+smbus2>=0.5,<1
+python-dotenv>=1.1,<2

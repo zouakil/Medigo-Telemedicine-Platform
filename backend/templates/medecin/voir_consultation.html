@@ -1,0 +1,431 @@
+{% extends 'base_medecin.html' %}
+{% block title %}Consultation — {{ patient }}    </div>
+</div>
+    </div>
+</div>
+
+    <!-- IMAGES MÉDICALES -->
+    {% if images %}
+    <div class="vc-card">
+        <div class="vc-card-title">
+            <i class="fa-solid fa-images" style="color:var(--cyan);"></i>
+            Images Médicales
+            <span style="font-size:0.7rem;color:var(--text-muted);margin-left:0.5rem;">{{ images|length }} image{{ images|length|pluralize }}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:0.75rem;">
+            {% for img in images %}
+            <div style="position:relative;">
+                <a href="/media/{{ img.storage_key }}" target="_blank">
+                    <img src="/media/{{ img.storage_key }}" alt="{{ img.nom_original }}"
+                         style="width:100%;height:100px;object-fit:cover;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:transform 0.2s;"
+                         onmouseover="this.style.transform='scale(1.05)'"
+                         onmouseout="this.style.transform='scale(1)'">
+                </a>
+                <div style="font-size:0.65rem;color:var(--text-muted);margin-top:0.25rem;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                    {{ img.envoye_le|date:"d/m H:i" }}
+                </div>
+                <div style="font-size:0.65rem;font-weight:600;text-align:center;color:{% if 'medecin' in img.nom_original %}var(--blue){% else %}var(--green){% endif %};">
+                    {% if 'medecin' in img.nom_original %}Médecin{% else %}Patient{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+{% endblock %}
+{% block extra_css %}
+.vc-header {
+    background: linear-gradient(135deg, var(--navy), #1e3a6e);
+    border-radius: var(--radius); padding: 1.75rem 2rem;
+    color: white; margin-bottom: 1.5rem;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+}
+.vc-avatar { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--cyan), var(--blue)); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 800; color: white; flex-shrink: 0; }
+.vc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; }
+.vc-card { background: white; border-radius: var(--radius); border: 1px solid var(--border); padding: 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+.vc-card-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+.vc-card-title i { color: var(--cyan); }
+.tag { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.3rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; background: #e3f2fd; color: var(--blue); margin: 0.2rem; }
+.tag.maladie { background: #fce4ec; color: #c62828; }
+.tag.allergie { background: #fff3e0; color: #e65100; }
+.tag.chronique { background: #f3e5f5; color: #7b1fa2; }
+.tag-detail { font-size: 0.7rem; opacity: 0.75; }
+.vital-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.875rem; }
+.vital-row:last-child { border-bottom: none; }
+.info-chip { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.82rem; font-weight: 600; background: var(--bg); border: 1px solid var(--border); margin: 0.2rem; }
+.btn-action { display: inline-flex; align-items: center; gap: 0.5rem; border-radius: 8px; padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; text-decoration: none; transition: opacity 0.2s; }
+.btn-action:hover { opacity: 0.85; }
+.empty-state { color: var(--text-muted); font-size: 0.875rem; font-style: italic; }
+.mesure-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.mesure-item { background: var(--bg); border-radius: 8px; padding: 0.75rem; text-align: center; border: 1px solid var(--border); }
+.mesure-val { font-size: 1.1rem; font-weight: 800; color: var(--navy); }
+.mesure-lbl { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.15rem; }
+    </div>
+</div>
+    </div>
+</div>
+
+    <!-- IMAGES MÉDICALES -->
+    {% if images %}
+    <div class="vc-card">
+        <div class="vc-card-title">
+            <i class="fa-solid fa-images" style="color:var(--cyan);"></i>
+            Images Médicales
+            <span style="font-size:0.7rem;color:var(--text-muted);margin-left:0.5rem;">{{ images|length }} image{{ images|length|pluralize }}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:0.75rem;">
+            {% for img in images %}
+            <div style="position:relative;">
+                <a href="/media/{{ img.storage_key }}" target="_blank">
+                    <img src="/media/{{ img.storage_key }}" alt="{{ img.nom_original }}"
+                         style="width:100%;height:100px;object-fit:cover;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:transform 0.2s;"
+                         onmouseover="this.style.transform='scale(1.05)'"
+                         onmouseout="this.style.transform='scale(1)'">
+                </a>
+                <div style="font-size:0.65rem;color:var(--text-muted);margin-top:0.25rem;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                    {{ img.envoye_le|date:"d/m H:i" }}
+                </div>
+                <div style="font-size:0.65rem;font-weight:600;text-align:center;color:{% if 'medecin' in img.nom_original %}var(--blue){% else %}var(--green){% endif %};">
+                    {% if 'medecin' in img.nom_original %}Médecin{% else %}Patient{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+{% endblock %}
+
+{% block content %}
+<div class="vc-header">
+    <div style="display:flex;align-items:center;gap:1rem;">
+        <div class="vc-avatar">{{ patient.prenom.0 }}{{ patient.nom.0 }}</div>
+        <div>
+            <div style="font-size:1.3rem;font-weight:800;">{{ patient.prenom }} {{ patient.nom }}</div>
+            <div style="opacity:0.75;font-size:0.875rem;">{{ patient.age }} ans — {{ consultation.cloturee_le|date:"d/m/Y à H:i" }}</div>
+        </div>
+    </div>
+    <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+        <a href="{% url 'fiche_patient' patient.id %}" class="btn-action" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;">
+            <i class="fa-solid fa-user"></i> Fiche patient
+        </a>
+        <a href="{% url 'medecin_consultations' %}" class="btn-action" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;">
+            <i class="fa-solid fa-arrow-left"></i> Retour
+        </a>
+    </div>
+</div>
+
+
+<!-- LAYOUT 2 COLONNES -->
+<div style="display:grid;grid-template-columns:1.8fr 1fr;gap:1.5rem;">
+    <!-- COLONNE GAUCHE: RAPPORT -->
+    <div>
+<!-- RAPPORT DE CONSULTATION (auto-généré, 100% local) -->
+{% if rapport %}
+<div class="vc-card">
+    <div class="vc-card-title">
+        <i class="fa-solid fa-file-medical"></i>
+        Rapport de consultation
+    </div>
+
+    <!-- PATIENT -->
+    <div style="margin-bottom:1rem;">
+        <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:#1976d2;margin-bottom:0.4rem;">
+            <i class="fa-solid fa-user" style="font-size:0.65rem;margin-right:0.3rem;"></i>PATIENT
+        </div>
+        <div style="font-size:0.95rem;font-weight:600;color:var(--navy);">
+            {{ rapport.patient_nom }}, {{ rapport.patient_age }}, {{ rapport.patient_sexe }}
+        </div>
+    </div>
+
+    <!-- ANTÉCÉDENTS -->
+    {% if rapport.antecedents %}
+    <div style="margin-bottom:1rem;">
+        <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:#7b1fa2;margin-bottom:0.4rem;">
+            <i class="fa-solid fa-notes-medical" style="font-size:0.65rem;margin-right:0.3rem;"></i>ANTÉCÉDENTS
+        </div>
+        <div style="font-size:0.9rem;color:var(--text);">{{ rapport.antecedents|join:", " }}</div>
+    </div>
+    {% endif %}
+
+    <!-- ALLERGIES -->
+    {% if rapport.allergies %}
+    <div style="margin-bottom:1rem;">
+        <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:#e65100;margin-bottom:0.4rem;">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size:0.65rem;margin-right:0.3rem;"></i>ALLERGIES
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
+            {% for a in rapport.allergies %}
+            <span style="background:#fff3e0;color:#e65100;padding:0.3rem 0.7rem;border-radius:12px;font-size:0.82rem;font-weight:600;">⚠ {{ a }}</span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- MOTIF -->
+    {% if rapport.symptomes %}
+    <div style="margin-bottom:1rem;">
+        <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:#00897b;margin-bottom:0.4rem;">
+            <i class="fa-solid fa-stethoscope" style="font-size:0.65rem;margin-right:0.3rem;"></i>MOTIF
+        </div>
+        <div style="font-size:0.9rem;color:var(--text);">{{ rapport.symptomes|join:", " }}</div>
+    </div>
+    {% endif %}
+
+    <!-- MESURES -->
+    {% if rapport.mesures %}
+    <div style="margin-bottom:1rem;">
+        <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:#0288d1;margin-bottom:0.4rem;">
+            <i class="fa-solid fa-chart-line" style="font-size:0.65rem;margin-right:0.3rem;"></i>MESURES
+        </div>
+        <div style="font-size:0.9rem;color:var(--text);">{{ rapport.mesures|join:" | " }}</div>
+    </div>
+    {% endif %}
+
+    <!-- DIAGNOSTIC -->
+    {% if rapport.diagnostics %}
+    <div style="margin-bottom:1rem;">
+        <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:#c62828;margin-bottom:0.4rem;">
+            <i class="fa-solid fa-diagnosis" style="font-size:0.65rem;margin-right:0.3rem;"></i>DIAGNOSTIC{{ rapport.diagnostics|length|pluralize }}
+        </div>
+        {% for d in rapport.diagnostics %}
+        <div style="background:#fce4ec;border-left:3px solid #c62828;padding:0.6rem 0.9rem;border-radius:6px;margin-bottom:0.4rem;">
+            <div style="font-size:0.95rem;font-weight:700;color:#c62828;margin-bottom:0.2rem;">{{ d.nom }}</div>
+            {% if d.confiance or d.categorie %}
+            <div style="display:flex;gap:0.8rem;font-size:0.78rem;color:#880e4f;">
+                {% if d.confiance %}<span><i class="fa-solid fa-chart-simple" style="font-size:0.7rem;margin-right:0.2rem;"></i>Confiance IA: {{ d.confiance }}%</span>{% endif %}
+                {% if d.categorie %}<span><i class="fa-solid fa-tag" style="font-size:0.7rem;margin-right:0.2rem;"></i>Catégorie: {{ d.categorie }}</span>{% endif %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="margin-bottom:1rem;">
+        <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:#757575;margin-bottom:0.4rem;">
+            <i class="fa-solid fa-diagnosis" style="font-size:0.65rem;margin-right:0.3rem;"></i>DIAGNOSTIC
+        </div>
+        <div style="font-size:0.88rem;color:var(--text-muted);font-style:italic;">Pas de diagnostic spécifique retenu</div>
+    </div>
+    {% endif %}
+
+    <!-- PRESCRIPTION -->
+    {% if rapport.medicaments %}
+    <div style="margin-bottom:1rem;">
+        <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:#2e7d32;margin-bottom:0.6rem;">
+            <i class="fa-solid fa-pills" style="font-size:0.65rem;margin-right:0.3rem;"></i>PRESCRIPTION
+        </div>
+        {% for med in rapport.medicaments %}
+        <div style="background:#e8f5e9;border:1px solid #a5d6a7;border-left:4px solid #2e7d32;border-radius:8px;padding:0.75rem 1rem;margin-bottom:0.5rem;">
+            <div style="font-size:0.92rem;font-weight:700;color:#1b5e20;margin-bottom:0.3rem;">
+                <i class="fa-solid fa-capsules" style="font-size:0.75rem;margin-right:0.4rem;opacity:0.7;"></i>{{ med.nom }}
+            </div>
+            {% if med.posologie %}
+            <div style="font-size:0.82rem;color:#388e3c;display:flex;align-items:center;gap:0.4rem;margin-top:0.2rem;">
+                <i class="fa-solid fa-clock" style="font-size:0.7rem;opacity:0.7;"></i>
+                <span><strong>Posologie :</strong> {{ med.posologie }}</span>
+            </div>
+            {% endif %}
+            {% if med.duree %}
+            <div style="font-size:0.82rem;color:#388e3c;display:flex;align-items:center;gap:0.4rem;margin-top:0.2rem;">
+                <i class="fa-solid fa-calendar-days" style="font-size:0.7rem;opacity:0.7;"></i>
+                <span><strong>Durée :</strong> {{ med.duree }}</span>
+            </div>
+            {% endif %}
+            {% if med.note %}
+            <div style="font-size:0.82rem;color:#558b2f;display:flex;align-items:center;gap:0.4rem;margin-top:0.2rem;">
+                <i class="fa-solid fa-circle-info" style="font-size:0.7rem;opacity:0.7;"></i>
+                <span><strong>Note :</strong> {{ med.note }}</span>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="margin-bottom:1rem;">
+        <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:#757575;margin-bottom:0.4rem;">
+            <i class="fa-solid fa-pills" style="font-size:0.65rem;margin-right:0.3rem;"></i>PRESCRIPTION
+        </div>
+        <div style="font-size:0.88rem;color:var(--text-muted);font-style:italic;">Aucune prescription médicamenteuse</div>
+    </div>
+    {% endif %}
+
+    <!-- SIGNAUX D'ALERTE -->
+    <div>
+        <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:{% if rapport.red_flags %}#d32f2f{% else %}#757575{% endif %};margin-bottom:0.4rem;">
+            <i class="fa-solid fa-bell" style="font-size:0.65rem;margin-right:0.3rem;"></i>SIGNAUX D'ALERTE
+        </div>
+        {% if rapport.red_flags %}
+        {% for rf in rapport.red_flags %}
+        <div style="background:#ffebee;color:#c62828;padding:0.5rem 0.8rem;border-left:3px solid #d32f2f;border-radius:4px;margin-bottom:0.3rem;font-size:0.88rem;font-weight:600;">
+            <i class="fa-solid fa-exclamation-triangle" style="margin-right:0.3rem;"></i>{{ rf }}
+        </div>
+        {% endfor %}
+        {% else %}
+        <div style="font-size:0.88rem;color:var(--text-muted);font-style:italic;">Aucun</div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+    </div>
+
+    <!-- COLONNE DROITE: INFOS COMPLÉMENTAIRES -->
+    <div style="display:flex;flex-direction:column;gap:1.25rem;">
+
+
+    <!-- INFOS CLINIQUES -->
+    {% if info_clinique or allergies %}
+    <div class="vc-card">
+        <div class="vc-card-title"><i class="fa-solid fa-user-doctor"></i> Profil clinique</div>
+        {% if info_clinique %}
+        <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.75rem;">
+            <span class="info-chip"><i class="fa-solid fa-smoking" style="font-size:0.75rem;"></i>
+                {% if info_clinique.tabac == 'non_fumeur' %}Non fumeur{% elif info_clinique.tabac == 'fumeur' %}Fumeur{% else %}Ancien fumeur{% endif %}
+            </span>
+            <span class="info-chip"><i class="fa-solid fa-wine-glass" style="font-size:0.75rem;"></i>
+                {% if info_clinique.alcool == 'jamais' %}Jamais{% elif info_clinique.alcool == 'occasionnel' %}Occasionnel{% else %}Régulier{% endif %}
+            </span>
+            <span class="info-chip"><i class="fa-solid fa-person-running" style="font-size:0.75rem;"></i>
+                {% if info_clinique.activite_physique == 'sedentaire' %}Sédentaire{% elif info_clinique.activite_physique == 'peu_actif' %}Peu actif{% elif info_clinique.activite_physique == 'actif' %}Actif{% else %}Très actif{% endif %}
+            </span>
+            {% if info_clinique.enceinte %}
+            <span class="info-chip" style="background:#fce4ec;border-color:#f48fb1;color:#c62828;">
+                <i class="fa-solid fa-baby" style="font-size:0.75rem;"></i> Enceinte
+            </span>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% if allergies %}
+        <div style="margin-top:0.5rem;">
+            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.4rem;">Allergies</div>
+            {% for a in allergies %}<span class="tag allergie"><i class="fa-solid fa-triangle-exclamation" style="font-size:0.65rem;"></i> {{ a.nom_allergie }}</span>{% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- SYMPTOMES -->
+    <div class="vc-card">
+        <div class="vc-card-title"><i class="fa-solid fa-stethoscope"></i> Symptômes</div>
+        {% if symptomes %}
+            {% for s in symptomes %}
+            <span class="tag">
+                {{ s.nom_symptome }}
+                {% if s.intensite %}<span class="tag-detail">· Int. {{ s.intensite }}/5</span>{% endif %}
+                {% if s.evolution != 'stable' %}<span class="tag-detail">· {% if s.evolution == 'aggravation' %}↑ Aggrav.{% else %}↓ Amélior.{% endif %}</span>{% endif %}
+            </span>
+            {% endfor %}
+        {% else %}<p class="empty-state">Aucun symptôme enregistré</p>{% endif %}
+    </div>
+
+    <!-- MALADIES -->
+    <div class="vc-card">
+        <div class="vc-card-title"><i class="fa-solid fa-virus"></i> Maladies diagnostiquées</div>
+        {% if maladies %}
+            {% for m in maladies %}
+            <span class="tag {% if m.est_chronique %}chronique{% else %}maladie{% endif %}">
+                {{ m.nom_maladie }}
+                {% if m.est_chronique %}<span class="tag-detail">· Chronique</span>{% endif %}
+            </span>
+            {% endfor %}
+        {% else %}<p class="empty-state">Aucune maladie enregistrée</p>{% endif %}
+    </div>
+
+    <!-- MESURES -->
+    <div class="vc-card">
+        <div class="vc-card-title"><i class="fa-solid fa-ruler"></i> Mesures</div>
+        {% if mesures %}
+        <div class="mesure-grid">
+            {% if mesures.taille_cm %}
+            <div class="mesure-item"><div class="mesure-val">{{ mesures.taille_cm }} cm</div><div class="mesure-lbl">Taille</div></div>
+            {% endif %}
+            {% if mesures.poids_kg %}
+            <div class="mesure-item"><div class="mesure-val">{{ mesures.poids_kg }} kg</div><div class="mesure-lbl">Poids</div></div>
+            {% endif %}
+            {% if mesures.tension_sys %}
+            <div class="mesure-item"><div class="mesure-val">{{ mesures.tension_sys }}/{{ mesures.tension_dia }}</div><div class="mesure-lbl">Tension (mmHg)</div></div>
+            {% endif %}
+            {% if mesures.glycemie %}
+            <div class="mesure-item"><div class="mesure-val">{{ mesures.glycemie }} g/L</div><div class="mesure-lbl">Glycémie</div></div>
+            {% endif %}
+        </div>
+        {% else %}<p class="empty-state">Aucune mesure enregistrée</p>{% endif %}
+    </div>
+
+    <!-- SIGNES VITAUX -->
+    <div class="vc-card">
+        <div class="vc-card-title"><i class="fa-solid fa-heart-pulse"></i> Signes vitaux enregistrés</div>
+        {% if signes %}
+            {% for sv in signes|slice:":6" %}
+            <div class="vital-row">
+                <span style="color:var(--text-muted);font-size:0.8rem;">{{ sv.mesure_le|date:"H:i" }}</span>
+                {% if sv.spo2 %}<span>SpO2 <strong>{{ sv.spo2 }}%</strong></span>{% endif %}
+                {% if sv.frequence_cardiaque %}<span>FC <strong>{{ sv.frequence_cardiaque }}</strong></span>{% endif %}
+                {% if sv.temperature %}<span>T° <strong>{{ sv.temperature }}°C</strong></span>{% endif %}
+            </div>
+            {% endfor %}
+        {% else %}<p class="empty-state">Aucun signe vital enregistré</p>{% endif %}
+    </div>
+
+    <!-- NOTES MEDECIN -->
+    {% if consultation.notes_medecin %}
+    <div class="vc-card">
+        <div class="vc-card-title"><i class="fa-solid fa-notes-medical"></i> Notes médicales</div>
+        <div style="font-size:0.9rem;white-space:pre-line;">{{ consultation.notes_medecin }}</div>
+    </div>
+    {% endif %}
+
+    <!-- ORDONNANCE -->
+    <div class="vc-card">
+        <div class="vc-card-title"><i class="fa-solid fa-prescription"></i> Ordonnance</div>
+        {% if ordonnance %}
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;">
+            <div style="font-weight:700;">Ordonnance du {{ ordonnance.creee_le|date:"d/m/Y" }}</div>
+            <div style="display:flex;gap:0.5rem;">
+                <a href="{% url 'voir_ordonnance' ordonnance.id %}" class="btn-action" style="background:var(--blue);color:white;">
+                    <i class="fa-solid fa-eye"></i> Voir
+                </a>
+                <a href="{% url 'telecharger_pdf' ordonnance.id %}" class="btn-action" style="background:#43a047;color:white;">
+                    <i class="fa-solid fa-download"></i> PDF
+                </a>
+            </div>
+        </div>
+        {% else %}<p class="empty-state">Aucune ordonnance</p>{% endif %}
+    </div>
+</div>
+    </div>
+</div>
+    </div>
+</div>
+
+    <!-- IMAGES MÉDICALES -->
+    {% if images %}
+    <div class="vc-card">
+        <div class="vc-card-title">
+            <i class="fa-solid fa-images" style="color:var(--cyan);"></i>
+            Images Médicales
+            <span style="font-size:0.7rem;color:var(--text-muted);margin-left:0.5rem;">{{ images|length }} image{{ images|length|pluralize }}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:0.75rem;">
+            {% for img in images %}
+            <div style="position:relative;">
+                <a href="/media/{{ img.storage_key }}" target="_blank">
+                    <img src="/media/{{ img.storage_key }}" alt="{{ img.nom_original }}"
+                         style="width:100%;height:100px;object-fit:cover;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:transform 0.2s;"
+                         onmouseover="this.style.transform='scale(1.05)'"
+                         onmouseout="this.style.transform='scale(1)'">
+                </a>
+                <div style="font-size:0.65rem;color:var(--text-muted);margin-top:0.25rem;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                    {{ img.envoye_le|date:"d/m H:i" }}
+                </div>
+                <div style="font-size:0.65rem;font-weight:600;text-align:center;color:{% if 'medecin' in img.nom_original %}var(--blue){% else %}var(--green){% endif %};">
+                    {% if 'medecin' in img.nom_original %}Médecin{% else %}Patient{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+{% endblock %}

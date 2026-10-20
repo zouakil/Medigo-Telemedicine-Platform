@@ -1,0 +1,253 @@
+{% extends 'base_medecin.html' %}
+{% block title %}Tableau de bord — Medigo{% endblock %}
+
+{% block extra_css %}
+.welcome-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 0.25rem;
+}
+.welcome-sub {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+}
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 1.5rem;
+    align-items: start;
+}
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+.stat-item {
+    background: white;
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    text-align: center;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    transition: all 0.2s ease;
+}
+.stat-item:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.stat-value { font-size: 2rem; font-weight: 800; line-height: 1; margin-bottom: 0.35rem; }
+.stat-label { font-size: 0.78rem; color: var(--text-muted); font-weight: 500; }
+.stat-item.blue .stat-value { color: var(--blue); }
+.stat-item.green .stat-value { color: var(--green); }
+.stat-item.orange .stat-value { color: var(--orange); }
+.nouvelle-demande-banner {
+    display: none;
+    background: linear-gradient(135deg, var(--blue), var(--cyan));
+    color: white;
+    border-radius: var(--radius);
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+    gap: 1rem;
+    animation: slideDown 0.4s ease;
+    box-shadow: 0 4px 20px rgba(25,118,210,0.3);
+}
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.demande-banner-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(255,255,255,0.15);
+    border-radius: var(--radius-sm);
+    padding: 0.625rem 1rem;
+    margin-bottom: 0.5rem;
+}
+{% endblock %}
+
+{% block content %}
+<div class="welcome-title">Bonjour, Dr. {{ medecin.prenom }} {{ medecin.nom }}</div>
+<div class="welcome-sub">{{ medecin.specialite }}</div>
+
+<div id="demandes-banner" class="nouvelle-demande-banner">
+    <i class="fa-solid fa-bell fa-lg"></i>
+    <div style="flex:1;">
+        <div style="font-weight:700;margin-bottom:0.5rem;">Nouvelles demandes en attente</div>
+        <div id="demandes-banner-list"></div>
+    </div>
+    <a href="{% url 'medecin_consultations' %}" class="btn" style="background:white;color:var(--blue);white-space:nowrap;">
+        Voir tout <i class="fa-solid fa-arrow-right"></i>
+    </a>
+</div>
+
+<div class="stat-grid">
+    <div class="stat-item blue">
+        <div class="stat-value" id="stat-total">{{ total_consultations }}</div>
+        <div class="stat-label">Total consultations</div>
+    </div>
+    <div class="stat-item green">
+        <div class="stat-value" id="stat-cloturees">{{ consultations_cloturees }}</div>
+        <div class="stat-label">Clôturées</div>
+    </div>
+    <div class="stat-item orange">
+        <div class="stat-value" id="stat-attente">{{ consultations_en_attente }}</div>
+        <div class="stat-label">En attente</div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="card">
+        <div class="card-title">Mes consultations récentes</div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Date</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in recent_consultations %}
+                    <tr>
+                        <td><strong>{{ c.patient.prenom }} {{ c.patient.nom }}</strong></td>
+                        <td style="color:var(--text-muted);">{{ c.demandee_le|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            {% if c.statut == 'en_cours' %}
+                                <span class="badge badge-warning"><i class="fa-solid fa-circle" style="font-size:0.5rem;"></i> En cours</span>
+                            {% elif c.statut == 'cloturee' %}
+                                <span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> Clôturée</span>
+                            {% elif c.statut == 'acceptee' %}
+                                <span class="badge badge-info"><i class="fa-solid fa-circle" style="font-size:0.5rem;"></i> Acceptée</span>
+                            {% elif c.statut == 'expiree' %}
+                                <span class="badge badge-danger"><i class="fa-solid fa-circle-xmark"></i> Expirée</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" style="text-align:center;color:var(--text-muted);padding:2rem;">
+                            <i class="fa-solid fa-folder-open fa-2x" style="opacity:0.3;display:block;margin-bottom:0.5rem;"></i>
+                            Aucune consultation
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div style="text-align:center;margin-top:1rem;">
+            <a href="{% url 'medecin_consultations' %}" class="btn btn-outline">
+                Afficher toutes mes consultations <i class="fa-solid fa-chevron-down"></i>
+            </a>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="card">
+            <div class="card-title">Statut actuel</div>
+            <div class="toggle-group" id="statusToggle" data-current="{{ medecin.statut }}">
+                <button type="button" data-statut="disponible" class="toggle-option {% if medecin.statut == 'disponible' %}active-green{% endif %}">
+                    Disponible
+                </button>
+                <button type="button" data-statut="indisponible" class="toggle-option {% if medecin.statut == 'indisponible' %}active-red{% endif %}">
+                    Indisponible
+                </button>
+            </div>
+            {% csrf_token %}
+        </div>
+
+        <script>
+        document.querySelectorAll('#statusToggle .toggle-option').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var statut = this.dataset.statut;
+                var toggle = document.getElementById('statusToggle');
+                var current = toggle.dataset.current;
+                if (statut === current) return;
+
+                var allBtns = toggle.querySelectorAll('.toggle-option');
+
+                // Animation immediate du toggle (sans attendre la reponse)
+                allBtns.forEach(function(b) {
+                    b.classList.remove('active-green', 'active-red');
+                });
+                if (statut === 'disponible') {
+                    document.querySelector('[data-statut="disponible"]').classList.add('active-green');
+                } else {
+                    document.querySelector('[data-statut="indisponible"]').classList.add('active-red');
+                }
+                toggle.dataset.current = statut;
+
+                // Envoyer la requete en arriere-plan
+                var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                var formData = new FormData();
+                formData.append('statut', statut);
+                formData.append('csrfmiddlewaretoken', csrfToken);
+
+                fetch('{% url "changer_statut" %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-CSRFToken': csrfToken },
+                }).catch(function(err) {
+                    console.error('Erreur changement statut:', err);
+                });
+            });
+        });
+        </script>
+
+        <div class="card">
+            <div class="card-title"><i class="fa-solid fa-bell" style="color:var(--orange);margin-right:0.5rem;"></i>Alertes urgentes</div>
+            <div id="alerts-container" style="color:var(--text-muted);font-size:0.875rem;text-align:center;padding:1rem 0;">
+                <i class="fa-solid fa-shield-check fa-2x" style="opacity:0.2;display:block;margin-bottom:0.5rem;"></i>
+                Aucune alerte
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+var wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+var ws = new WebSocket(wsProtocol + window.location.host + '/ws/medecin/');
+
+ws.onmessage = function(e) {
+    var data = JSON.parse(e.data);
+    if (data.type === 'alerte_urgente') {
+        document.getElementById('alertPatientNom').textContent = data.patient_nom || 'Patient';
+        document.getElementById('alertUrgent').style.display = 'flex';
+        var container = document.getElementById('alerts-container');
+        container.innerHTML = '<div style="background:var(--red-light);border-left:4px solid var(--red);border-radius:var(--radius-sm);padding:0.75rem;color:var(--red);font-weight:600;font-size:0.875rem;"><i class="fa-solid fa-triangle-exclamation" style="margin-right:0.5rem;"></i>' + (data.patient_nom || 'Patient') + ' — ALERTE MÉDECIN</div>';
+    }
+};
+
+function syncDashboard() {
+    fetch('/medecin/consultations/api/')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            document.getElementById('stat-attente').textContent = data.count;
+            var banner = document.getElementById('demandes-banner');
+            var bannerList = document.getElementById('demandes-banner-list');
+            if (data.count > 0) {
+                banner.style.display = 'flex';
+                bannerList.innerHTML = '';
+                data.consultations.forEach(function(c) {
+                    var div = document.createElement('div');
+                    div.className = 'demande-banner-item';
+                    div.innerHTML = '<i class="fa-solid fa-user-injured"></i><span>' + c.patient_nom + '</span><span style="opacity:0.7;font-size:0.8rem;margin-left:auto;">' + c.demandee_le + '</span>';
+                    bannerList.appendChild(div);
+                });
+                document.title = '🔔 ' + data.count + ' demande(s) — Medigo';
+            } else {
+                banner.style.display = 'none';
+                document.title = 'Tableau de bord — Medigo';
+            }
+        })
+        .catch(function() {});
+}
+
+setInterval(syncDashboard, 3000);
+syncDashboard();
+</script>
+{% endblock %}

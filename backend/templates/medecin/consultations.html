@@ -1,0 +1,361 @@
+{% extends 'base_medecin.html' %}
+{% block title %}Consultations — Medigo{% endblock %}
+
+{% block extra_css %}
+.demande-card {
+    background: white;
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1.5px solid var(--border);
+    margin-bottom: 0.75rem;
+    transition: all 0.2s ease;
+    animation: fadeInUp 0.3s ease;
+}
+.demande-card:hover {
+    border-color: var(--cyan);
+    box-shadow: 0 4px 16px rgba(0,188,212,0.12);
+    transform: translateX(3px);
+}
+.demande-card.prioritaire {
+    border-color: var(--orange);
+    background: var(--orange-light);
+}
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+.page-header h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--navy);
+}
+.badge-count {
+    background: var(--red);
+    color: white;
+    border-radius: 50px;
+    padding: 0.2rem 0.625rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-left: 0.5rem;
+    animation: pulse 2s ease infinite;
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,42,74,0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+}
+.modal {
+    background: white;
+    border-radius: var(--radius);
+    padding: 2rem;
+    max-width: 480px;
+    width: 90%;
+    box-shadow: var(--shadow-lg);
+    animation: fadeInUp 0.3s ease;
+}
+.modal h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    color: var(--navy);
+}
+.form-group {
+    margin-bottom: 1rem;
+}
+.form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text);
+    transition: all 0.2s ease;
+    outline: none;
+    resize: vertical;
+}
+.form-group input:focus, .form-group textarea:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 3px rgba(0,188,212,0.1);
+}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="fa-solid fa-folder-open" style="color:var(--blue);margin-right:0.5rem;"></i>Consultations</h1>
+</div>
+
+<div class="card" style="margin-bottom:1.5rem;">
+    <div style="display:flex;align-items:center;margin-bottom:1.25rem;">
+        <span class="card-title" style="margin-bottom:0;">Demandes en attente</span>
+        <span class="badge-count" id="badge-count">{{ consultations_en_attente.count }}</span>
+    </div>
+    <div id="demandes-list">
+        {% for c in consultations_en_attente %}
+        <div class="demande-card" id="demande-{{ c.id }}">
+            <div>
+                <div style="font-weight:700;color:var(--navy);margin-bottom:0.2rem;">
+                    <i class="fa-solid fa-user-injured" style="color:var(--blue);margin-right:0.5rem;"></i>
+                    {{ c.patient.prenom }} {{ c.patient.nom }}
+                </div>
+                <div style="font-size:0.82rem;color:var(--text-muted);">
+                    <i class="fa-regular fa-clock" style="margin-right:0.3rem;"></i>
+                    {{ c.demandee_le|date:"d/m/Y H:i" }}
+                </div>
+            </div>
+            <button onclick="accepterConsultation('{{ c.id }}')" class="btn btn-success">
+                <i class="fa-solid fa-check"></i> Accepter
+            </button>
+        </div>
+        {% empty %}
+        <div id="no-demandes" style="text-align:center;padding:2rem;color:var(--text-muted);">
+            <i class="fa-solid fa-inbox fa-2x" style="opacity:0.3;display:block;margin-bottom:0.75rem;"></i>
+            Aucune demande en attente
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">Mes consultations récentes</div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Statut</th>
+                    <th>Date</th>
+                    <th>Clôture auto</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in consultations_avec_countdown %}
+                {% with c=item.consultation %}
+                <tr>
+                    <td><strong>{{ c.patient.prenom }} {{ c.patient.nom }}</strong></td>
+                    <td>
+                        {% if c.statut == 'en_cours' %}
+                            <span class="badge badge-warning"><i class="fa-solid fa-circle" style="font-size:0.5rem;"></i> En cours</span>
+                        {% elif c.statut == 'cloturee' %}
+                            <span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> Clôturée</span>
+                        {% elif c.statut == 'acceptee' %}
+                            <span class="badge badge-info"><i class="fa-solid fa-circle" style="font-size:0.5rem;"></i> Acceptée</span>
+                        {% elif c.statut == 'expiree' %}
+                            <span class="badge badge-danger"><i class="fa-solid fa-circle-xmark"></i> Expirée</span>
+                        {% endif %}
+                    </td>
+                    <td style="color:var(--text-muted);">{{ c.demandee_le|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        {% if item.countdown_seconds is not None %}
+                        <span id="countdown-{{ c.id }}" data-seconds="{{ item.countdown_seconds }}"
+                            style="font-size:0.82rem;font-weight:600;"></span>
+                        {% else %}
+                        <span style="color:var(--border);">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                        {% if c.statut == 'acceptee' %}
+                            <a href="{% url 'debriefing' c.id %}" class="btn btn-primary" style="padding:0.4rem 0.875rem;font-size:0.8rem;">
+                                <i class="fa-solid fa-file-medical"></i> Debriefing
+                            </a>
+                            <button onclick="cloturerRapide('{{ c.id }}')" class="btn btn-danger" style="padding:0.4rem 0.875rem;font-size:0.8rem;">
+                                <i class="fa-solid fa-xmark"></i> Clôturer
+                            </button>
+                        {% elif c.statut == 'en_cours' %}
+                            <a href="{% url 'demarrer_consultation' c.id %}" class="btn btn-warning" style="padding:0.4rem 0.875rem;font-size:0.8rem;">
+                                <i class="fa-solid fa-rotate-right"></i> Reprendre
+                            </a>
+                            <button onclick="cloturerRapide('{{ c.id }}')" class="btn btn-danger" style="padding:0.4rem 0.875rem;font-size:0.8rem;">
+                                <i class="fa-solid fa-xmark"></i> Clôturer
+                            </button>
+                        {% elif c.statut == 'cloturee' %}
+                            <a href="{% url 'voir_consultation' c.id %}" class="btn btn-primary" style="padding:0.4rem 0.875rem;font-size:0.8rem;background:var(--navy);border-color:var(--navy);">
+                                <i class="fa-solid fa-eye"></i> Voir
+                            </a>
+                        {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endwith %}
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align:center;color:var(--text-muted);padding:2rem;">
+                        <i class="fa-solid fa-folder-open fa-2x" style="opacity:0.3;display:block;margin-bottom:0.5rem;"></i>
+                        Aucune consultation
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modal-cloture">
+    <div class="modal">
+        <h3><i class="fa-solid fa-file-circle-check" style="color:var(--green);margin-right:0.5rem;"></i>Clôturer la consultation</h3>
+        <input type="hidden" id="modal-consultation-id">
+        <div class="form-group">
+
+        </div>
+        <div class="form-group">
+            <label>Notes et observations</label>
+            <textarea id="modal-notes" rows="5" placeholder="Notes privées : observations, recommandations, suivi à prévoir...&#10;Ces notes ne sont visibles que par les médecins."></textarea>
+        </div>
+        <div style="display:flex;gap:0.75rem;margin-top:1.5rem;">
+            <button onclick="confirmerCloture()" class="btn btn-success" style="flex:1;">
+                <i class="fa-solid fa-check"></i> Clôturer
+            </button>
+            <button onclick="fermerModal()" class="btn btn-outline" style="flex:1;">
+                Annuler
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+var wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+var ws = new WebSocket(wsProtocol + window.location.host + '/ws/medecin/');
+
+ws.onopen = function() { console.log('WebSocket connected'); };
+
+ws.onmessage = function(e) {
+    var data = JSON.parse(e.data);
+    if (data.type === 'consultation_acceptee') {
+        window.location.href = '/consultations/' + data.consultation_id + '/debriefing/';
+    } else if (data.type === 'alerte_urgente') {
+        document.getElementById('alertPatientNom').textContent = data.patient_nom || 'Patient';
+        document.getElementById('alertUrgent').style.display = 'flex';
+    }
+};
+
+function syncDemandes() {
+    fetch('/medecin/consultations/api/')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var badge = document.getElementById('badge-count');
+            var list = document.getElementById('demandes-list');
+            var serverIds = new Set(data.consultations.map(function(c) { return c.id; }));
+
+            document.querySelectorAll('.demande-card').forEach(function(el) {
+                var id = el.id.replace('demande-', '');
+                if (!serverIds.has(id)) {
+                    el.style.animation = 'fadeInUp 0.3s ease reverse';
+                    setTimeout(function() { el.remove(); }, 280);
+                }
+            });
+
+            data.consultations.forEach(function(c) {
+                if (!document.getElementById('demande-' + c.id)) {
+                    var noMsg = document.getElementById('no-demandes');
+                    if (noMsg) noMsg.remove();
+                    var div = document.createElement('div');
+                    div.className = 'demande-card';
+                    div.id = 'demande-' + c.id;
+                    div.innerHTML = '<div><div style="font-weight:700;color:var(--navy);margin-bottom:0.2rem;"><i class="fa-solid fa-user-injured" style="color:var(--blue);margin-right:0.5rem;"></i>' + c.patient_nom + '</div><div style="font-size:0.82rem;color:var(--text-muted);"><i class="fa-regular fa-clock" style="margin-right:0.3rem;"></i>' + c.demandee_le + '</div></div><button onclick="accepterConsultation(\'' + c.id + '\')" class="btn btn-success"><i class="fa-solid fa-check"></i> Accepter</button>';
+                    list.prepend(div);
+                    showToast('Nouvelle demande de ' + c.patient_nom, 'info');
+                }
+            });
+
+            badge.textContent = data.count;
+
+            if (data.count === 0 && !document.getElementById('no-demandes') && list.querySelectorAll('.demande-card').length === 0) {
+                var p = document.createElement('div');
+                p.id = 'no-demandes';
+                p.style.cssText = 'text-align:center;padding:2rem;color:var(--text-muted);';
+                p.innerHTML = '<i class="fa-solid fa-inbox fa-2x" style="opacity:0.3;display:block;margin-bottom:0.75rem;"></i>Aucune demande en attente';
+                list.appendChild(p);
+            }
+
+            document.title = data.count > 0 ? '🔔 ' + data.count + ' demande(s) — Medigo' : 'Consultations — Medigo';
+        })
+        .catch(function() {});
+}
+
+setInterval(syncDemandes, 3000);
+
+document.querySelectorAll('[id^="countdown-"]').forEach(function(el) {
+    var seconds = parseInt(el.getAttribute('data-seconds'));
+    function updateCountdown() {
+        if (seconds <= 0) { el.innerHTML = '<span style="color:var(--red);">⚠ Imminente</span>'; return; }
+        var h = Math.floor(seconds / 3600);
+        var m = Math.floor((seconds % 3600) / 60);
+        var color = seconds < 3600 ? 'var(--red)' : seconds < 7200 ? 'var(--orange)' : 'var(--green)';
+        el.innerHTML = '<span style="color:' + color + '"><i class="fa-regular fa-clock"></i> ' + h + 'h ' + (m < 10 ? '0' : '') + m + 'm</span>';
+        seconds--;
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+});
+
+function accepterConsultation(consultationId) {
+    if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({action: 'accepter_consultation', consultation_id: consultationId}));
+    } else {
+        showToast('Connexion perdue. Actualisez la page.', 'error');
+        return;
+    }
+    var el = document.getElementById('demande-' + consultationId);
+    if (el) { el.style.opacity = '0.5'; el.style.pointerEvents = 'none'; }
+    var badge = document.getElementById('badge-count');
+    badge.textContent = Math.max(0, parseInt(badge.textContent) - 1);
+}
+
+function cloturerRapide(consultationId) {
+    document.getElementById('modal-consultation-id').value = consultationId;
+
+    document.getElementById('modal-notes').value = '';
+    document.getElementById('modal-cloture').style.display = 'flex';
+}
+
+function fermerModal() {
+    document.getElementById('modal-cloture').style.display = 'none';
+}
+
+function confirmerCloture() {
+    var consultationId = document.getElementById('modal-consultation-id').value;
+    var btn = event.target;
+    btn.innerHTML = '<span class="spinner"></span> En cours...';
+    btn.disabled = true;
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/consultations/' + consultationId + '/cloturer/';
+    var csrf = document.createElement('input');
+    csrf.type = 'hidden'; csrf.name = 'csrfmiddlewaretoken'; csrf.value = '{{ csrf_token }}';
+    var diagInput = document.createElement('input');
+    diagInput.type = 'hidden'; diagInput.name = 'diagnostic'; diagInput.value = '';
+    var notesInput = document.createElement('input');
+    notesInput.type = 'hidden'; notesInput.name = 'notes_medecin'; notesInput.value = document.getElementById('modal-notes').value;
+    form.appendChild(csrf); form.appendChild(diagInput); form.appendChild(notesInput);
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
+{% endblock %}

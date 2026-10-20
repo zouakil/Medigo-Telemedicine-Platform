@@ -1,0 +1,107 @@
+{% extends 'base_patient.html' %}
+{% load i18n_patient_tags %}
+{% block title %}Medigo — {% t "vital_signs" %}{% endblock %}
+{% block header_title %}{% t "my_vital_signs" %}{% endblock %}
+{% block header_sub %}{{ patient.prenom }} {{ patient.nom }}{% endblock %}
+
+{% block extra_css %}
+.vital-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 0.5rem; }
+.vital-box {
+    text-align: center;
+    padding: 1rem 0.5rem;
+    border-radius: var(--radius-sm);
+}
+.vital-box .v-value { font-size: 1.6rem; font-weight: 800; }
+.vital-box .v-label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); margin-top: 0.2rem; }
+canvas { width: 100% !important; }
+{% endblock %}
+
+{% block content %}
+{% if derniere_mesure %}
+<div class="p-card">
+    <div class="p-card-title"><i class="fa-solid fa-heart-pulse"></i> {% t "last_measurements" %}</div>
+    <div class="vital-grid">
+        <div class="vital-box" style="background:var(--green-light);">
+            <div class="v-value" style="color:var(--green);">{{ derniere_mesure.spo2|default:"--" }}</div>
+            <div class="v-label">SpO2 %</div>
+        </div>
+        <div class="vital-box" style="background:var(--blue-light);">
+            <div class="v-value" style="color:var(--blue);">{{ derniere_mesure.frequence_cardiaque|default:"--" }}</div>
+            <div class="v-label">FC bpm</div>
+        </div>
+        <div class="vital-box" style="background:var(--orange-light);">
+            <div class="v-value" style="color:var(--orange);">{{ derniere_mesure.temperature|default:"--" }}</div>
+            <div class="v-label">Temp °C</div>
+        </div>
+    </div>
+    <div style="text-align:right;font-size:0.78rem;color:var(--text-muted);margin-top:0.5rem;">
+        <i class="fa-solid fa-clock"></i> {{ derniere_mesure.mesure_le|date:"d/m/Y H:i" }}
+    </div>
+</div>
+
+{% if spo2_data %}
+<div class="p-card">
+    <div class="p-card-title"><i class="fa-solid fa-chart-line" style="color:var(--green);"></i> {% t "spo2_evolution" %}</div>
+    <canvas id="chartSpo2"></canvas>
+</div>
+<div class="p-card">
+    <div class="p-card-title"><i class="fa-solid fa-heart-pulse" style="color:var(--blue);"></i> {% t "hr_evolution" %}</div>
+    <canvas id="chartBpm"></canvas>
+</div>
+<div class="p-card">
+    <div class="p-card-title"><i class="fa-solid fa-temperature-half" style="color:var(--orange);"></i> {% t "temp_evolution" %}</div>
+    <canvas id="chartTemp"></canvas>
+</div>
+{% endif %}
+
+{% else %}
+<div class="p-empty">
+    <i class="fa-solid fa-heart-pulse"></i>
+    <div class="p-empty-text">{% t "no_measurements" %}</div>
+    <div class="p-empty-sub">{% t "data_after_consultation" %}</div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if spo2_data %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+var labels = {{ labels|safe }};
+var spo2Data = {{ spo2_data|safe }};
+var tempData = {{ temp_data|safe }};
+var bpmData = {{ bpm_data|safe }};
+
+// Filtrer temperature: ignorer les valeurs 0 ou aberrantes (garder null entre 30 et 45°C)
+tempData = tempData.map(function(v) { return (v && v >= 30 && v <= 45) ? v : null; });
+// Filtrer spo2: ignorer valeurs hors plage 50-100%
+spo2Data = spo2Data.map(function(v) { return (v && v >= 50 && v <= 100) ? v : null; });
+// Filtrer bpm: ignorer valeurs hors plage 30-220 bpm
+bpmData = bpmData.map(function(v) { return (v && v >= 30 && v <= 220) ? v : null; });
+
+var chartOpts = {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    spanGaps: true
+};
+
+new Chart(document.getElementById('chartSpo2'), {
+    type: 'line',
+    data: { labels: labels, datasets: [{ data: spo2Data, borderColor: '#43a047', backgroundColor: 'rgba(67,160,71,0.1)', tension: 0.3, fill: true, pointRadius: 3 }] },
+    options: Object.assign({}, chartOpts, { scales: { y: { min: 80, max: 100 } } })
+});
+
+new Chart(document.getElementById('chartBpm'), {
+    type: 'line',
+    data: { labels: labels, datasets: [{ data: bpmData, borderColor: '#1976d2', backgroundColor: 'rgba(25,118,210,0.1)', tension: 0.3, fill: true, pointRadius: 3 }] },
+    options: Object.assign({}, chartOpts, { scales: { y: { min: 40, max: 150 } } })
+});
+
+new Chart(document.getElementById('chartTemp'), {
+    type: 'line',
+    data: { labels: labels, datasets: [{ data: tempData, borderColor: '#fb8c00', backgroundColor: 'rgba(251,140,0,0.1)', tension: 0.3, fill: true, pointRadius: 3 }] },
+    options: Object.assign({}, chartOpts, { scales: { y: { min: 35, max: 42 } } })
+});
+</script>
+{% endif %}
+{% endblock %}

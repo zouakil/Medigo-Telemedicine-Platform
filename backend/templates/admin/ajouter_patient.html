@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block title %}Ajouter un patient
+<script>
+let VILLES = [];
+fetch('/static/data/villes_maroc.json')
+    .then(r => r.json())
+    .then(data => { VILLES = data; });
+
+const input = document.getElementById('ville-input');
+const suggestions = document.getElementById('ville-suggestions');
+
+input.addEventListener('input', function() {
+    const query = this.value.toLowerCase().trim();
+    if (query.length < 1) {
+        suggestions.style.display = 'none';
+        return;
+    }
+
+    const matches = VILLES.filter(v =>
+        v.toLowerCase().includes(query)
+    ).slice(0, 10);
+
+    if (matches.length === 0) {
+        suggestions.style.display = 'none';
+        return;
+    }
+
+    suggestions.innerHTML = matches.map(v =>
+        `<div class="ville-item" style="padding:0.6rem 0.8rem;cursor:pointer;border-bottom:1px solid #f0f0f0;font-size:0.9rem;" onmouseover="this.style.background='#e3f2fd'" onmouseout="this.style.background='white'">${v}</div>`
+    ).join('');
+
+    suggestions.style.display = 'block';
+
+    document.querySelectorAll('.ville-item').forEach(item => {
+        item.addEventListener('click', function() {
+            input.value = this.textContent;
+            suggestions.style.display = 'none';
+        });
+    });
+});
+
+document.addEventListener('click', function(e) {
+    if (!input.contains(e.target) && !suggestions.contains(e.target)) {
+        suggestions.style.display = 'none';
+    }
+});
+</script>
+
+{% endblock %}
+{% block content %}
+<div style="max-width: 500px; margin: 0 auto;">
+    <div class="card">
+        <h2 style="margin-bottom: 1.5rem;">Ajouter un patient</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label>Prénom</label>
+            <input type="text" name="prenom" required>
+            <label>Nom</label>
+            <input type="text" name="nom" required>
+            <label>CIN</label>
+            <input type="text" name="cin" required>
+            <label>Téléphone</label>
+            <input type="text" name="telephone" required>
+            <label>Date de naissance</label>
+            <input type="date" name="date_naissance" required>
+            <label>Sexe</label>
+            <select name="sexe">
+                <option value="">-- Non renseigné --</option>
+                <option value="M">Masculin</option>
+                <option value="F">Féminin</option>
+            </select>
+            <label>Ville</label>
+            <div style="position:relative;">
+                <input type="text" name="ville" id="ville-input" autocomplete="off"
+                       placeholder="Tapez pour rechercher une ville..."
+                       style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:6px;font-size:0.95rem;">
+                <div id="ville-suggestions" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #ddd;border-top:none;border-radius:0 0 6px 6px;max-height:250px;overflow-y:auto;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,0.1);"></div>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary">Créer</button>
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-warning">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+let VILLES = [];
+fetch('/static/data/villes_maroc.json')
+    .then(r => r.json())
+    .then(data => { VILLES = data; });
+
+const input = document.getElementById('ville-input');
+const suggestions = document.getElementById('ville-suggestions');
+
+input.addEventListener('input', function() {
+    const query = this.value.toLowerCase().trim();
+    if (query.length < 1) {
+        suggestions.style.display = 'none';
+        return;
+    }
+
+    const matches = VILLES.filter(v =>
+        v.toLowerCase().includes(query)
+    ).slice(0, 10);
+
+    if (matches.length === 0) {
+        suggestions.style.display = 'none';
+        return;
+    }
+
+    suggestions.innerHTML = matches.map(v =>
+        `<div class="ville-item" style="padding:0.6rem 0.8rem;cursor:pointer;border-bottom:1px solid #f0f0f0;font-size:0.9rem;" onmouseover="this.style.background='#e3f2fd'" onmouseout="this.style.background='white'">${v}</div>`
+    ).join('');
+
+    suggestions.style.display = 'block';
+
+    document.querySelectorAll('.ville-item').forEach(item => {
+        item.addEventListener('click', function() {
+            input.value = this.textContent;
+            suggestions.style.display = 'none';
+        });
+    });
+});
+
+document.addEventListener('click', function(e) {
+    if (!input.contains(e.target) && !suggestions.contains(e.target)) {
+        suggestions.style.display = 'none';
+    }
+});
+</script>
+
+{% endblock %}

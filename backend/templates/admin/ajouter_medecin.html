@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Ajouter un médecin{% endblock %}
+{% block content %}
+<div style="max-width: 500px; margin: 0 auto;">
+    <div class="card">
+        <h2 style="margin-bottom: 1.5rem;">Ajouter un médecin</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label>Prénom</label>
+            <input type="text" name="prenom" required>
+            <label>Nom</label>
+            <input type="text" name="nom" required>
+            <label>Email</label>
+            <input type="email" name="email" required>
+            <label>Mot de passe</label>
+            <input type="password" name="password" required>
+            <label>Spécialité</label>
+            <input type="text" name="specialite" required>
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary">Créer</button>
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-warning">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

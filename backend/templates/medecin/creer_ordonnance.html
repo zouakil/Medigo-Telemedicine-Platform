@@ -1,0 +1,393 @@
+{% extends 'base_medecin.html' %}
+{% block title %}Nouvelle ordonnance{% endblock %}
+
+{% block extra_css %}
+.prescription-textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 1.25rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    resize: vertical;
+    transition: all 0.2s ease;
+    outline: none;
+    line-height: 1.8;
+}
+.prescription-textarea:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 4px rgba(67,160,71,0.1);
+}
+.med-search-box { position: relative; margin-bottom: 1rem; }
+.med-search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    background: var(--bg);
+    transition: all 0.2s;
+}
+.med-search-input:focus { border-color: var(--green); background: white; box-shadow: 0 0 0 3px rgba(67,160,71,0.1); }
+.med-search-box > i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+.med-results {
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: white; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+    max-height: 250px; overflow-y: auto; z-index: 50;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12); display: none;
+}
+.med-results.show { display: block; }
+.med-item { padding: 0.6rem 1rem; cursor: pointer; font-size: 0.875rem; border-bottom: 1px solid var(--border); transition: background 0.15s; }
+.med-item:last-child { border-bottom: none; }
+.med-item:hover { background: var(--bg); }
+.med-item-name { font-weight: 700; color: var(--navy); }
+.med-item-info { font-size: 0.78rem; color: var(--text-muted); }
+/* FORMULAIRE MEDICAMENT */
+.med-form {
+    display: none;
+    background: var(--bg);
+    border: 2px solid var(--green);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    animation: slideDown 0.3s ease;
+}
+.med-form.show { display: block; }
+@keyframes slideDown { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+.med-form-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);
+}
+.med-form-title { font-size: 1rem; font-weight: 800; color: var(--navy); }
+.med-form-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; }
+.med-form-close:hover { color: var(--red); }
+.med-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+.med-form-field label {
+    display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;
+}
+.med-form-field select, .med-form-field input {
+    width: 100%; padding: 0.6rem 0.75rem; border: 1.5px solid var(--border); border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.875rem; background: white; outline: none;
+    transition: border-color 0.2s;
+}
+.med-form-field select:focus, .med-form-field input:focus { border-color: var(--green); }
+/* LIGNES ORDONNANCE */
+.ord-lines { margin-bottom: 1rem; }
+.ord-line {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.75rem 1rem; background: white; border: 1px solid var(--border);
+    border-radius: var(--radius-sm); margin-bottom: 0.5rem;
+    animation: slideDown 0.2s ease;
+}
+.ord-line-info { flex: 1; }
+.ord-line-name { font-weight: 700; font-size: 0.9rem; color: var(--navy); }
+.ord-line-detail { font-size: 0.8rem; color: var(--text-muted); }
+.ord-line-posologie { font-size: 0.82rem; color: var(--green); font-weight: 600; }
+.ord-line-remove { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; padding: 0.25rem; }
+.ord-line-remove:hover { color: var(--red); }
+.ord-line-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--green-light); display: flex; align-items: center; justify-content: center; color: var(--green); flex-shrink: 0; }
+{% endblock %}
+
+{% block content %}
+<div style="max-width:700px;margin:0 auto;">
+    <div style="margin-bottom:1.5rem;">
+        <h1 style="font-size:1.5rem;font-weight:800;color:var(--navy);margin-bottom:0.25rem;">
+            <i class="fa-solid fa-prescription" style="color:var(--green);margin-right:0.5rem;"></i>
+            Nouvelle ordonnance
+        </h1>
+        <p style="color:var(--text-muted);font-size:0.9rem;">
+            Patient : <strong>{{ patient.prenom }} {{ patient.nom }}</strong>
+        </p>
+    </div>
+
+    <!-- RÉSUMÉ CONSULTATION -->
+    {% if maladies_list or symptomes_list or info_clinique or mesures %}
+    <div class="card" style="margin-bottom:1.25rem;border-left:4px solid var(--cyan);">
+        <div style="font-size:0.82rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.75rem;">
+            <i class="fa-solid fa-clipboard-list" style="color:var(--cyan);margin-right:0.4rem;"></i> Résumé de la consultation
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.75rem;">
+            {% if symptomes_list %}
+            <div style="flex:1;min-width:200px;">
+                <div style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.4rem;">Symptômes</div>
+                <div style="display:flex;flex-wrap:wrap;gap:0.25rem;">
+                    {% for s in symptomes_list %}<span style="display:inline-block;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.78rem;font-weight:600;background:#e3f2fd;color:#1565c0;">{{ s }}</span>{% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            {% if maladies_list %}
+            <div style="flex:1;min-width:200px;">
+                <div style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.4rem;">Maladies</div>
+                <div style="display:flex;flex-wrap:wrap;gap:0.25rem;">
+                    {% for m in maladies_list %}<span style="display:inline-block;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.78rem;font-weight:600;background:#fce4ec;color:#c62828;">{{ m }}</span>{% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% if allergies_list %}
+        <div style="margin-top:0.6rem;">
+            <div style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.4rem;">Allergies</div>
+            <div style="display:flex;flex-wrap:wrap;gap:0.25rem;">
+                {% for a in allergies_list %}<span style="display:inline-block;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.78rem;font-weight:600;background:#fff3e0;color:#e65100;"><i class="fa-solid fa-triangle-exclamation" style="font-size:0.65rem;"></i> {{ a }}</span>{% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        {% if mesures %}
+        <div style="display:flex;gap:0.75rem;margin-top:0.6rem;flex-wrap:wrap;">
+            {% if mesures.poids_kg %}<span style="padding:0.3rem 0.6rem;background:var(--bg);border-radius:6px;font-size:0.8rem;font-weight:600;border:1px solid var(--border);"><i class="fa-solid fa-weight-scale" style="color:var(--blue);margin-right:0.3rem;"></i>{{ mesures.poids_kg }} kg</span>{% endif %}
+            {% if mesures.taille_cm %}<span style="padding:0.3rem 0.6rem;background:var(--bg);border-radius:6px;font-size:0.8rem;font-weight:600;border:1px solid var(--border);"><i class="fa-solid fa-ruler" style="color:var(--blue);margin-right:0.3rem;"></i>{{ mesures.taille_cm }} cm</span>{% endif %}
+            {% if mesures.tension_sys %}<span style="padding:0.3rem 0.6rem;background:var(--bg);border-radius:6px;font-size:0.8rem;font-weight:600;border:1px solid var(--border);"><i class="fa-solid fa-heart-pulse" style="color:var(--red);margin-right:0.3rem;"></i>{{ mesures.tension_sys }}/{{ mesures.tension_dia }} mmHg</span>{% endif %}
+            {% if mesures.glycemie %}<span style="padding:0.3rem 0.6rem;background:var(--bg);border-radius:6px;font-size:0.8rem;font-weight:600;border:1px solid var(--border);"><i class="fa-solid fa-droplet" style="color:var(--orange);margin-right:0.3rem;"></i>{{ mesures.glycemie }} g/L</span>{% endif %}
+        </div>
+        {% endif %}
+        {% if info_clinique %}
+        <div style="display:flex;gap:0.5rem;margin-top:0.6rem;flex-wrap:wrap;font-size:0.78rem;">
+            {% if info_clinique.tabac == 'fumeur' %}<span style="padding:0.2rem 0.5rem;background:#ffebee;color:#c62828;border-radius:6px;font-weight:600;"><i class="fa-solid fa-smoking"></i> Fumeur</span>{% endif %}
+            {% if info_clinique.enceinte %}<span style="padding:0.2rem 0.5rem;background:#fce4ec;color:#c62828;border-radius:6px;font-weight:600;"><i class="fa-solid fa-baby"></i> Enceinte</span>{% endif %}
+            {% if patient.age %}<span style="padding:0.2rem 0.5rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-weight:600;">{{ patient.age }} ans</span>{% endif %}
+            {% if patient.sexe %}<span style="padding:0.2rem 0.5rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-weight:600;">{{ patient.get_sexe_display }}</span>{% endif %}
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="card" style="margin-bottom:1.25rem;">
+        <div style="font-size:0.82rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.75rem;">
+            <i class="fa-solid fa-pills" style="color:var(--green);margin-right:0.4rem;"></i> Ajouter des médicaments
+        </div>
+
+        <div class="med-search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="med-search-input" id="med-search" placeholder="Rechercher un médicament..." oninput="filterMeds(this.value)" autocomplete="off">
+            <div class="med-results" id="med-results"></div>
+        </div>
+
+        <!-- Formulaire détail médicament -->
+        <div class="med-form" id="med-form">
+            <div class="med-form-header">
+                <div class="med-form-title" id="med-form-title">Doliprane</div>
+                <button class="med-form-close" onclick="fermerFormMed()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;" id="med-form-dci"></div>
+            <div class="med-form-grid">
+                <div class="med-form-field">
+                    <label>Forme</label>
+                    <select id="med-forme-select" onchange="updateDosages()"></select>
+                </div>
+                <div class="med-form-field">
+                    <label>Dosage</label>
+                    <select id="med-dosage-select"></select>
+                </div>
+                <div class="med-form-field">
+                    <label>Posologie</label>
+                    <input type="text" id="med-posologie" placeholder="Ex: 3 fois par jour">
+                </div>
+                <div class="med-form-field">
+                    <label>Durée</label>
+                    <input type="text" id="med-duree" placeholder="Ex: 5 jours">
+                </div>
+                <div class="med-form-field">
+                    <label>Notes (optionnel)</label>
+                    <input type="text" id="med-notes" placeholder="Ex: Après les repas">
+                </div>
+            </div>
+            <button type="button" class="btn btn-success" style="width:100%;justify-content:center;" onclick="ajouterLigne()">
+                <i class="fa-solid fa-plus"></i> Ajouter à l'ordonnance
+            </button>
+        </div>
+
+        <!-- Lignes ajoutées -->
+        <div class="ord-lines" id="ord-lines"></div>
+    </div>
+
+    <div class="card">
+        <form method="post" onsubmit="preparerContenu()">
+            {% csrf_token %}
+            <div style="margin-bottom:1.25rem;">
+                <label style="display:block;font-size:0.82rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.625rem;">
+                    Prescription médicale
+                </label>
+                <textarea name="contenu" class="prescription-textarea" id="prescription-text"
+                    placeholder="Les médicaments ajoutés apparaîtront ici.&#10;Vous pouvez aussi écrire directement." required></textarea>
+            </div>
+            <div style="display:flex;gap:0.75rem;">
+                <button type="submit" class="btn btn-success" style="flex:1;justify-content:center;padding:0.875rem;">
+                    <i class="fa-solid fa-file-pdf"></i> Générer l'ordonnance PDF
+                </button>
+                <a href="{% url 'cloturer_consultation' consultation.id %}" class="btn btn-outline" style="flex:1;justify-content:center;padding:0.875rem;">
+                    Passer sans ordonnance
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+var searchTimer = null;
+var ordLignes = [];
+var currentMed = null;
+var currentVariants = [];
+
+function filterMeds(q) {
+    var results = document.getElementById('med-results');
+    if (q.length < 2) { results.classList.remove('show'); return; }
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(function() {
+        fetch('/api/medicaments/?q=' + encodeURIComponent(q))
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.results.length === 0) {
+                    results.innerHTML = '<div class="med-item" style="color:var(--text-muted);cursor:default;">Aucun résultat</div>';
+                    results.classList.add('show');
+                    return;
+                }
+                // Grouper par nom pour avoir les variantes
+                var grouped = {};
+                data.results.forEach(function(m) {
+                    if (!grouped[m.nom]) grouped[m.nom] = { nom: m.nom, dci: m.dci, categorie: m.categorie, variants: [] };
+                    grouped[m.nom].variants.push({ forme: m.forme, dosage: m.dosage, id: m.id });
+                });
+                var html = '';
+                Object.values(grouped).forEach(function(g) {
+                    var varCount = g.variants.length;
+                    html += '<div class="med-item" onclick=\'selectMedGroup(' + JSON.stringify(g).replace(/'/g, "&#39;") + ')\'>' +
+                        '<div class="med-item-name">' + g.nom + ' <span style="font-weight:400;color:var(--text-muted);">(' + g.dci + ')</span></div>' +
+                        '<div class="med-item-info">' + varCount + ' forme(s) — ' + g.categorie + '</div></div>';
+                });
+                results.innerHTML = html;
+                results.classList.add('show');
+            });
+    }, 250);
+}
+
+function selectMedGroup(group) {
+    currentMed = group;
+    currentVariants = group.variants;
+    document.getElementById('med-results').classList.remove('show');
+    document.getElementById('med-search').value = '';
+
+    // Remplir le formulaire
+    document.getElementById('med-form-title').textContent = group.nom;
+    document.getElementById('med-form-dci').innerHTML = '<i class="fa-solid fa-atom" style="margin-right:0.3rem;"></i> ' + group.dci + ' — ' + group.categorie;
+
+    // Remplir formes uniques
+    var formes = [];
+    var formesSet = {};
+    group.variants.forEach(function(v) {
+        if (!formesSet[v.forme]) {
+            formesSet[v.forme] = true;
+            formes.push(v.forme);
+        }
+    });
+    var selectForme = document.getElementById('med-forme-select');
+    selectForme.innerHTML = formes.map(function(f) {
+        return '<option value="' + f + '">' + f + '</option>';
+    }).join('');
+    updateDosages();
+
+    document.getElementById('med-posologie').value = '';
+    document.getElementById('med-duree').value = '';
+    document.getElementById('med-notes').value = '';
+    document.getElementById('med-form').classList.add('show');
+    document.getElementById('med-posologie').focus();
+}
+
+function updateDosages() {
+    var forme = document.getElementById('med-forme-select').value;
+    var dosages = [];
+    var dosagesSet = {};
+    currentVariants.forEach(function(v) {
+        if (v.forme === forme && !dosagesSet[v.dosage]) {
+            dosagesSet[v.dosage] = true;
+            dosages.push(v.dosage);
+        }
+    });
+    var selectDosage = document.getElementById('med-dosage-select');
+    selectDosage.innerHTML = dosages.map(function(d) {
+        return '<option value="' + d + '">' + d + '</option>';
+    }).join('');
+}
+
+function fermerFormMed() {
+    document.getElementById('med-form').classList.remove('show');
+    currentMed = null;
+}
+
+function ajouterLigne() {
+    if (!currentMed) return;
+    var forme = document.getElementById('med-forme-select').value;
+    var dosage = document.getElementById('med-dosage-select').value;
+    var formeDosage = forme + ' ' + dosage;
+    var posologie = document.getElementById('med-posologie').value.trim();
+    var duree = document.getElementById('med-duree').value.trim();
+    var notes = document.getElementById('med-notes').value.trim();
+
+    if (!posologie) { document.getElementById('med-posologie').focus(); return; }
+
+    var ligne = {
+        nom: currentMed.nom,
+        dci: currentMed.dci,
+        formeDosage: formeDosage,
+        posologie: posologie,
+        duree: duree,
+        notes: notes
+    };
+    ordLignes.push(ligne);
+    renderLignes();
+    fermerFormMed();
+    syncTextarea();
+}
+
+function supprimerLigne(idx) {
+    ordLignes.splice(idx, 1);
+    renderLignes();
+    syncTextarea();
+}
+
+function renderLignes() {
+    var container = document.getElementById('ord-lines');
+    if (ordLignes.length === 0) { container.innerHTML = ''; return; }
+    container.innerHTML = ordLignes.map(function(l, i) {
+        var detail = l.formeDosage;
+        if (l.duree) detail += ' — ' + l.duree;
+        if (l.notes) detail += ' (' + l.notes + ')';
+        return '<div class="ord-line">' +
+            '<div class="ord-line-icon"><i class="fa-solid fa-pills"></i></div>' +
+            '<div class="ord-line-info">' +
+                '<div class="ord-line-name">' + l.nom + '</div>' +
+                '<div class="ord-line-detail">' + l.dci + ' — ' + detail + '</div>' +
+                '<div class="ord-line-posologie">' + l.posologie + '</div>' +
+            '</div>' +
+            '<button class="ord-line-remove" onclick="supprimerLigne(' + i + ')"><i class="fa-solid fa-trash"></i></button>' +
+        '</div>';
+    }).join('');
+}
+
+function syncTextarea() {
+    var textarea = document.getElementById('prescription-text');
+    var text = ordLignes.map(function(l, i) {
+        var line = (i + 1) + '. ' + l.nom + ' (' + l.dci + ') ' + l.formeDosage;
+        line += '\n   Posologie : ' + l.posologie;
+        if (l.duree) line += '\n   Durée : ' + l.duree;
+        if (l.notes) line += '\n   Note : ' + l.notes;
+        return line;
+    }).join('\n\n');
+    textarea.value = text;
+}
+
+function preparerContenu() {
+    // Le textarea est déjà synchronisé, rien à faire
+}
+
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.med-search-box')) {
+        document.getElementById('med-results').classList.remove('show');
+    }
+});
+</script>
+{% endblock %}

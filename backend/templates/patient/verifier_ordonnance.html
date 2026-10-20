@@ -1,0 +1,136 @@
+{% load i18n_patient_tags %}
+{% get_lang as lang %}
+{% get_dir as dir %}
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{{ dir }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/static/images/favicon.png">
+    <title>{% t "verify_prescription" %} — Medigo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: {% if lang == 'ar' %}'Cairo'{% else %}'Plus Jakarta Sans'{% endif %}, sans-serif;
+            background: linear-gradient(135deg, #f0f4ff, #e8f5e9);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+            padding: 2.5rem;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+        }
+        .logo { width: 60px; margin-bottom: 1rem; }
+        .title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #1a237e;
+            margin-bottom: 0.5rem;
+        }
+        .subtitle {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        .icon-lock {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.25rem;
+            font-size: 1.5rem;
+            color: #1565c0;
+        }
+        .input-group {
+            margin-bottom: 1rem;
+            text-align: {% if dir == 'rtl' %}right{% else %}left{% endif %};
+        }
+        .input-group label {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #555;
+            display: block;
+            margin-bottom: 0.4rem;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            text-align: center;
+            letter-spacing: 0.15em;
+            font-weight: 700;
+            outline: none;
+            transition: border-color 0.2s;
+            direction: ltr;
+        }
+        .input-group input:focus {
+            border-color: #1565c0;
+            box-shadow: 0 0 0 3px rgba(21,101,192,0.1);
+        }
+        .btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #1565c0, #0097a7);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(21,101,192,0.3); }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <img src="/static/images/logo.png" alt="Medigo" class="logo">
+        <div class="icon-lock">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2m3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2"/>
+            </svg>
+        </div>
+        <div class="title">{% if lang == 'ar' %}التحقق مطلوب{% else %}Vérification requise{% endif %}</div>
+        <div class="subtitle">{% if lang == 'ar' %}للوصول إلى هذه الوصفة الطبية، يرجى إدخال الرمز المميز للمريض.{% else %}Pour accéder à cette ordonnance, veuillez saisir le code unique du patient.{% endif %}</div>
+
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="input-group">
+                <label>{% if lang == 'ar' %}رمز المريض{% else %}Code patient{% endif %}</label>
+                <input type="text" name="code" placeholder="Ex: 582777" required autofocus maxlength="10">
+            </div>
+            <button type="submit" class="btn">{% if lang == 'ar' %}التحقق والوصول{% else %}Vérifier et accéder{% endif %}</button>
+        </form>
+    </div>
+</body>
+</html>

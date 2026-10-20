@@ -1,0 +1,289 @@
+{% load i18n_patient_tags %}
+{% get_lang as lang %}
+{% get_dir as dir %}
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{{ dir }}">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/static/images/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Medigo{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --navy: #1a2a4a;
+            --navy-light: #243555;
+            --cyan: #00bcd4;
+            --cyan-light: #e0f7fa;
+            --blue: #1976d2;
+            --blue-light: #e3f2fd;
+            --green: #43a047;
+            --green-light: #e8f5e9;
+            --orange: #fb8c00;
+            --orange-light: #fff3e0;
+            --red: #e53935;
+            --red-light: #ffebee;
+            --purple: #7b1fa2;
+            --purple-light: #f3e5f5;
+            --bg: #f0f4f8;
+            --white: #ffffff;
+            --text: #1a2a4a;
+            --text-muted: #7a8caa;
+            --border: #e2e8f0;
+            --shadow: 0 4px 24px rgba(26,42,74,0.08);
+            --shadow-lg: 0 8px 40px rgba(26,42,74,0.14);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: {% if lang == 'ar' %}'Cairo'{% else %}'Plus Jakarta Sans'{% endif %}, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+        /* HEADER */
+        .patient-header {
+            background: linear-gradient(135deg, var(--navy), #1e3a6e);
+            color: white;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 4px 20px rgba(26,42,74,0.2);
+        }
+        .patient-header img { height: 36px; filter: brightness(0) invert(1); }
+        .patient-header-info { flex: 1; }
+        .patient-header-name { font-size: 1rem; font-weight: 700; }
+        .patient-header-sub { font-size: 0.78rem; opacity: 0.7; }
+        .patient-header-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.25);
+            color: white;
+            border-radius: 50px;
+            padding: 0.55rem 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-family: inherit;
+        }
+        .patient-header-btn:hover { background: rgba(255,255,255,0.25); }
+        /* LANG SWITCHER */
+        .header-lang-switcher {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50px;
+            padding: 0.3rem;
+            display: flex;
+            gap: 0.2rem;
+        }
+        .header-lang-switcher a {
+            color: white;
+            text-decoration: none;
+            padding: 0.35rem 0.7rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .header-lang-switcher a.active {
+            background: white;
+            color: var(--navy);
+        }
+        .header-lang-switcher a.ar { font-family: 'Cairo', sans-serif; }
+        .flag-fr, .flag-ma {
+            display: inline-block;
+            width: 18px;
+            height: 13px;
+            border-radius: 2px;
+            border: 1px solid rgba(0,0,0,0.1);
+            vertical-align: middle;
+            background-size: cover;
+        }
+        .flag-fr {
+            background: linear-gradient(to right, #002654 0%, #002654 33.33%, #FFFFFF 33.33%, #FFFFFF 66.66%, #ED2939 66.66%, #ED2939 100%);
+        }
+        .flag-ma {
+            background-color: #C1272D;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'><rect width='30' height='20' fill='%23C1272D'/><polygon points='15,7 16.5,11 20.5,11 17.5,13.5 18.5,17.5 15,15 11.5,17.5 12.5,13.5 9.5,11 13.5,11' fill='none' stroke='%23006233' stroke-width='0.6'/></svg>");
+            background-size: cover;
+        }
+        /* BOTTOM NAV */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: var(--white);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom));
+            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(26,42,74,0.08);
+        }
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 0.35rem 0.75rem;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+        }
+        .bottom-nav-item i { font-size: 1.15rem; }
+        .bottom-nav-item.active { color: var(--blue); }
+        .bottom-nav-item:hover { color: var(--blue); }
+        /* PAGE CONTENT */
+        .page-body { padding: 1.25rem; max-width: 600px; margin: 0 auto; }
+        /* CARDS */
+        .p-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+        .p-card-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .p-card-title i { color: var(--cyan); }
+        /* BUTTONS */
+        .p-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 0.875rem 1.25rem;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .p-btn:hover { transform: translateY(-1px); }
+        .p-btn:active { transform: translateY(0); }
+        .p-btn-primary { background: var(--blue); color: white; box-shadow: 0 4px 12px rgba(25,118,210,0.3); }
+        .p-btn-danger { background: var(--red); color: white; box-shadow: 0 4px 12px rgba(229,57,53,0.3); }
+        .p-btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+        .p-btn-success { background: var(--green); color: white; box-shadow: 0 4px 12px rgba(67,160,71,0.3); }
+        /* BADGES */
+        .p-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.25rem 0.65rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .p-badge-green { background: var(--green-light); color: var(--green); }
+        .p-badge-blue { background: var(--blue-light); color: var(--blue); }
+        .p-badge-orange { background: var(--orange-light); color: var(--orange); }
+        .p-badge-red { background: var(--red-light); color: var(--red); }
+        /* EMPTY STATE */
+        .p-empty {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-muted);
+        }
+        .p-empty i { font-size: 2.5rem; opacity: 0.3; display: block; margin-bottom: 0.75rem; }
+        .p-empty-text { font-weight: 600; margin-bottom: 0.3rem; }
+        .p-empty-sub { font-size: 0.85rem; }
+        /* INFO ROW */
+        .p-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+        .p-info-row:last-child { border-bottom: none; }
+        .p-info-label { color: var(--text-muted); font-weight: 500; }
+        .p-info-value { font-weight: 700; color: var(--text); }
+        /* ANIMATION */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .page-body > * { animation: fadeUp 0.4s ease both; }
+        .page-body > *:nth-child(2) { animation-delay: 0.05s; }
+        .page-body > *:nth-child(3) { animation-delay: 0.1s; }
+        .page-body > *:nth-child(4) { animation-delay: 0.15s; }
+        /* RESPONSIVE */
+        @media (min-width: 768px) {
+            .page-body { max-width: 700px; padding: 2rem; }
+            .bottom-nav { max-width: 500px; left: 50%; right: auto; transform: translateX(-50%); border-radius: 16px 16px 0 0; }
+        }
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+<body>
+<div class="patient-header">
+    <img src="/static/images/logo.png" alt="Medigo">
+    <div class="patient-header-info">
+        <div class="patient-header-name">{% block header_title %}Medigo{% endblock %}</div>
+        <div class="patient-header-sub">{% block header_sub %}{% endblock %}</div>
+    </div>
+
+    <div class="header-lang-switcher">
+        <a href="{% url 'patient_change_lang' 'fr' %}" class="{% if lang == 'fr' %}active{% endif %}" title="Français">
+            <span class="flag-fr"></span> FR
+        </a>
+        <a href="{% url 'patient_change_lang' 'ar' %}" class="ar {% if lang == 'ar' %}active{% endif %}" title="العربية">
+            <span class="flag-ma"></span> ع
+        </a>
+    </div>
+
+    {% block header_actions %}{% endblock %}
+</div>
+<div class="page-body">
+    {% block content %}{% endblock %}
+</div>
+<nav class="bottom-nav">
+    <a href="{% url 'patient_menu' %}" class="bottom-nav-item {% if active_tab == 'home' %}active{% endif %}">
+        <i class="fa-solid fa-house"></i> {% t "home" %}
+    </a>
+    <a href="{% url 'patient_historique' %}" class="bottom-nav-item {% if active_tab == 'historique' %}active{% endif %}">
+        <i class="fa-solid fa-clock-rotate-left"></i> {% t "history" %}
+    </a>
+    <a href="{% url 'patient_ordonnances' %}" class="bottom-nav-item {% if active_tab == 'ordonnances' %}active{% endif %}">
+        <i class="fa-solid fa-prescription"></i> {% t "prescriptions" %}
+    </a>
+    <a href="{% url 'patient_signes_vitaux' %}" class="bottom-nav-item {% if active_tab == 'vitaux' %}active{% endif %}">
+        <i class="fa-solid fa-heart-pulse"></i> {% t "vital_signs" %}
+    </a>
+</nav>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

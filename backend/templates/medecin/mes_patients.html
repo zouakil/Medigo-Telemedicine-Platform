@@ -1,0 +1,109 @@
+{% extends 'base_medecin.html' %}
+{% block title %}Mes Patients{% endblock %}
+{% block extra_css %}
+.mp-header {
+    background: linear-gradient(135deg, var(--navy), #1e3a6e);
+    border-radius: var(--radius); padding: 1.5rem 2rem;
+    color: white; margin-bottom: 1.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.mp-search {
+    display: flex; align-items: center; gap: 0.75rem;
+    background: white; border-radius: 10px;
+    padding: 0.625rem 1rem; width: 100%;
+    border: 1.5px solid var(--border); margin-bottom: 1.25rem;
+}
+.mp-search input { border: none; outline: none; flex: 1; font-family: Plus Jakarta Sans,sans-serif; font-size:0.9rem; }
+.mp-search i { color: var(--text-muted); }
+.patient-card {
+    background: white; border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 1.25rem 1.5rem;
+    box-shadow: var(--shadow-sm); transition: box-shadow 0.2s, transform 0.2s;
+    cursor: pointer; text-decoration: none; color: inherit; display: block;
+    margin-bottom: 0.75rem;
+}
+.patient-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.1); transform: translateY(-1px); color: inherit; }
+.patient-card-inner { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; }
+.p-avatar {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--cyan), var(--blue));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; font-weight: 800; color: white; flex-shrink: 0;
+}
+.p-avatar.f { background: linear-gradient(135deg, #f48fb1, #e91e8c); }
+.p-info { flex: 1; min-width: 180px; }
+.p-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.2rem; }
+.p-sub { font-size: 0.8rem; color: var(--text-muted); }
+.p-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.4rem; }
+.p-badge { padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; background: #e3f2fd; color: var(--blue); }
+.p-badge.gs { background: #fce4ec; color: #c62828; }
+.p-badge.allergy { background: #fff3e0; color: #e65100; }
+.p-stats { display: flex; gap: 1.5rem; }
+.p-stat { text-align: center; }
+.p-stat-val { font-size: 1.2rem; font-weight: 800; color: var(--navy); }
+.p-stat-lbl { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; }
+.empty-patients { text-align: center; padding: 4rem 2rem; color: var(--text-muted); }
+.empty-patients i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; display: block; }
+{% endblock %}
+{% block content %}
+<div class="mp-header">
+    <div>
+        <div style="font-size:1.4rem;font-weight:800;">Mes Patients</div>
+        <div style="opacity:0.7;font-size:0.875rem;margin-top:0.2rem;">{{ patients_data|length }} patient(s) suivi(s)</div>
+    </div>
+</div>
+<div class="mp-search">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" placeholder="Rechercher un patient..." oninput="filterPatients(this.value)" value="{{ q|default:'' }}">
+</div>
+<div id="patients-list">
+<div id="no-results" style="display:none;text-align:center;padding:3rem;color:var(--text-muted);">
+    <i class="fa-solid fa-user-slash fa-2x" style="opacity:0.3;display:block;margin-bottom:0.75rem;"></i>
+    <div style="font-weight:600;">Aucun patient trouvé</div>
+</div>
+{% if patients_data %}
+    {% for pd in patients_data %}
+    <a href="{% url 'fiche_patient' pd.patient.id %}" class="patient-card" data-name="{{ pd.patient.prenom }} {{ pd.patient.nom }}">
+        <div class="patient-card-inner">
+            <div class="p-avatar {% if pd.patient.sexe == 'F' %}f{% endif %}">{{ pd.patient.prenom.0 }}{{ pd.patient.nom.0 }}</div>
+            <div class="p-info">
+                <div class="p-name">{{ pd.patient.prenom }} {{ pd.patient.nom }}</div>
+                <div class="p-sub">{{ pd.patient.age }} ans &mdash; {{ pd.patient.telephone }}</div>
+                <div class="p-badges">
+                    {% if pd.patient.groupe_sanguin %}<span class="p-badge gs"><i class="fa-solid fa-droplet"></i> {{ pd.patient.groupe_sanguin }}</span>{% endif %}
+                    {% if pd.patient.allergies %}<span class="p-badge allergy"><i class="fa-solid fa-triangle-exclamation"></i> Allergies</span>{% endif %}
+                    {% if pd.mesures %}<span class="p-badge">{{ pd.mesures.poids_kg }} kg &mdash; {{ pd.mesures.taille_cm }} cm</span>{% endif %}
+                </div>
+            </div>
+            <div class="p-stats">
+                <div class="p-stat">
+                    <div class="p-stat-val">{{ pd.nb_consultations }}</div>
+                    <div class="p-stat-lbl">Consultations</div>
+                </div>
+                {% if pd.derniere_consultation %}
+                <div class="p-stat">
+                    <div class="p-stat-val" style="font-size:0.9rem;">{{ pd.derniere_consultation.cloturee_le|date:"d/m/Y" }}</div>
+                    <div class="p-stat-lbl">Dernière visite</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+{% else %}
+    <div class="empty-patients">
+        <i class="fa-solid fa-users"></i>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.5rem;">Aucun patient suivi</div>
+        <div style="font-size:0.875rem;">Les patients apparaîtront ici après une consultation clôturée.</div>
+    </div>
+{% endif %}
+</div>
+<script>
+function filterPatients(q) {
+    q = q.toLowerCase();
+    document.querySelectorAll('.patient-card').forEach(function(c) {
+        c.style.display = c.dataset.name.toLowerCase().includes(q) ? 'block' : 'none';
+    });
+}
+</script>
+{% endblock %}

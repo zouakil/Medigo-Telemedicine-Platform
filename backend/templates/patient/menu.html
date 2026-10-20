@@ -1,0 +1,162 @@
+{% extends 'base_patient.html' %}
+{% load i18n_patient_tags %}
+{% get_lang as lang %}
+{% block title %}Medigo — {% t "home" %}{% endblock %}
+{% block header_title %}{% t "welcome" %} {{ patient.prenom }} !{% endblock %}
+{% block header_sub %}{% endblock %}
+{% block header_actions %}
+<a href="{% url 'patient_logout' %}" class="patient-header-btn" title="{% t 'logout' %}">
+    <i class="fa-solid fa-right-from-bracket"></i>
+    <span>{% t "logout" %}</span>
+</a>
+{% endblock %}
+
+{% block extra_css %}
+.bottom-nav { display: none; }
+body { padding-bottom: 0; }
+.menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; }
+.menu-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 1.75rem 1rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+.menu-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); color: var(--text); }
+.menu-card:active { transform: translateY(0); }
+.menu-icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    color: white;
+}
+.menu-icon.consult { background: linear-gradient(135deg, var(--blue), var(--cyan)); }
+.menu-icon.ordonnance { background: linear-gradient(135deg, var(--green), #66bb6a); }
+.menu-icon.vitaux { background: linear-gradient(135deg, var(--orange), #ffa726); }
+.menu-icon.historique { background: linear-gradient(135deg, var(--purple), #ab47bc); }
+.menu-label { font-size: 0.9rem; font-weight: 700; line-height: 1.3; }
+@keyframes pulse-banner {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+}
+.secours-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--red), #c62828);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 1.05rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    box-shadow: 0 6px 20px rgba(229,57,53,0.35);
+    transition: all 0.2s;
+    margin-bottom: 1rem;
+}
+.secours-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(229,57,53,0.45); }
+.secours-btn:active { transform: translateY(0); }
+.secours-msg {
+    display: none;
+    background: var(--green-light);
+    color: var(--green);
+    border-radius: var(--radius-sm);
+    padding: 0.875rem;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+{% endblock %}
+
+{% block content %}
+{% if consultation_active %}
+<a href="{% url 'patient_live' consultation_active.id %}" id="consultation-banner" style="display:flex;align-items:center;gap:0.75rem;padding:1rem;background:linear-gradient(135deg,#1565c0,#0288d1);color:white;border-radius:var(--radius);margin-bottom:1rem;text-decoration:none;box-shadow:0 4px 16px rgba(21,101,192,0.3);animation:pulse-banner 2s infinite;">
+    <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">
+        <i class="fa-solid fa-video"></i>
+    </div>
+    <div style="flex:1;">
+        <div style="font-weight:800;font-size:0.95rem;">{% t "live_consultation" %}</div>
+        <div style="font-size:0.82rem;opacity:0.85;">{{ consultation_active.medecin }}</div>
+    </div>
+    <i class="fa-solid fa-arrow-{% if lang == 'ar' %}left{% else %}right{% endif %}" style="font-size:1.1rem;opacity:0.8;"></i>
+</a>
+{% endif %}
+
+<div class="menu-grid">
+    <a href="{% url 'patient_consultation' %}" class="menu-card">
+        <div class="menu-icon consult"><i class="fa-solid fa-video"></i></div>
+        <div class="menu-label">{% t "start_consultation" %}</div>
+    </a>
+    <a href="{% url 'patient_ordonnances' %}" class="menu-card">
+        <div class="menu-icon ordonnance"><i class="fa-solid fa-prescription"></i></div>
+        <div class="menu-label">{% t "prescriptions" %}</div>
+    </a>
+    <a href="{% url 'patient_signes_vitaux' %}" class="menu-card">
+        <div class="menu-icon vitaux"><i class="fa-solid fa-heart-pulse"></i></div>
+        <div class="menu-label">{% t "vital_signs" %}</div>
+    </a>
+    <a href="{% url 'patient_historique' %}" class="menu-card">
+        <div class="menu-icon historique"><i class="fa-solid fa-clock-rotate-left"></i></div>
+        <div class="menu-label">{% t "consultations_history" %}</div>
+    </a>
+</div>
+
+<button class="secours-btn" onclick="envoyerSecours()">
+    <i class="fa-solid fa-triangle-exclamation fa-lg"></i> {% t "medical_alert" %}
+</button>
+
+<div id="secours-msg" class="secours-msg">
+    <i class="fa-solid fa-circle-check"></i>
+    {% if lang == 'ar' %}تم إرسال التنبيه إلى الطبيب !{% else %}Alerte envoyée au médecin !{% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+{% if consultation_active %}
+setInterval(function() {
+    fetch('/api/consultation/check-active/?consultation_id={{ consultation_active.id }}')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (!data.active) {
+                var banner = document.getElementById('consultation-banner');
+                if (banner) {
+                    banner.style.transition = 'opacity 0.3s, transform 0.3s';
+                    banner.style.opacity = '0';
+                    banner.style.transform = 'translateY(-10px)';
+                    setTimeout(function() { banner.remove(); }, 300);
+                }
+            }
+        }).catch(function() {});
+}, 5000);
+{% endif %}
+
+function envoyerSecours() {
+    fetch('{% url "au_secours" %}', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/json' }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function() {
+        var msg = document.getElementById('secours-msg');
+        msg.style.display = 'block';
+        setTimeout(function() { msg.style.display = 'none'; }, 5000);
+    })
+    .catch(function() { alert("{% if lang == 'ar' %}خطأ في الإرسال{% else %}Erreur lors de l'envoi{% endif %}"); });
+}
+</script>
+{% endblock %}

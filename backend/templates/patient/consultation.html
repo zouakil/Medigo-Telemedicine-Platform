@@ -1,0 +1,378 @@
+{% load i18n_patient_tags %}
+{% get_lang as lang %}
+{% get_dir as dir %}
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{{ dir }}">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/static/images/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medigo — {% t "consultation" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --navy: #1a2a4a;
+            --cyan: #00bcd4;
+            --blue: #1976d2;
+            --green: #43a047;
+            --orange: #fb8c00;
+            --red: #e53935;
+            --bg: #f0f4f8;
+            --white: #ffffff;
+            --text: #1a2a4a;
+            --text-muted: #7a8caa;
+            --border: #e2e8f0;
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: {% if lang == 'ar' %}'Cairo'{% else %}'Plus Jakarta Sans'{% endif %}, sans-serif;
+            background: linear-gradient(160deg, var(--navy) 0%, #1e3a6e 50%, #0d47a1 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .lang-switcher {
+            position: fixed;
+            top: 1rem;
+            {% if dir == 'rtl' %}left: 1rem;{% else %}right: 1rem;{% endif %}
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            padding: 0.4rem 0.6rem;
+            display: flex;
+            gap: 0.3rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            z-index: 100;
+        }
+        .lang-switcher a {
+            color: white;
+            text-decoration: none;
+            padding: 0.4rem 0.85rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            transition: all 0.2s;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .lang-switcher a.active { background: white; color: var(--navy); }
+        .lang-switcher a:not(.active):hover { background: rgba(255,255,255,0.15); }
+        .lang-switcher a.ar { font-family: 'Cairo', sans-serif; }
+        .flag-fr, .flag-ma {
+            display: inline-block;
+            width: 22px;
+            height: 16px;
+            border-radius: 3px;
+            border: 1px solid rgba(0,0,0,0.1);
+            vertical-align: middle;
+            background-size: cover;
+        }
+        .flag-fr {
+            background: linear-gradient(to right, #002654 0%, #002654 33.33%, #FFFFFF 33.33%, #FFFFFF 66.66%, #ED2939 66.66%, #ED2939 100%);
+        }
+        .flag-ma {
+            background-color: #C1272D;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'><rect width='30' height='20' fill='%23C1272D'/><polygon points='15,7 16.5,11 20.5,11 17.5,13.5 18.5,17.5 15,15 11.5,17.5 12.5,13.5 9.5,11 13.5,11' fill='none' stroke='%23006233' stroke-width='0.6'/></svg>");
+            background-size: cover;
+        }
+        .consult-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.5s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .screen { display: none; }
+        .screen.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .screen-icon {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+        }
+        .screen-icon.blue { background: rgba(25,118,210,0.1); color: var(--blue); }
+        .screen-icon.orange { background: rgba(251,140,0,0.1); color: var(--orange); }
+        .screen-icon.green { background: rgba(67,160,71,0.1); color: var(--green); }
+        .screen-icon.red { background: rgba(229,57,53,0.1); color: var(--red); }
+        .screen-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--navy);
+            margin-bottom: 0.5rem;
+        }
+        .screen-sub {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.75rem;
+            line-height: 1.5;
+        }
+        .timer-display {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--blue);
+            margin: 1rem 0;
+            font-variant-numeric: tabular-nums;
+        }
+        .timer-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 50px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        .timer-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--blue));
+            border-radius: 50px;
+            transition: width 1s linear;
+        }
+        .medecin-card {
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            margin: 1rem 0 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .medecin-avatar {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 800; font-size: 1rem;
+        }
+        .medecin-name { font-weight: 700; font-size: 0.95rem; text-align: {% if dir == 'rtl' %}right{% else %}left{% endif %}; }
+        .medecin-sub { font-size: 0.8rem; color: var(--text-muted); text-align: {% if dir == 'rtl' %}right{% else %}left{% endif %}; }
+        .c-btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            text-decoration: none;
+        }
+        .c-btn:hover { transform: translateY(-2px); }
+        .c-btn:active { transform: translateY(0); }
+        .c-btn-primary { background: linear-gradient(135deg, var(--blue), var(--cyan)); color: white; box-shadow: 0 6px 20px rgba(25,118,210,0.35); }
+        .c-btn-danger { background: var(--red); color: white; box-shadow: 0 4px 12px rgba(229,57,53,0.3); }
+        .c-btn-outline { background: transparent; color: var(--text-muted); border: 1.5px solid var(--border); }
+        .pulse-ring {
+            display: inline-block;
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            background: var(--orange);
+            animation: pulse 1.5s ease infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(251,140,0,0.5); }
+            70% { box-shadow: 0 0 0 12px rgba(251,140,0,0); }
+            100% { box-shadow: 0 0 0 0 rgba(251,140,0,0); }
+        }
+        .dots { display: inline-block; }
+        .dots::after { content: ''; animation: dots 1.5s steps(4,end) infinite; }
+        @keyframes dots {
+            0% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+        }
+    </style>
+</head>
+<body>
+    <div class="lang-switcher">
+        <a href="{% url 'patient_change_lang' 'fr' %}" class="{% if lang == 'fr' %}active{% endif %}">
+            <span class="flag-fr"></span> FR
+        </a>
+        <a href="{% url 'patient_change_lang' 'ar' %}" class="ar {% if lang == 'ar' %}active{% endif %}">
+            <span class="flag-ma"></span> ع
+        </a>
+    </div>
+
+    <div class="consult-card">
+        <!-- SCREEN: INITIAL -->
+        <div class="screen active" id="screen-initial">
+            <div class="screen-icon blue"><i class="fa-solid fa-video"></i></div>
+            <div class="screen-title">{% t "start_consultation" %}</div>
+            <div class="screen-sub">
+                {% if lang == 'ar' %}سيتم توصيلك بطبيب متاح عبر الفيديو لاستشارة عن بعد.{% else %}Un médecin disponible sera connecté avec vous en vidéo pour une consultation à distance.{% endif %}
+            </div>
+            <button class="c-btn c-btn-primary" onclick="demanderConsultation()">
+                <i class="fa-solid fa-phone"></i>
+                {% if lang == 'ar' %}الاتصال بطبيب{% else %}Appeler un médecin{% endif %}
+            </button>
+            <button class="c-btn c-btn-outline" onclick="retourMenu()">
+                <i class="fa-solid fa-arrow-{% if lang == 'ar' %}right{% else %}left{% endif %}"></i>
+                {% if lang == 'ar' %}رجوع{% else %}Retour{% endif %}
+            </button>
+        </div>
+
+        <!-- SCREEN: ATTENTE -->
+        <div class="screen" id="screen-attente">
+            <div class="screen-icon orange">
+                <span class="pulse-ring"></span>
+            </div>
+            <div class="screen-title">
+                {% if lang == 'ar' %}جاري البحث{% else %}{% t "doctor_search" %}{% endif %}<span class="dots"></span>
+            </div>
+            <div class="screen-sub">{% t "waiting_doctor" %}</div>
+            <div class="timer-display" id="timer">3:00</div>
+            <div class="timer-bar"><div class="timer-bar-fill" id="timer-bar-fill" style="width:100%;"></div></div>
+            <button class="c-btn c-btn-danger" onclick="annulerDemande()">
+                <i class="fa-solid fa-xmark"></i> {% t "cancel" %}
+            </button>
+        </div>
+
+        <!-- SCREEN: ACCEPTEE -->
+        <div class="screen" id="screen-acceptee">
+            <div class="screen-icon green"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="screen-title">
+                {% if lang == 'ar' %}تم العثور على طبيب !{% else %}Médecin trouvé !{% endif %}
+            </div>
+            <div class="screen-sub">{% t "consultation_starting" %}</div>
+            <div class="medecin-card">
+                <div class="medecin-avatar" id="medecin-avatar">Dr</div>
+                <div>
+                    <div class="medecin-name" id="medecin-name"></div>
+                    <div class="medecin-sub">
+                        {% if lang == 'ar' %}طبيبك{% else %}Votre médecin{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN: EXPIREE -->
+        <div class="screen" id="screen-expiree">
+            <div class="screen-icon red"><i class="fa-solid fa-clock"></i></div>
+            <div class="screen-title">{% t "no_doctor_available" %}</div>
+            <div class="screen-sub">{% t "try_again_later" %}</div>
+            <button class="c-btn c-btn-primary" onclick="resetInitial()">
+                <i class="fa-solid fa-rotate-right"></i>
+                {% if lang == 'ar' %}إعادة المحاولة{% else %}Réessayer{% endif %}
+            </button>
+            <button class="c-btn c-btn-outline" onclick="retourMenu()">
+                <i class="fa-solid fa-arrow-{% if lang == 'ar' %}right{% else %}left{% endif %}"></i> {% t "back_to_menu" %}
+            </button>
+        </div>
+    </div>
+
+    <script>
+        var patientCode = '{{ patient.code_unique }}';
+        var csrfToken = '{{ csrf_token }}';
+        var ws = null;
+        var timerInterval = null;
+        var consultationId = null;
+        var timeLeft = 180;
+        var wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+
+        function showScreen(name) {
+            document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+            document.getElementById('screen-' + name).classList.add('active');
+        }
+
+        function connectWS() {
+            ws = new WebSocket(wsProtocol + window.location.host + '/ws/consultations/?code=' + patientCode);
+            ws.onmessage = function(e) { handleMessage(JSON.parse(e.data)); };
+            ws.onclose = function() { console.log('WS disconnected'); };
+        }
+
+        function handleMessage(data) {
+            if (data.type === 'consultation_en_attente') {
+                consultationId = data.consultation_id;
+                showScreen('attente');
+                startTimer();
+            } else if (data.type === 'consultation_acceptee') {
+                clearInterval(timerInterval);
+                var nom = data.medecin_nom || 'Médecin';
+                document.getElementById('medecin-name').textContent = nom;
+                document.getElementById('medecin-avatar').textContent = nom.charAt(0).toUpperCase();
+                showScreen('acceptee');
+                setTimeout(function() {
+                    window.location.href = '/patient/live/' + data.consultation_id + '/';
+                }, 2500);
+            } else if (data.type === 'consultation_expiree') {
+                clearInterval(timerInterval);
+                showScreen('expiree');
+            }
+        }
+
+        function startTimer() {
+            timeLeft = 180;
+            var barFill = document.getElementById('timer-bar-fill');
+            timerInterval = setInterval(function() {
+                timeLeft--;
+                var min = Math.floor(timeLeft / 60);
+                var sec = timeLeft % 60;
+                document.getElementById('timer').textContent = min + ':' + (sec < 10 ? '0' : '') + sec;
+                barFill.style.width = ((timeLeft / 180) * 100) + '%';
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    if (consultationId) expireConsultation();
+                    showScreen('expiree');
+                }
+            }, 1000);
+        }
+
+        function expireConsultation() {
+            fetch('/patient/annuler-consultation/', {
+                method: 'POST',
+                headers: {'X-CSRFToken': csrfToken, 'Content-Type': 'application/json'},
+                body: JSON.stringify({consultation_id: consultationId})
+            }).catch(function() {});
+        }
+
+        function demanderConsultation() {
+            connectWS();
+            setTimeout(function() {
+                ws.send(JSON.stringify({ action: 'demander_consultation', code: patientCode }));
+            }, 500);
+        }
+
+        function annulerDemande() {
+            clearInterval(timerInterval);
+            if (consultationId) expireConsultation();
+            if (ws) ws.close();
+            consultationId = null;
+            showScreen('initial');
+        }
+
+        function resetInitial() {
+            consultationId = null;
+            showScreen('initial');
+        }
+
+        function retourMenu() {
+            window.location.href = '{% url "patient_menu" %}';
+        }
+    </script>
+</body>
+</html>

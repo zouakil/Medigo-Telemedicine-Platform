@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Admin{% endblock %}
+{% block content %}
+<h1 style="margin-bottom: 1.5rem;">Dashboard Administrateur</h1>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+    <div class="card" style="text-align: center;">
+        <h2>{{ medecins.count }}</h2>
+        <p>Médecins</p>
+        <a href="{% url 'ajouter_medecin' %}" class="btn btn-primary" style="margin-top: 1rem;">Ajouter un médecin</a>
+    </div>
+    <div class="card" style="text-align: center;">
+        <h2>{{ patients.count }}</h2>
+        <p>Patients</p>
+        <a href="{% url 'ajouter_patient' %}" class="btn btn-primary" style="margin-top: 1rem;">Ajouter un patient</a>
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="margin-bottom: 1rem;">Médecins</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Spécialité</th>
+                <th>Statut</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for medecin in medecins %}
+            <tr>
+                <td>Dr. {{ medecin.prenom }} {{ medecin.nom }}</td>
+                <td>{{ medecin.specialite }}</td>
+                <td>
+                    {% if medecin.statut == 'disponible' %}
+                        <span class="badge badge-success">Disponible</span>
+                    {% elif medecin.statut == 'occupe' %}
+                        <span class="badge badge-warning">Occupé</span>
+                    {% else %}
+                        <span class="badge badge-danger">Indisponible</span>
+                    {% endif %}
+                </td>
+                <td>{{ medecin.user.email }}</td>
+                <td style="display:flex;gap:0.4rem;align-items:center;">
+                    {% if medecin.user.est_actif %}
+                    <a href="{% url 'desactiver_medecin' medecin.id %}"
+                       class="btn btn-danger"
+                       onclick="return confirm('⚠️ Désactiver Dr. {{ medecin.prenom }} {{ medecin.nom }} ?\n\nCette action va :\n• Empêcher sa connexion\n• Fermer ses relations patient-traitant actives\n• Le marquer comme indisponible\n\nContinuer ?')">
+                        <i class="fa-solid fa-ban"></i> Désactiver
+                    </a>
+                    {% else %}
+                    <a href="{% url 'reactiver_medecin' medecin.id %}"
+                       class="btn"
+                       style="background:#2e7d32;color:white;padding:0.35rem 0.6rem;border-radius:6px;text-decoration:none;font-size:0.82rem;"
+                       onclick="return confirm('✅ Réactiver Dr. {{ medecin.prenom }} {{ medecin.nom }} ?\n\nCette action va :\n• Permettre sa connexion\n• Le remettre comme indisponible (il devra se mettre disponible)\n\nContinuer ?')">
+                        <i class="fa-solid fa-check-circle"></i> Réactiver
+                    </a>
+                    {% endif %}
+                    <button class="btn btn-sm" style="background:#e3f2fd;color:#1565c0;border:1px solid #bbdefb;padding:0.35rem 0.6rem;border-radius:6px;cursor:pointer;font-size:0.82rem;" onclick="openResetModal('{{ medecin.id }}', '{{ medecin.prenom }} {{ medecin.nom }}')">
+                        <i class="fa-solid fa-key"></i> MDP
+                    </button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">Aucun médecin enregistré</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h3 style="margin-bottom: 1rem;">Patients</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>CIN</th>
+                <th>Téléphone</th>
+                <th>Code unique</th>
+                <th>Médecin traitant</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for patient in patients %}
+            <tr {% if not patient.est_actif %}style="opacity:0.6;background:#fafafa;"{% endif %}>
+                <td>{{ patient.prenom }} {{ patient.nom }}</td>
+                <td>{{ patient.cin }}</td>
+                <td>{{ patient.telephone }}</td>
+                <td><strong>{{ patient.code_unique }}</strong></td>
+                <td>
+                    <form method="post" action="{% url 'changer_medecin_traitant' %}" style="display:flex;gap:0.4rem;align-items:center;" onsubmit="return confirmChangeMedecin(this, '{{ patient.prenom }} {{ patient.nom }}')">
+                        {% csrf_token %}
+                        <input type="hidden" name="patient_id" value="{{ patient.id }}">
+                        <select name="medecin_id" data-original="{% with t=patient.get_medecin_traitant %}{% if t %}{{ t.id }}{% endif %}{% endwith %}" style="padding:0.35rem 0.5rem;border:1px solid #ddd;border-radius:6px;font-size:0.82rem;font-family:inherit;cursor:pointer;" {% if not patient.est_actif %}disabled{% endif %}>
+                            <option value="">— Aucun —</option>
+                            {% for m in all_medecins %}
+                            <option value="{{ m.id }}" {% with traitant=patient.get_medecin_traitant %}{% if traitant and traitant.id == m.id %}selected{% endif %}{% endwith %}>Dr. {{ m.prenom }} {{ m.nom }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-sm" style="padding:0.3rem 0.55rem;background:#1976d2;color:white;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem;" {% if not patient.est_actif %}disabled{% endif %}>OK</button>
+                    </form>
+                </td>
+                <td>
+                    {% if patient.est_actif %}
+                        <span class="badge" style="background:#e8f5e9;color:#2e7d32;padding:0.3rem 0.7rem;border-radius:12px;font-size:0.78rem;font-weight:600;">Actif</span>
+                    {% else %}
+                        <span class="badge" style="background:#ffebee;color:#c62828;padding:0.3rem 0.7rem;border-radius:12px;font-size:0.78rem;font-weight:600;">Désactivé</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if patient.est_actif %}
+                    <a href="{% url 'toggle_patient_actif' patient.id %}"
+                       class="btn btn-danger"
+                       style="padding:0.35rem 0.7rem;background:#c62828;color:white;border-radius:6px;text-decoration:none;font-size:0.8rem;font-weight:600;"
+                       onclick="return confirm('⚠️ Désactiver le patient {{ patient.prenom }} {{ patient.nom }} ?\n\nCette action va :\n• Empêcher sa connexion avec son code unique\n• Conserver toutes ses données médicales\n\nContinuer ?')">
+                        <i class="fa-solid fa-ban"></i> Désactiver
+                    </a>
+                    {% else %}
+                    <a href="{% url 'toggle_patient_actif' patient.id %}"
+                       class="btn"
+                       style="padding:0.35rem 0.7rem;background:#2e7d32;color:white;border-radius:6px;text-decoration:none;font-size:0.8rem;font-weight:600;"
+                       onclick="return confirm('✅ Réactiver le patient {{ patient.prenom }} {{ patient.nom }} ?\n\nIl pourra à nouveau se connecter avec son code unique.\n\nContinuer ?')">
+                        <i class="fa-solid fa-check-circle"></i> Activer
+                    </a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7">Aucun patient enregistré</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+<script>
+function confirmChangeMedecin(form, patientName) {
+    const select = form.querySelector('select[name="medecin_id"]');
+    const original = select.dataset.original;
+    const newVal = select.value;
+    if (original === newVal) {
+        return false;  // Pas de changement
+    }
+    const oldText = original ? form.querySelector('option[value="' + original + '"]').textContent : 'Aucun';
+    const newText = newVal ? form.querySelector('option[value="' + newVal + '"]').textContent : 'Aucun';
+    return confirm('⚠️ Changer le médecin traitant de ' + patientName + ' ?\n\nAncien : ' + oldText + '\nNouveau : ' + newText + '\n\nContinuer ?');
+}
+</script>
+</div>
+
+<!-- Modal Reset MDP -->
+<div id="resetModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;align-items:center;justify-content:center;">
+    <div style="background:white;border-radius:12px;padding:1.5rem;max-width:400px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,0.2);">
+        <div style="font-weight:800;font-size:1.1rem;margin-bottom:0.5rem;color:#1a237e;">
+            <i class="fa-solid fa-key" style="color:#1565c0;margin-right:0.4rem;"></i> Réinitialiser le mot de passe
+        </div>
+        <div id="resetMedecinName" style="font-size:0.9rem;color:#666;margin-bottom:1rem;"></div>
+        <form method="post" action="{% url 'reset_password_medecin' %}">
+            {% csrf_token %}
+            <input type="hidden" name="medecin_id" id="resetMedecinId">
+            <div style="margin-bottom:0.75rem;">
+                <label style="font-size:0.82rem;font-weight:600;color:#555;display:block;margin-bottom:0.3rem;">Nouveau mot de passe</label>
+                <input type="password" name="new_password" required minlength="6" placeholder="Min. 6 caractères" style="width:100%;padding:0.6rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-size:0.9rem;font-family:inherit;box-sizing:border-box;">
+            </div>
+            <div style="display:flex;gap:0.5rem;justify-content:flex-end;">
+                <button type="button" onclick="closeResetModal()" style="padding:0.5rem 1rem;background:#f5f5f5;border:1px solid #ddd;border-radius:8px;cursor:pointer;font-family:inherit;font-weight:600;">Annuler</button>
+                <button type="submit" style="padding:0.5rem 1rem;background:#1565c0;color:white;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-weight:600;">Réinitialiser</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+function openResetModal(id, nom) {
+    document.getElementById('resetMedecinId').value = id;
+    document.getElementById('resetMedecinName').textContent = 'Dr. ' + nom;
+    document.getElementById('resetModal').style.display = 'flex';
+}
+function closeResetModal() {
+    document.getElementById('resetModal').style.display = 'none';
+}
+document.getElementById('resetModal').addEventListener('click', function(e) {
+    if (e.target === this) closeResetModal();
+});
+</script>
+{% endblock %}

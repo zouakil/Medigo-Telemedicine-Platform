@@ -1,0 +1,144 @@
+{% load i18n_patient_tags %}
+{% get_lang as lang %}
+{% get_dir as dir %}
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{{ dir }}">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/static/images/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medigo — {% t "preparing_prescription" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root { --navy: #1a2a4a; --cyan: #00bcd4; --blue: #1976d2; --green: #43a047; --bg: #f0f4f8; --text-muted: #7a8caa; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: {% if lang == 'ar' %}'Cairo'{% else %}'Plus Jakarta Sans'{% endif %}, sans-serif;
+            background: linear-gradient(160deg, var(--navy) 0%, #1e3a6e 50%, #0d47a1 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .wait-card {
+            background: white;
+            border-radius: 28px;
+            padding: 3rem 2.5rem;
+            width: 100%;
+            max-width: 440px;
+            text-align: center;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.3);
+            animation: slideUp 0.6s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .wait-icon {
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(25,118,210,0.1), rgba(0,188,212,0.1));
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+        .wait-icon i {
+            font-size: 2.5rem;
+            color: var(--blue);
+            animation: iconPulse 2s ease infinite;
+        }
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+        }
+        .wait-icon::after {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: var(--cyan);
+            animation: spin 1.5s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .wait-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--navy);
+            margin-bottom: 0.75rem;
+        }
+        .wait-sub {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        .wait-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .wait-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: var(--cyan);
+            animation: dotBounce 1.4s ease infinite;
+        }
+        .wait-dot:nth-child(2) { animation-delay: 0.2s; }
+        .wait-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes dotBounce {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+        .wait-info {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .wait-info i { color: var(--blue); font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+    <div class="wait-card">
+        <div class="wait-icon">
+            <i class="fa-solid fa-prescription"></i>
+        </div>
+        <div class="wait-title">{% t "preparing_prescription" %}</div>
+        <div class="wait-sub">{% t "waiting_prescription" %}<br>{% t "please_wait" %}</div>
+        <div class="wait-dots">
+            <div class="wait-dot"></div>
+            <div class="wait-dot"></div>
+            <div class="wait-dot"></div>
+        </div>
+        <div class="wait-info">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>{% if lang == 'ar' %}يرجى عدم مغادرة هذه الصفحة{% else %}Veuillez ne pas quitter cette page{% endif %}</span>
+        </div>
+    </div>
+
+    <script>
+    var patientCode = '{{ patient.code_unique }}';
+    var wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+    var ws = new WebSocket(wsProtocol + window.location.host + '/ws/consultations/?code=' + patientCode);
+
+    ws.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        if (data.type === 'consultation_cloturee') {
+            if (data.ordonnance_id) {
+                window.location.href = '/patient/ordonnance/' + data.ordonnance_id + '/';
+            } else {
+                window.location.href = '/patient/consultation-terminee/';
+            }
+        }
+    };
+    </script>
+</body>
+</html>

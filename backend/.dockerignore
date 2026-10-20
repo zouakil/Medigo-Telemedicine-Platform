@@ -1,0 +1,10 @@
+.env*
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+media/
+static_collected/
+*.sqlite3
+*.bak*
+patch_*.py

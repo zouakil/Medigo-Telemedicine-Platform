@@ -1,0 +1,135 @@
+{% load i18n_patient_tags %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEDIGO — Langue / اللغة</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #0d1b3d;
+            --blue: #1976d2;
+            --cyan: #00bcd4;
+            --green: #43a047;
+            --bg: #f5f7fa;
+            --text: #1a1a1a;
+            --border: #e0e0e0;
+            --radius: 16px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, var(--navy) 0%, #1e3a6e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .container {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2.5rem 2rem;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 8px 24px rgba(25,118,210,0.3);
+        }
+        .logo i { color: white; font-size: 2rem; }
+        .title-fr {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 0.4rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .title-ar {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 2rem;
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
+        }
+        .lang-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .lang-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1.25rem 1.5rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            color: var(--navy);
+            background: white;
+        }
+        .lang-btn:hover {
+            border-color: var(--blue);
+            background: #e3f2fd;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(25,118,210,0.15);
+        }
+        .lang-btn.fr { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .lang-btn.ar {
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
+            font-size: 1.25rem;
+        }
+        .flag {
+            font-size: 1.6rem;
+            line-height: 1;
+        }
+        .footer-text {
+            margin-top: 2rem;
+            font-size: 0.78rem;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <i class="fa-solid fa-stethoscope"></i>
+        </div>
+        <div class="title-fr">Veuillez choisir votre langue</div>
+        <div class="title-ar">المرجو اختيار اللغة</div>
+
+        <div class="lang-options">
+            <a href="{% url 'patient_set_lang' 'fr' %}" class="lang-btn fr">
+                <span class="flag">🇫🇷</span>
+                Français
+            </a>
+            <a href="{% url 'patient_set_lang' 'ar' %}" class="lang-btn ar">
+                <span class="flag">🇲🇦</span>
+                العربية
+            </a>
+        </div>
+
+        <div class="footer-text">MEDIGO © 2026</div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,2896 @@
+{
+  "version": "1.0.0",
+  "language": "fr",
+  "medical_disclaimer": "Estimations indicatives pour tri/orientation. Ne remplacent pas le jugement clinique ni l'avis médical.",
+  "scoring_notes": {
+    "weight_meaning": "Poids indicatif de plausibilité locale pour un symptôme isolé. Ce n'est pas une probabilité réelle.",
+    "implementation_tip": "Additionner les weights par maladie quand plusieurs symptômes sont présents, puis appliquer les combo_rules et red_flags."
+  },
+  "red_flags": [
+    "altération de conscience",
+    "détresse respiratoire",
+    "douleur thoracique aiguë ou oppression prolongée",
+    "hémorragie active",
+    "raideur de nuque",
+    "déficit neurologique focal",
+    "déshydratation sévère",
+    "grossesse avec douleur ou saignement",
+    "cyanose",
+    "hypotension ou état de choc",
+    "anaphylaxie",
+    "convulsions nouvelles"
+  ],
+  "symptoms": {
+    "Fièvre": {
+      "category": "general",
+      "diagnoses": [
+        {
+          "name": "Grippe / syndrome viral",
+          "weight": 35
+        },
+        {
+          "name": "Infection urinaire",
+          "weight": 18
+        },
+        {
+          "name": "Pneumonie",
+          "weight": 15
+        },
+        {
+          "name": "Paludisme selon voyage",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Depuis combien de jours ?",
+        "Frissons associés ?",
+        "Toux, brûlures mictionnelles ou douleurs abdominales ?",
+        "Voyage récent en zone endémique ?"
+      ],
+      "red_flag_hint": "Altération majeure de l'état général, hypotension, confusion, dyspnée, douleur intense."
+    },
+    "Frissons": {
+      "category": "general",
+      "diagnoses": [
+        {
+          "name": "Infection virale ou bactérienne",
+          "weight": 20
+        },
+        {
+          "name": "Cause inflammatoire",
+          "weight": 12
+        },
+        {
+          "name": "Cause métabolique ou endocrinienne",
+          "weight": 10
+        },
+        {
+          "name": "Cause néoplasique selon contexte",
+          "weight": 6
+        }
+      ],
+      "questions": [
+        "Depuis quand ?",
+        "Installation brutale ou progressive ?",
+        "Signes associés : douleur, toux, troubles urinaires, digestifs ?",
+        "Perte de poids, sueurs nocturnes, voyage, contact malade ?"
+      ],
+      "red_flag_hint": "Altération majeure de l'état général, hypotension, confusion, dyspnée, douleur intense."
+    },
+    "Fatigue": {
+      "category": "general",
+      "diagnoses": [
+        {
+          "name": "Infection virale ou bactérienne",
+          "weight": 20
+        },
+        {
+          "name": "Cause inflammatoire",
+          "weight": 12
+        },
+        {
+          "name": "Cause métabolique ou endocrinienne",
+          "weight": 10
+        },
+        {
+          "name": "Cause néoplasique selon contexte",
+          "weight": 6
+        }
+      ],
+      "questions": [
+        "Depuis quand ?",
+        "Installation brutale ou progressive ?",
+        "Signes associés : douleur, toux, troubles urinaires, digestifs ?",
+        "Perte de poids, sueurs nocturnes, voyage, contact malade ?"
+      ],
+      "red_flag_hint": "Altération majeure de l'état général, hypotension, confusion, dyspnée, douleur intense."
+    },
+    "Faiblesse générale": {
+      "category": "general",
+      "diagnoses": [
+        {
+          "name": "Infection virale ou bactérienne",
+          "weight": 20
+        },
+        {
+          "name": "Cause inflammatoire",
+          "weight": 12
+        },
+        {
+          "name": "Cause métabolique ou endocrinienne",
+          "weight": 10
+        },
+        {
+          "name": "Cause néoplasique selon contexte",
+          "weight": 6
+        }
+      ],
+      "questions": [
+        "Depuis quand ?",
+        "Installation brutale ou progressive ?",
+        "Signes associés : douleur, toux, troubles urinaires, digestifs ?",
+        "Perte de poids, sueurs nocturnes, voyage, contact malade ?"
+      ],
+      "red_flag_hint": "Altération majeure de l'état général, hypotension, confusion, dyspnée, douleur intense."
+    },
+    "Perte de poids": {
+      "category": "general",
+      "diagnoses": [
+        {
+          "name": "Hyperthyroïdie",
+          "weight": 18
+        },
+        {
+          "name": "Diabète",
+          "weight": 15
+        },
+        {
+          "name": "Dépression",
+          "weight": 12
+        },
+        {
+          "name": "Cancer ou tuberculose selon contexte",
+          "weight": 10
+        }
+      ],
+      "questions": [
+        "Combien de kilos et en combien de temps ?",
+        "Appétit conservé ou diminué ?",
+        "Sueurs nocturnes ou toux chronique ?",
+        "Polydipsie, palpitations, diarrhée ?"
+      ],
+      "red_flag_hint": "Altération majeure de l'état général, hypotension, confusion, dyspnée, douleur intense."
+    },
+    "Prise de poids": {
+      "category": "general",
+      "diagnoses": [
+        {
+          "name": "Infection virale ou bactérienne",
+          "weight": 20
+        },
+        {
+          "name": "Cause inflammatoire",
+          "weight": 12
+        },
+        {
+          "name": "Cause métabolique ou endocrinienne",
+          "weight": 10
+        },
+        {
+          "name": "Cause néoplasique selon contexte",
+          "weight": 6
+        }
+      ],
+      "questions": [
+        "Depuis quand ?",
+        "Installation brutale ou progressive ?",
+        "Signes associés : douleur, toux, troubles urinaires, digestifs ?",
+        "Perte de poids, sueurs nocturnes, voyage, contact malade ?"
+      ],
+      "red_flag_hint": "Altération majeure de l'état général, hypotension, confusion, dyspnée, douleur intense."
+    },
+    "Sueurs nocturnes": {
+      "category": "general",
+      "diagnoses": [
+        {
+          "name": "Infection virale ou bactérienne",
+          "weight": 20
+        },
+        {
+          "name": "Cause inflammatoire",
+          "weight": 12
+        },
+        {
+          "name": "Cause métabolique ou endocrinienne",
+          "weight": 10
+        },
+        {
+          "name": "Cause néoplasique selon contexte",
+          "weight": 6
+        }
+      ],
+      "questions": [
+        "Depuis quand ?",
+        "Installation brutale ou progressive ?",
+        "Signes associés : douleur, toux, troubles urinaires, digestifs ?",
+        "Perte de poids, sueurs nocturnes, voyage, contact malade ?"
+      ],
+      "red_flag_hint": "Altération majeure de l'état général, hypotension, confusion, dyspnée, douleur intense."
+    },
+    "Perte d'appétit": {
+      "category": "general",
+      "diagnoses": [
+        {
+          "name": "Infection virale ou bactérienne",
+          "weight": 20
+        },
+        {
+          "name": "Cause inflammatoire",
+          "weight": 12
+        },
+        {
+          "name": "Cause métabolique ou endocrinienne",
+          "weight": 10
+        },
+        {
+          "name": "Cause néoplasique selon contexte",
+          "weight": 6
+        }
+      ],
+      "questions": [
+        "Depuis quand ?",
+        "Installation brutale ou progressive ?",
+        "Signes associés : douleur, toux, troubles urinaires, digestifs ?",
+        "Perte de poids, sueurs nocturnes, voyage, contact malade ?"
+      ],
+      "red_flag_hint": "Altération majeure de l'état général, hypotension, confusion, dyspnée, douleur intense."
+    },
+    "Nausées": {
+      "category": "digestive",
+      "diagnoses": [
+        {
+          "name": "Gastrite / dyspepsie",
+          "weight": 18
+        },
+        {
+          "name": "Infection digestive",
+          "weight": 18
+        },
+        {
+          "name": "Syndrome de l'intestin irritable",
+          "weight": 12
+        },
+        {
+          "name": "Pathologie organique digestive selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Localisation précise ?",
+        "Lien avec les repas ?",
+        "Transit modifié ?",
+        "Fièvre, sang, amaigrissement ou ictère ?"
+      ],
+      "red_flag_hint": "Défense abdominale, vomissements incoercibles, sang abondant, déshydratation, ictère fébrile."
+    },
+    "Vomissements": {
+      "category": "digestive",
+      "diagnoses": [
+        {
+          "name": "Gastrite / dyspepsie",
+          "weight": 18
+        },
+        {
+          "name": "Infection digestive",
+          "weight": 18
+        },
+        {
+          "name": "Syndrome de l'intestin irritable",
+          "weight": 12
+        },
+        {
+          "name": "Pathologie organique digestive selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Localisation précise ?",
+        "Lien avec les repas ?",
+        "Transit modifié ?",
+        "Fièvre, sang, amaigrissement ou ictère ?"
+      ],
+      "red_flag_hint": "Défense abdominale, vomissements incoercibles, sang abondant, déshydratation, ictère fébrile."
+    },
+    "Diarrhée": {
+      "category": "digestive",
+      "diagnoses": [
+        {
+          "name": "Gastrite / dyspepsie",
+          "weight": 18
+        },
+        {
+          "name": "Infection digestive",
+          "weight": 18
+        },
+        {
+          "name": "Syndrome de l'intestin irritable",
+          "weight": 12
+        },
+        {
+          "name": "Pathologie organique digestive selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Localisation précise ?",
+        "Lien avec les repas ?",
+        "Transit modifié ?",
+        "Fièvre, sang, amaigrissement ou ictère ?"
+      ],
+      "red_flag_hint": "Défense abdominale, vomissements incoercibles, sang abondant, déshydratation, ictère fébrile."
+    },
+    "Constipation": {
+      "category": "digestive",
+      "diagnoses": [
+        {
+          "name": "Gastrite / dyspepsie",
+          "weight": 18
+        },
+        {
+          "name": "Infection digestive",
+          "weight": 18
+        },
+        {
+          "name": "Syndrome de l'intestin irritable",
+          "weight": 12
+        },
+        {
+          "name": "Pathologie organique digestive selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Localisation précise ?",
+        "Lien avec les repas ?",
+        "Transit modifié ?",
+        "Fièvre, sang, amaigrissement ou ictère ?"
+      ],
+      "red_flag_hint": "Défense abdominale, vomissements incoercibles, sang abondant, déshydratation, ictère fébrile."
+    },
+    "Douleurs abdominales": {
+      "category": "digestive",
+      "diagnoses": [
+        {
+          "name": "Gastrite / dyspepsie",
+          "weight": 18
+        },
+        {
+          "name": "Infection digestive",
+          "weight": 18
+        },
+        {
+          "name": "Syndrome de l'intestin irritable",
+          "weight": 12
+        },
+        {
+          "name": "Pathologie organique digestive selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Localisation précise ?",
+        "Lien avec les repas ?",
+        "Transit modifié ?",
+        "Fièvre, sang, amaigrissement ou ictère ?"
+      ],
+      "red_flag_hint": "Défense abdominale, vomissements incoercibles, sang abondant, déshydratation, ictère fébrile."
+    },
+    "Ballonnements": {
+      "category": "digestive",
+      "diagnoses": [
+        {
+          "name": "Gastrite / dyspepsie",
+          "weight": 18
+        },
+        {
+          "name": "Infection digestive",
+          "weight": 18
+        },
+        {
+          "name": "Syndrome de l'intestin irritable",
+          "weight": 12
+        },
+        {
+          "name": "Pathologie organique digestive selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Localisation précise ?",
+        "Lien avec les repas ?",
+        "Transit modifié ?",
+        "Fièvre, sang, amaigrissement ou ictère ?"
+      ],
+      "red_flag_hint": "Défense abdominale, vomissements incoercibles, sang abondant, déshydratation, ictère fébrile."
+    },
+    "Brûlures d'estomac": {
+      "category": "digestive",
+      "diagnoses": [
+        {
+          "name": "Gastrite / dyspepsie",
+          "weight": 18
+        },
+        {
+          "name": "Infection digestive",
+          "weight": 18
+        },
+        {
+          "name": "Syndrome de l'intestin irritable",
+          "weight": 12
+        },
+        {
+          "name": "Pathologie organique digestive selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Localisation précise ?",
+        "Lien avec les repas ?",
+        "Transit modifié ?",
+        "Fièvre, sang, amaigrissement ou ictère ?"
+      ],
+      "red_flag_hint": "Défense abdominale, vomissements incoercibles, sang abondant, déshydratation, ictère fébrile."
+    },
+    "Reflux gastrique": {
+      "category": "digestive",
+      "diagnoses": [
+        {
+          "name": "Gastrite / dyspepsie",
+          "weight": 18
+        },
+        {
+          "name": "Infection digestive",
+          "weight": 18
+        },
+        {
+          "name": "Syndrome de l'intestin irritable",
+          "weight": 12
+        },
+        {
+          "name": "Pathologie organique digestive selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Localisation précise ?",
+        "Lien avec les repas ?",
+        "Transit modifié ?",
+        "Fièvre, sang, amaigrissement ou ictère ?"
+      ],
+      "red_flag_hint": "Défense abdominale, vomissements incoercibles, sang abondant, déshydratation, ictère fébrile."
+    },
+    "Sang dans les selles": {
+      "category": "digestive",
+      "diagnoses": [
+        {
+          "name": "Gastrite / dyspepsie",
+          "weight": 18
+        },
+        {
+          "name": "Infection digestive",
+          "weight": 18
+        },
+        {
+          "name": "Syndrome de l'intestin irritable",
+          "weight": 12
+        },
+        {
+          "name": "Pathologie organique digestive selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Localisation précise ?",
+        "Lien avec les repas ?",
+        "Transit modifié ?",
+        "Fièvre, sang, amaigrissement ou ictère ?"
+      ],
+      "red_flag_hint": "Défense abdominale, vomissements incoercibles, sang abondant, déshydratation, ictère fébrile."
+    },
+    "Jaunisse": {
+      "category": "digestive",
+      "diagnoses": [
+        {
+          "name": "Gastrite / dyspepsie",
+          "weight": 18
+        },
+        {
+          "name": "Infection digestive",
+          "weight": 18
+        },
+        {
+          "name": "Syndrome de l'intestin irritable",
+          "weight": 12
+        },
+        {
+          "name": "Pathologie organique digestive selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Localisation précise ?",
+        "Lien avec les repas ?",
+        "Transit modifié ?",
+        "Fièvre, sang, amaigrissement ou ictère ?"
+      ],
+      "red_flag_hint": "Défense abdominale, vomissements incoercibles, sang abondant, déshydratation, ictère fébrile."
+    },
+    "Toux": {
+      "category": "respiratory",
+      "diagnoses": [
+        {
+          "name": "Bronchite / infection virale",
+          "weight": 30
+        },
+        {
+          "name": "Grippe / COVID",
+          "weight": 18
+        },
+        {
+          "name": "Asthme",
+          "weight": 12
+        },
+        {
+          "name": "Pneumonie",
+          "weight": 10
+        }
+      ],
+      "questions": [
+        "Toux sèche ou grasse ?",
+        "Depuis combien de temps ?",
+        "Fièvre, dyspnée, douleur thoracique ?",
+        "Crachats, tabagisme, contact infectieux ?"
+      ],
+      "red_flag_hint": "Détresse respiratoire, cyanose, douleur thoracique aiguë, hémoptysie, saturation basse."
+    },
+    "Toux grasse": {
+      "category": "respiratory",
+      "diagnoses": [
+        {
+          "name": "Infection respiratoire haute ou basse",
+          "weight": 20
+        },
+        {
+          "name": "Asthme / hyperréactivité bronchique",
+          "weight": 14
+        },
+        {
+          "name": "Pneumonie",
+          "weight": 12
+        },
+        {
+          "name": "Cause thromboembolique ou cardiaque selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Début brutal ou progressif ?",
+        "Toux sèche ou grasse ?",
+        "Fièvre, douleur thoracique, sifflement, crachats ?",
+        "Tabagisme, antécédents pulmonaires, saturation, contact infectieux ?"
+      ],
+      "red_flag_hint": "Détresse respiratoire, cyanose, douleur thoracique aiguë, hémoptysie, saturation basse."
+    },
+    "Toux sèche": {
+      "category": "respiratory",
+      "diagnoses": [
+        {
+          "name": "Infection respiratoire haute ou basse",
+          "weight": 20
+        },
+        {
+          "name": "Asthme / hyperréactivité bronchique",
+          "weight": 14
+        },
+        {
+          "name": "Pneumonie",
+          "weight": 12
+        },
+        {
+          "name": "Cause thromboembolique ou cardiaque selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Début brutal ou progressif ?",
+        "Toux sèche ou grasse ?",
+        "Fièvre, douleur thoracique, sifflement, crachats ?",
+        "Tabagisme, antécédents pulmonaires, saturation, contact infectieux ?"
+      ],
+      "red_flag_hint": "Détresse respiratoire, cyanose, douleur thoracique aiguë, hémoptysie, saturation basse."
+    },
+    "Essoufflement": {
+      "category": "respiratory",
+      "diagnoses": [
+        {
+          "name": "Infection respiratoire haute ou basse",
+          "weight": 20
+        },
+        {
+          "name": "Asthme / hyperréactivité bronchique",
+          "weight": 14
+        },
+        {
+          "name": "Pneumonie",
+          "weight": 12
+        },
+        {
+          "name": "Cause thromboembolique ou cardiaque selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Début brutal ou progressif ?",
+        "Toux sèche ou grasse ?",
+        "Fièvre, douleur thoracique, sifflement, crachats ?",
+        "Tabagisme, antécédents pulmonaires, saturation, contact infectieux ?"
+      ],
+      "red_flag_hint": "Détresse respiratoire, cyanose, douleur thoracique aiguë, hémoptysie, saturation basse."
+    },
+    "Dyspnée": {
+      "category": "respiratory",
+      "diagnoses": [
+        {
+          "name": "Infection respiratoire haute ou basse",
+          "weight": 20
+        },
+        {
+          "name": "Asthme / hyperréactivité bronchique",
+          "weight": 14
+        },
+        {
+          "name": "Pneumonie",
+          "weight": 12
+        },
+        {
+          "name": "Cause thromboembolique ou cardiaque selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Début brutal ou progressif ?",
+        "Toux sèche ou grasse ?",
+        "Fièvre, douleur thoracique, sifflement, crachats ?",
+        "Tabagisme, antécédents pulmonaires, saturation, contact infectieux ?"
+      ],
+      "red_flag_hint": "Détresse respiratoire, cyanose, douleur thoracique aiguë, hémoptysie, saturation basse."
+    },
+    "Douleur thoracique": {
+      "category": "cardio",
+      "diagnoses": [
+        {
+          "name": "Reflux gastro-œsophagien",
+          "weight": 20
+        },
+        {
+          "name": "Syndrome coronarien / ischémie",
+          "weight": 18
+        },
+        {
+          "name": "Cause musculo-squelettique",
+          "weight": 15
+        },
+        {
+          "name": "Embolie pulmonaire / pneumothorax selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Irradiation vers bras, mâchoire ou dos ?",
+        "Aggravée par l'effort ou la respiration ?",
+        "Essoufflement ou palpitations associés ?",
+        "Facteurs de risque cardiovasculaire ou thrombotique ?"
+      ],
+      "red_flag_hint": "Oppression prolongée, dyspnée, syncope, cyanose, douleur thoracique aiguë intense."
+    },
+    "Palpitations": {
+      "category": "cardio",
+      "diagnoses": [
+        {
+          "name": "Cause bénigne fonctionnelle ou anxieuse",
+          "weight": 15
+        },
+        {
+          "name": "Trouble du rythme",
+          "weight": 14
+        },
+        {
+          "name": "Insuffisance cardiaque ou ischémie selon contexte",
+          "weight": 12
+        },
+        {
+          "name": "Cause respiratoire associée",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Au repos ou à l'effort ?",
+        "Début brutal, durée, irradiation ?",
+        "Essoufflement, syncope, œdème, palpitations ?",
+        "Facteurs de risque cardiovasculaire, antécédents, traitements ?"
+      ],
+      "red_flag_hint": "Syncope, oppression prolongée, hypotension, douleur thoracique typique, cyanose."
+    },
+    "Sifflements respiratoires": {
+      "category": "respiratory",
+      "diagnoses": [
+        {
+          "name": "Infection respiratoire haute ou basse",
+          "weight": 20
+        },
+        {
+          "name": "Asthme / hyperréactivité bronchique",
+          "weight": 14
+        },
+        {
+          "name": "Pneumonie",
+          "weight": 12
+        },
+        {
+          "name": "Cause thromboembolique ou cardiaque selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Début brutal ou progressif ?",
+        "Toux sèche ou grasse ?",
+        "Fièvre, douleur thoracique, sifflement, crachats ?",
+        "Tabagisme, antécédents pulmonaires, saturation, contact infectieux ?"
+      ],
+      "red_flag_hint": "Détresse respiratoire, cyanose, douleur thoracique aiguë, hémoptysie, saturation basse."
+    },
+    "Hémoptysie": {
+      "category": "respiratory",
+      "diagnoses": [
+        {
+          "name": "Infection respiratoire haute ou basse",
+          "weight": 20
+        },
+        {
+          "name": "Asthme / hyperréactivité bronchique",
+          "weight": 14
+        },
+        {
+          "name": "Pneumonie",
+          "weight": 12
+        },
+        {
+          "name": "Cause thromboembolique ou cardiaque selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Début brutal ou progressif ?",
+        "Toux sèche ou grasse ?",
+        "Fièvre, douleur thoracique, sifflement, crachats ?",
+        "Tabagisme, antécédents pulmonaires, saturation, contact infectieux ?"
+      ],
+      "red_flag_hint": "Détresse respiratoire, cyanose, douleur thoracique aiguë, hémoptysie, saturation basse."
+    },
+    "Maux de tête": {
+      "category": "neuro",
+      "diagnoses": [
+        {
+          "name": "Migraine",
+          "weight": 30
+        },
+        {
+          "name": "Céphalée de tension",
+          "weight": 25
+        },
+        {
+          "name": "Sinusite",
+          "weight": 12
+        },
+        {
+          "name": "Cause secondaire neurologique ou infectieuse",
+          "weight": 10
+        }
+      ],
+      "questions": [
+        "Localisation et intensité ?",
+        "Début brutal ou progressif ?",
+        "Nausées, photophobie, fièvre ou déficit ?",
+        "Antécédents de migraine, traumatisme ou HTA ?"
+      ],
+      "red_flag_hint": "Déficit focal, convulsion, altération de conscience, céphalée brutale, syndrome méningé."
+    },
+    "Vertiges": {
+      "category": "neuro",
+      "diagnoses": [
+        {
+          "name": "Cause fonctionnelle bénigne",
+          "weight": 12
+        },
+        {
+          "name": "Migraine / céphalée primaire",
+          "weight": 14
+        },
+        {
+          "name": "Atteinte vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause neurologique ou métabolique selon contexte",
+          "weight": 10
+        }
+      ],
+      "questions": [
+        "Début soudain ou progressif ?",
+        "Durée de l'épisode ?",
+        "Troubles visuels, déficit, fièvre, perte de connaissance ?",
+        "Terrain neurologique, traumatisme, toxiques, médicaments ?"
+      ],
+      "red_flag_hint": "Déficit focal, convulsion, altération de conscience, céphalée brutale, syndrome méningé."
+    },
+    "Étourdissements": {
+      "category": "neuro",
+      "diagnoses": [
+        {
+          "name": "Cause fonctionnelle bénigne",
+          "weight": 12
+        },
+        {
+          "name": "Migraine / céphalée primaire",
+          "weight": 14
+        },
+        {
+          "name": "Atteinte vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause neurologique ou métabolique selon contexte",
+          "weight": 10
+        }
+      ],
+      "questions": [
+        "Début soudain ou progressif ?",
+        "Durée de l'épisode ?",
+        "Troubles visuels, déficit, fièvre, perte de connaissance ?",
+        "Terrain neurologique, traumatisme, toxiques, médicaments ?"
+      ],
+      "red_flag_hint": "Déficit focal, convulsion, altération de conscience, céphalée brutale, syndrome méningé."
+    },
+    "Convulsions": {
+      "category": "neuro",
+      "diagnoses": [
+        {
+          "name": "Cause fonctionnelle bénigne",
+          "weight": 12
+        },
+        {
+          "name": "Migraine / céphalée primaire",
+          "weight": 14
+        },
+        {
+          "name": "Atteinte vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause neurologique ou métabolique selon contexte",
+          "weight": 10
+        }
+      ],
+      "questions": [
+        "Début soudain ou progressif ?",
+        "Durée de l'épisode ?",
+        "Troubles visuels, déficit, fièvre, perte de connaissance ?",
+        "Terrain neurologique, traumatisme, toxiques, médicaments ?"
+      ],
+      "red_flag_hint": "Déficit focal, convulsion, altération de conscience, céphalée brutale, syndrome méningé."
+    },
+    "Tremblements": {
+      "category": "neuro",
+      "diagnoses": [
+        {
+          "name": "Cause fonctionnelle bénigne",
+          "weight": 12
+        },
+        {
+          "name": "Migraine / céphalée primaire",
+          "weight": 14
+        },
+        {
+          "name": "Atteinte vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause neurologique ou métabolique selon contexte",
+          "weight": 10
+        }
+      ],
+      "questions": [
+        "Début soudain ou progressif ?",
+        "Durée de l'épisode ?",
+        "Troubles visuels, déficit, fièvre, perte de connaissance ?",
+        "Terrain neurologique, traumatisme, toxiques, médicaments ?"
+      ],
+      "red_flag_hint": "Déficit focal, convulsion, altération de conscience, céphalée brutale, syndrome méningé."
+    },
+    "Engourdissements": {
+      "category": "neuro",
+      "diagnoses": [
+        {
+          "name": "Cause fonctionnelle bénigne",
+          "weight": 12
+        },
+        {
+          "name": "Migraine / céphalée primaire",
+          "weight": 14
+        },
+        {
+          "name": "Atteinte vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause neurologique ou métabolique selon contexte",
+          "weight": 10
+        }
+      ],
+      "questions": [
+        "Début soudain ou progressif ?",
+        "Durée de l'épisode ?",
+        "Troubles visuels, déficit, fièvre, perte de connaissance ?",
+        "Terrain neurologique, traumatisme, toxiques, médicaments ?"
+      ],
+      "red_flag_hint": "Déficit focal, convulsion, altération de conscience, céphalée brutale, syndrome méningé."
+    },
+    "Fourmillements": {
+      "category": "neuro",
+      "diagnoses": [
+        {
+          "name": "Cause fonctionnelle bénigne",
+          "weight": 12
+        },
+        {
+          "name": "Migraine / céphalée primaire",
+          "weight": 14
+        },
+        {
+          "name": "Atteinte vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause neurologique ou métabolique selon contexte",
+          "weight": 10
+        }
+      ],
+      "questions": [
+        "Début soudain ou progressif ?",
+        "Durée de l'épisode ?",
+        "Troubles visuels, déficit, fièvre, perte de connaissance ?",
+        "Terrain neurologique, traumatisme, toxiques, médicaments ?"
+      ],
+      "red_flag_hint": "Déficit focal, convulsion, altération de conscience, céphalée brutale, syndrome méningé."
+    },
+    "Perte de conscience": {
+      "category": "neuro",
+      "diagnoses": [
+        {
+          "name": "Cause fonctionnelle bénigne",
+          "weight": 12
+        },
+        {
+          "name": "Migraine / céphalée primaire",
+          "weight": 14
+        },
+        {
+          "name": "Atteinte vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause neurologique ou métabolique selon contexte",
+          "weight": 10
+        }
+      ],
+      "questions": [
+        "Début soudain ou progressif ?",
+        "Durée de l'épisode ?",
+        "Troubles visuels, déficit, fièvre, perte de connaissance ?",
+        "Terrain neurologique, traumatisme, toxiques, médicaments ?"
+      ],
+      "red_flag_hint": "Déficit focal, convulsion, altération de conscience, céphalée brutale, syndrome méningé."
+    },
+    "Confusion": {
+      "category": "neuro",
+      "diagnoses": [
+        {
+          "name": "Cause fonctionnelle bénigne",
+          "weight": 12
+        },
+        {
+          "name": "Migraine / céphalée primaire",
+          "weight": 14
+        },
+        {
+          "name": "Atteinte vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause neurologique ou métabolique selon contexte",
+          "weight": 10
+        }
+      ],
+      "questions": [
+        "Début soudain ou progressif ?",
+        "Durée de l'épisode ?",
+        "Troubles visuels, déficit, fièvre, perte de connaissance ?",
+        "Terrain neurologique, traumatisme, toxiques, médicaments ?"
+      ],
+      "red_flag_hint": "Déficit focal, convulsion, altération de conscience, céphalée brutale, syndrome méningé."
+    },
+    "Troubles de la mémoire": {
+      "category": "neuro",
+      "diagnoses": [
+        {
+          "name": "Cause fonctionnelle bénigne",
+          "weight": 12
+        },
+        {
+          "name": "Migraine / céphalée primaire",
+          "weight": 14
+        },
+        {
+          "name": "Atteinte vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause neurologique ou métabolique selon contexte",
+          "weight": 10
+        }
+      ],
+      "questions": [
+        "Début soudain ou progressif ?",
+        "Durée de l'épisode ?",
+        "Troubles visuels, déficit, fièvre, perte de connaissance ?",
+        "Terrain neurologique, traumatisme, toxiques, médicaments ?"
+      ],
+      "red_flag_hint": "Déficit focal, convulsion, altération de conscience, céphalée brutale, syndrome méningé."
+    },
+    "Insomnie": {
+      "category": "psych",
+      "diagnoses": [
+        {
+          "name": "Trouble anxieux",
+          "weight": 18
+        },
+        {
+          "name": "Dépression",
+          "weight": 18
+        },
+        {
+          "name": "Trouble du sommeil",
+          "weight": 12
+        },
+        {
+          "name": "Cause endocrinienne ou organique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Depuis quand ?",
+        "Retentissement sur le quotidien ?",
+        "Sommeil, appétit, idées noires, irritabilité ?",
+        "Substances, stress, traitement, cause organique évoquée ?"
+      ],
+      "red_flag_hint": "Idées suicidaires, agitation extrême, confusion, sevrage sévère."
+    },
+    "Somnolence excessive": {
+      "category": "psych",
+      "diagnoses": [
+        {
+          "name": "Trouble anxieux",
+          "weight": 18
+        },
+        {
+          "name": "Dépression",
+          "weight": 18
+        },
+        {
+          "name": "Trouble du sommeil",
+          "weight": 12
+        },
+        {
+          "name": "Cause endocrinienne ou organique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Depuis quand ?",
+        "Retentissement sur le quotidien ?",
+        "Sommeil, appétit, idées noires, irritabilité ?",
+        "Substances, stress, traitement, cause organique évoquée ?"
+      ],
+      "red_flag_hint": "Idées suicidaires, agitation extrême, confusion, sevrage sévère."
+    },
+    "Anxiété": {
+      "category": "psych",
+      "diagnoses": [
+        {
+          "name": "Trouble anxieux",
+          "weight": 18
+        },
+        {
+          "name": "Dépression",
+          "weight": 18
+        },
+        {
+          "name": "Trouble du sommeil",
+          "weight": 12
+        },
+        {
+          "name": "Cause endocrinienne ou organique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Depuis quand ?",
+        "Retentissement sur le quotidien ?",
+        "Sommeil, appétit, idées noires, irritabilité ?",
+        "Substances, stress, traitement, cause organique évoquée ?"
+      ],
+      "red_flag_hint": "Idées suicidaires, agitation extrême, confusion, sevrage sévère."
+    },
+    "Dépression": {
+      "category": "psych",
+      "diagnoses": [
+        {
+          "name": "Trouble anxieux",
+          "weight": 18
+        },
+        {
+          "name": "Dépression",
+          "weight": 18
+        },
+        {
+          "name": "Trouble du sommeil",
+          "weight": 12
+        },
+        {
+          "name": "Cause endocrinienne ou organique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Depuis quand ?",
+        "Retentissement sur le quotidien ?",
+        "Sommeil, appétit, idées noires, irritabilité ?",
+        "Substances, stress, traitement, cause organique évoquée ?"
+      ],
+      "red_flag_hint": "Idées suicidaires, agitation extrême, confusion, sevrage sévère."
+    },
+    "Irritabilité": {
+      "category": "psych",
+      "diagnoses": [
+        {
+          "name": "Trouble anxieux",
+          "weight": 18
+        },
+        {
+          "name": "Dépression",
+          "weight": 18
+        },
+        {
+          "name": "Trouble du sommeil",
+          "weight": 12
+        },
+        {
+          "name": "Cause endocrinienne ou organique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Depuis quand ?",
+        "Retentissement sur le quotidien ?",
+        "Sommeil, appétit, idées noires, irritabilité ?",
+        "Substances, stress, traitement, cause organique évoquée ?"
+      ],
+      "red_flag_hint": "Idées suicidaires, agitation extrême, confusion, sevrage sévère."
+    },
+    "Douleurs articulaires": {
+      "category": "rheum",
+      "diagnoses": [
+        {
+          "name": "Cause mécanique",
+          "weight": 18
+        },
+        {
+          "name": "Cause inflammatoire",
+          "weight": 15
+        },
+        {
+          "name": "Cause microcristalline",
+          "weight": 10
+        },
+        {
+          "name": "Cause systémique / auto-immune",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Quelle localisation ?",
+        "Raideur matinale ?",
+        "Gonflement, rougeur, chaleur ?",
+        "Traumatisme, effort, antécédents, atteinte symétrique ?"
+      ],
+      "red_flag_hint": "Arthrite aiguë fébrile, impotence majeure, déficit neurologique associé."
+    },
+    "Douleurs musculaires": {
+      "category": "rheum",
+      "diagnoses": [
+        {
+          "name": "Cause mécanique",
+          "weight": 18
+        },
+        {
+          "name": "Cause inflammatoire",
+          "weight": 15
+        },
+        {
+          "name": "Cause microcristalline",
+          "weight": 10
+        },
+        {
+          "name": "Cause systémique / auto-immune",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Quelle localisation ?",
+        "Raideur matinale ?",
+        "Gonflement, rougeur, chaleur ?",
+        "Traumatisme, effort, antécédents, atteinte symétrique ?"
+      ],
+      "red_flag_hint": "Arthrite aiguë fébrile, impotence majeure, déficit neurologique associé."
+    },
+    "Gonflement articulaire": {
+      "category": "rheum",
+      "diagnoses": [
+        {
+          "name": "Cause mécanique",
+          "weight": 18
+        },
+        {
+          "name": "Cause inflammatoire",
+          "weight": 15
+        },
+        {
+          "name": "Cause microcristalline",
+          "weight": 10
+        },
+        {
+          "name": "Cause systémique / auto-immune",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Quelle localisation ?",
+        "Raideur matinale ?",
+        "Gonflement, rougeur, chaleur ?",
+        "Traumatisme, effort, antécédents, atteinte symétrique ?"
+      ],
+      "red_flag_hint": "Arthrite aiguë fébrile, impotence majeure, déficit neurologique associé."
+    },
+    "Raideur matinale": {
+      "category": "rheum",
+      "diagnoses": [
+        {
+          "name": "Cause mécanique",
+          "weight": 18
+        },
+        {
+          "name": "Cause inflammatoire",
+          "weight": 15
+        },
+        {
+          "name": "Cause microcristalline",
+          "weight": 10
+        },
+        {
+          "name": "Cause systémique / auto-immune",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Quelle localisation ?",
+        "Raideur matinale ?",
+        "Gonflement, rougeur, chaleur ?",
+        "Traumatisme, effort, antécédents, atteinte symétrique ?"
+      ],
+      "red_flag_hint": "Arthrite aiguë fébrile, impotence majeure, déficit neurologique associé."
+    },
+    "Douleurs osseuses": {
+      "category": "rheum",
+      "diagnoses": [
+        {
+          "name": "Cause mécanique",
+          "weight": 18
+        },
+        {
+          "name": "Cause inflammatoire",
+          "weight": 15
+        },
+        {
+          "name": "Cause microcristalline",
+          "weight": 10
+        },
+        {
+          "name": "Cause systémique / auto-immune",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Quelle localisation ?",
+        "Raideur matinale ?",
+        "Gonflement, rougeur, chaleur ?",
+        "Traumatisme, effort, antécédents, atteinte symétrique ?"
+      ],
+      "red_flag_hint": "Arthrite aiguë fébrile, impotence majeure, déficit neurologique associé."
+    },
+    "Crampes musculaires": {
+      "category": "rheum",
+      "diagnoses": [
+        {
+          "name": "Cause mécanique",
+          "weight": 18
+        },
+        {
+          "name": "Cause inflammatoire",
+          "weight": 15
+        },
+        {
+          "name": "Cause microcristalline",
+          "weight": 10
+        },
+        {
+          "name": "Cause systémique / auto-immune",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Quelle localisation ?",
+        "Raideur matinale ?",
+        "Gonflement, rougeur, chaleur ?",
+        "Traumatisme, effort, antécédents, atteinte symétrique ?"
+      ],
+      "red_flag_hint": "Arthrite aiguë fébrile, impotence majeure, déficit neurologique associé."
+    },
+    "Faiblesse musculaire": {
+      "category": "rheum",
+      "diagnoses": [
+        {
+          "name": "Cause mécanique",
+          "weight": 18
+        },
+        {
+          "name": "Cause inflammatoire",
+          "weight": 15
+        },
+        {
+          "name": "Cause microcristalline",
+          "weight": 10
+        },
+        {
+          "name": "Cause systémique / auto-immune",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Quelle localisation ?",
+        "Raideur matinale ?",
+        "Gonflement, rougeur, chaleur ?",
+        "Traumatisme, effort, antécédents, atteinte symétrique ?"
+      ],
+      "red_flag_hint": "Arthrite aiguë fébrile, impotence majeure, déficit neurologique associé."
+    },
+    "Éruption cutanée": {
+      "category": "skin",
+      "diagnoses": [
+        {
+          "name": "Réaction allergique",
+          "weight": 18
+        },
+        {
+          "name": "Dermatose inflammatoire",
+          "weight": 15
+        },
+        {
+          "name": "Infection cutanée",
+          "weight": 10
+        },
+        {
+          "name": "Cause systémique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Localisation et extension ?",
+        "Prurit, douleur, fièvre ?",
+        "Nouveau médicament, aliment, produit, contact ?",
+        "Œdème, bulles, atteinte muqueuse, dyspnée ?"
+      ],
+      "red_flag_hint": "Atteinte muqueuse, œdème laryngé, purpura extensif, nécrose, détresse respiratoire."
+    },
+    "Démangeaisons": {
+      "category": "skin",
+      "diagnoses": [
+        {
+          "name": "Réaction allergique",
+          "weight": 18
+        },
+        {
+          "name": "Dermatose inflammatoire",
+          "weight": 15
+        },
+        {
+          "name": "Infection cutanée",
+          "weight": 10
+        },
+        {
+          "name": "Cause systémique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Localisation et extension ?",
+        "Prurit, douleur, fièvre ?",
+        "Nouveau médicament, aliment, produit, contact ?",
+        "Œdème, bulles, atteinte muqueuse, dyspnée ?"
+      ],
+      "red_flag_hint": "Atteinte muqueuse, œdème laryngé, purpura extensif, nécrose, détresse respiratoire."
+    },
+    "Urticaire": {
+      "category": "skin",
+      "diagnoses": [
+        {
+          "name": "Réaction allergique",
+          "weight": 18
+        },
+        {
+          "name": "Dermatose inflammatoire",
+          "weight": 15
+        },
+        {
+          "name": "Infection cutanée",
+          "weight": 10
+        },
+        {
+          "name": "Cause systémique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Localisation et extension ?",
+        "Prurit, douleur, fièvre ?",
+        "Nouveau médicament, aliment, produit, contact ?",
+        "Œdème, bulles, atteinte muqueuse, dyspnée ?"
+      ],
+      "red_flag_hint": "Atteinte muqueuse, œdème laryngé, purpura extensif, nécrose, détresse respiratoire."
+    },
+    "Rougeurs": {
+      "category": "skin",
+      "diagnoses": [
+        {
+          "name": "Réaction allergique",
+          "weight": 18
+        },
+        {
+          "name": "Dermatose inflammatoire",
+          "weight": 15
+        },
+        {
+          "name": "Infection cutanée",
+          "weight": 10
+        },
+        {
+          "name": "Cause systémique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Localisation et extension ?",
+        "Prurit, douleur, fièvre ?",
+        "Nouveau médicament, aliment, produit, contact ?",
+        "Œdème, bulles, atteinte muqueuse, dyspnée ?"
+      ],
+      "red_flag_hint": "Atteinte muqueuse, œdème laryngé, purpura extensif, nécrose, détresse respiratoire."
+    },
+    "Œdème": {
+      "category": "skin",
+      "diagnoses": [
+        {
+          "name": "Réaction allergique",
+          "weight": 18
+        },
+        {
+          "name": "Dermatose inflammatoire",
+          "weight": 15
+        },
+        {
+          "name": "Infection cutanée",
+          "weight": 10
+        },
+        {
+          "name": "Cause systémique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Localisation et extension ?",
+        "Prurit, douleur, fièvre ?",
+        "Nouveau médicament, aliment, produit, contact ?",
+        "Œdème, bulles, atteinte muqueuse, dyspnée ?"
+      ],
+      "red_flag_hint": "Atteinte muqueuse, œdème laryngé, purpura extensif, nécrose, détresse respiratoire."
+    },
+    "Cyanose": {
+      "category": "skin",
+      "diagnoses": [
+        {
+          "name": "Réaction allergique",
+          "weight": 18
+        },
+        {
+          "name": "Dermatose inflammatoire",
+          "weight": 15
+        },
+        {
+          "name": "Infection cutanée",
+          "weight": 10
+        },
+        {
+          "name": "Cause systémique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Localisation et extension ?",
+        "Prurit, douleur, fièvre ?",
+        "Nouveau médicament, aliment, produit, contact ?",
+        "Œdème, bulles, atteinte muqueuse, dyspnée ?"
+      ],
+      "red_flag_hint": "Atteinte muqueuse, œdème laryngé, purpura extensif, nécrose, détresse respiratoire."
+    },
+    "Pâleur": {
+      "category": "skin",
+      "diagnoses": [
+        {
+          "name": "Réaction allergique",
+          "weight": 18
+        },
+        {
+          "name": "Dermatose inflammatoire",
+          "weight": 15
+        },
+        {
+          "name": "Infection cutanée",
+          "weight": 10
+        },
+        {
+          "name": "Cause systémique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Localisation et extension ?",
+        "Prurit, douleur, fièvre ?",
+        "Nouveau médicament, aliment, produit, contact ?",
+        "Œdème, bulles, atteinte muqueuse, dyspnée ?"
+      ],
+      "red_flag_hint": "Atteinte muqueuse, œdème laryngé, purpura extensif, nécrose, détresse respiratoire."
+    },
+    "Lésions cutanées": {
+      "category": "skin",
+      "diagnoses": [
+        {
+          "name": "Réaction allergique",
+          "weight": 18
+        },
+        {
+          "name": "Dermatose inflammatoire",
+          "weight": 15
+        },
+        {
+          "name": "Infection cutanée",
+          "weight": 10
+        },
+        {
+          "name": "Cause systémique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Localisation et extension ?",
+        "Prurit, douleur, fièvre ?",
+        "Nouveau médicament, aliment, produit, contact ?",
+        "Œdème, bulles, atteinte muqueuse, dyspnée ?"
+      ],
+      "red_flag_hint": "Atteinte muqueuse, œdème laryngé, purpura extensif, nécrose, détresse respiratoire."
+    },
+    "Alopécie": {
+      "category": "skin",
+      "diagnoses": [
+        {
+          "name": "Réaction allergique",
+          "weight": 18
+        },
+        {
+          "name": "Dermatose inflammatoire",
+          "weight": 15
+        },
+        {
+          "name": "Infection cutanée",
+          "weight": 10
+        },
+        {
+          "name": "Cause systémique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Localisation et extension ?",
+        "Prurit, douleur, fièvre ?",
+        "Nouveau médicament, aliment, produit, contact ?",
+        "Œdème, bulles, atteinte muqueuse, dyspnée ?"
+      ],
+      "red_flag_hint": "Atteinte muqueuse, œdème laryngé, purpura extensif, nécrose, détresse respiratoire."
+    },
+    "Mictions fréquentes": {
+      "category": "urinary",
+      "diagnoses": [
+        {
+          "name": "Cystite / infection urinaire basse",
+          "weight": 22
+        },
+        {
+          "name": "Pyélonéphrite selon contexte",
+          "weight": 12
+        },
+        {
+          "name": "Lithiase urinaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause gynécologique ou prostatique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Brûlures, fréquence, urgence ?",
+        "Fièvre, lombalgies, hématurie ?",
+        "Grossesse, contexte sexuel, sondage, antécédents ?",
+        "Début récent, récidives, obstruction ?"
+      ],
+      "red_flag_hint": "Fièvre avec lombalgies, rétention aiguë, hématurie abondante, sepsis."
+    },
+    "Brûlures mictionnelles": {
+      "category": "urinary",
+      "diagnoses": [
+        {
+          "name": "Cystite",
+          "weight": 40
+        },
+        {
+          "name": "Infection urinaire",
+          "weight": 25
+        },
+        {
+          "name": "Urétrite",
+          "weight": 12
+        },
+        {
+          "name": "Prostatite selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Fréquence des mictions ?",
+        "Fièvre ou douleurs lombaires ?",
+        "Sang dans les urines ?",
+        "Contexte sexuel, grossesse, récidive ?"
+      ],
+      "red_flag_hint": "Fièvre avec lombalgies, rétention aiguë, hématurie abondante, sepsis."
+    },
+    "Sang dans les urines": {
+      "category": "urinary",
+      "diagnoses": [
+        {
+          "name": "Cystite / infection urinaire basse",
+          "weight": 22
+        },
+        {
+          "name": "Pyélonéphrite selon contexte",
+          "weight": 12
+        },
+        {
+          "name": "Lithiase urinaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause gynécologique ou prostatique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Brûlures, fréquence, urgence ?",
+        "Fièvre, lombalgies, hématurie ?",
+        "Grossesse, contexte sexuel, sondage, antécédents ?",
+        "Début récent, récidives, obstruction ?"
+      ],
+      "red_flag_hint": "Fièvre avec lombalgies, rétention aiguë, hématurie abondante, sepsis."
+    },
+    "Douleurs lombaires": {
+      "category": "urinary",
+      "diagnoses": [
+        {
+          "name": "Lombalgie mécanique",
+          "weight": 28
+        },
+        {
+          "name": "Lithiase urinaire",
+          "weight": 15
+        },
+        {
+          "name": "Infection urinaire haute",
+          "weight": 12
+        },
+        {
+          "name": "Hernie discale",
+          "weight": 12
+        }
+      ],
+      "questions": [
+        "Irradiation vers jambe ou pli inguinal ?",
+        "Fièvre ou signes urinaires ?",
+        "Après effort ou faux mouvement ?",
+        "Déficit moteur, anesthésie, troubles sphinctériens ?"
+      ],
+      "red_flag_hint": "Fièvre avec lombalgies, rétention aiguë, hématurie abondante, sepsis."
+    },
+    "Incontinence urinaire": {
+      "category": "urinary",
+      "diagnoses": [
+        {
+          "name": "Cystite / infection urinaire basse",
+          "weight": 22
+        },
+        {
+          "name": "Pyélonéphrite selon contexte",
+          "weight": 12
+        },
+        {
+          "name": "Lithiase urinaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause gynécologique ou prostatique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Brûlures, fréquence, urgence ?",
+        "Fièvre, lombalgies, hématurie ?",
+        "Grossesse, contexte sexuel, sondage, antécédents ?",
+        "Début récent, récidives, obstruction ?"
+      ],
+      "red_flag_hint": "Fièvre avec lombalgies, rétention aiguë, hématurie abondante, sepsis."
+    },
+    "Saignements vaginaux": {
+      "category": "gyn",
+      "diagnoses": [
+        {
+          "name": "Cause fonctionnelle ou hormonale",
+          "weight": 18
+        },
+        {
+          "name": "Grossesse ou complication",
+          "weight": 14
+        },
+        {
+          "name": "Infection pelvienne",
+          "weight": 10
+        },
+        {
+          "name": "Endométriose / pathologie organique",
+          "weight": 10
+        }
+      ],
+      "questions": [
+        "Date des dernières règles ?",
+        "Possibilité de grossesse ?",
+        "Douleurs, fièvre, pertes, saignement abondant ?",
+        "Cycle habituel, contraception, antécédents gynécologiques ?"
+      ],
+      "red_flag_hint": "Grossesse possible avec douleur ou saignement, douleur aiguë intense, hémorragie."
+    },
+    "Douleurs pelviennes": {
+      "category": "gyn",
+      "diagnoses": [
+        {
+          "name": "Cause fonctionnelle ou hormonale",
+          "weight": 18
+        },
+        {
+          "name": "Grossesse ou complication",
+          "weight": 14
+        },
+        {
+          "name": "Infection pelvienne",
+          "weight": 10
+        },
+        {
+          "name": "Endométriose / pathologie organique",
+          "weight": 10
+        }
+      ],
+      "questions": [
+        "Date des dernières règles ?",
+        "Possibilité de grossesse ?",
+        "Douleurs, fièvre, pertes, saignement abondant ?",
+        "Cycle habituel, contraception, antécédents gynécologiques ?"
+      ],
+      "red_flag_hint": "Grossesse possible avec douleur ou saignement, douleur aiguë intense, hémorragie."
+    },
+    "Aménorrhée": {
+      "category": "gyn",
+      "diagnoses": [
+        {
+          "name": "Cause fonctionnelle ou hormonale",
+          "weight": 18
+        },
+        {
+          "name": "Grossesse ou complication",
+          "weight": 14
+        },
+        {
+          "name": "Infection pelvienne",
+          "weight": 10
+        },
+        {
+          "name": "Endométriose / pathologie organique",
+          "weight": 10
+        }
+      ],
+      "questions": [
+        "Date des dernières règles ?",
+        "Possibilité de grossesse ?",
+        "Douleurs, fièvre, pertes, saignement abondant ?",
+        "Cycle habituel, contraception, antécédents gynécologiques ?"
+      ],
+      "red_flag_hint": "Grossesse possible avec douleur ou saignement, douleur aiguë intense, hémorragie."
+    },
+    "Dysménorrhée": {
+      "category": "gyn",
+      "diagnoses": [
+        {
+          "name": "Cause fonctionnelle ou hormonale",
+          "weight": 18
+        },
+        {
+          "name": "Grossesse ou complication",
+          "weight": 14
+        },
+        {
+          "name": "Infection pelvienne",
+          "weight": 10
+        },
+        {
+          "name": "Endométriose / pathologie organique",
+          "weight": 10
+        }
+      ],
+      "questions": [
+        "Date des dernières règles ?",
+        "Possibilité de grossesse ?",
+        "Douleurs, fièvre, pertes, saignement abondant ?",
+        "Cycle habituel, contraception, antécédents gynécologiques ?"
+      ],
+      "red_flag_hint": "Grossesse possible avec douleur ou saignement, douleur aiguë intense, hémorragie."
+    },
+    "Troubles de la vision": {
+      "category": "eye_ent",
+      "diagnoses": [
+        {
+          "name": "Infection ORL ou oculaire",
+          "weight": 18
+        },
+        {
+          "name": "Cause allergique ou inflammatoire",
+          "weight": 14
+        },
+        {
+          "name": "Cause vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause tumorale / neurologique selon contexte",
+          "weight": 6
+        }
+      ],
+      "questions": [
+        "Unilatéral ou bilatéral ?",
+        "Fièvre, douleur, baisse d'audition ou de vision ?",
+        "Début brutal ou progressif ?",
+        "Traumatisme, exposition, contexte infectieux ?"
+      ],
+      "red_flag_hint": "Baisse visuelle, douleur oculaire intense, stridor, dysphagie sévère, épistaxis abondante."
+    },
+    "Douleurs oculaires": {
+      "category": "eye_ent",
+      "diagnoses": [
+        {
+          "name": "Infection ORL ou oculaire",
+          "weight": 18
+        },
+        {
+          "name": "Cause allergique ou inflammatoire",
+          "weight": 14
+        },
+        {
+          "name": "Cause vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause tumorale / neurologique selon contexte",
+          "weight": 6
+        }
+      ],
+      "questions": [
+        "Unilatéral ou bilatéral ?",
+        "Fièvre, douleur, baisse d'audition ou de vision ?",
+        "Début brutal ou progressif ?",
+        "Traumatisme, exposition, contexte infectieux ?"
+      ],
+      "red_flag_hint": "Baisse visuelle, douleur oculaire intense, stridor, dysphagie sévère, épistaxis abondante."
+    },
+    "Rougeur oculaire": {
+      "category": "eye_ent",
+      "diagnoses": [
+        {
+          "name": "Infection ORL ou oculaire",
+          "weight": 18
+        },
+        {
+          "name": "Cause allergique ou inflammatoire",
+          "weight": 14
+        },
+        {
+          "name": "Cause vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause tumorale / neurologique selon contexte",
+          "weight": 6
+        }
+      ],
+      "questions": [
+        "Unilatéral ou bilatéral ?",
+        "Fièvre, douleur, baisse d'audition ou de vision ?",
+        "Début brutal ou progressif ?",
+        "Traumatisme, exposition, contexte infectieux ?"
+      ],
+      "red_flag_hint": "Baisse visuelle, douleur oculaire intense, stridor, dysphagie sévère, épistaxis abondante."
+    },
+    "Acouphènes": {
+      "category": "eye_ent",
+      "diagnoses": [
+        {
+          "name": "Infection ORL ou oculaire",
+          "weight": 18
+        },
+        {
+          "name": "Cause allergique ou inflammatoire",
+          "weight": 14
+        },
+        {
+          "name": "Cause vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause tumorale / neurologique selon contexte",
+          "weight": 6
+        }
+      ],
+      "questions": [
+        "Unilatéral ou bilatéral ?",
+        "Fièvre, douleur, baisse d'audition ou de vision ?",
+        "Début brutal ou progressif ?",
+        "Traumatisme, exposition, contexte infectieux ?"
+      ],
+      "red_flag_hint": "Baisse visuelle, douleur oculaire intense, stridor, dysphagie sévère, épistaxis abondante."
+    },
+    "Douleurs auriculaires": {
+      "category": "eye_ent",
+      "diagnoses": [
+        {
+          "name": "Infection ORL ou oculaire",
+          "weight": 18
+        },
+        {
+          "name": "Cause allergique ou inflammatoire",
+          "weight": 14
+        },
+        {
+          "name": "Cause vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause tumorale / neurologique selon contexte",
+          "weight": 6
+        }
+      ],
+      "questions": [
+        "Unilatéral ou bilatéral ?",
+        "Fièvre, douleur, baisse d'audition ou de vision ?",
+        "Début brutal ou progressif ?",
+        "Traumatisme, exposition, contexte infectieux ?"
+      ],
+      "red_flag_hint": "Baisse visuelle, douleur oculaire intense, stridor, dysphagie sévère, épistaxis abondante."
+    },
+    "Vertiges positionnels": {
+      "category": "neuro",
+      "diagnoses": [
+        {
+          "name": "Cause fonctionnelle bénigne",
+          "weight": 12
+        },
+        {
+          "name": "Migraine / céphalée primaire",
+          "weight": 14
+        },
+        {
+          "name": "Atteinte vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause neurologique ou métabolique selon contexte",
+          "weight": 10
+        }
+      ],
+      "questions": [
+        "Début soudain ou progressif ?",
+        "Durée de l'épisode ?",
+        "Troubles visuels, déficit, fièvre, perte de connaissance ?",
+        "Terrain neurologique, traumatisme, toxiques, médicaments ?"
+      ],
+      "red_flag_hint": "Déficit focal, convulsion, altération de conscience, céphalée brutale, syndrome méningé."
+    },
+    "Dysphagie": {
+      "category": "eye_ent",
+      "diagnoses": [
+        {
+          "name": "Infection ORL ou oculaire",
+          "weight": 18
+        },
+        {
+          "name": "Cause allergique ou inflammatoire",
+          "weight": 14
+        },
+        {
+          "name": "Cause vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause tumorale / neurologique selon contexte",
+          "weight": 6
+        }
+      ],
+      "questions": [
+        "Unilatéral ou bilatéral ?",
+        "Fièvre, douleur, baisse d'audition ou de vision ?",
+        "Début brutal ou progressif ?",
+        "Traumatisme, exposition, contexte infectieux ?"
+      ],
+      "red_flag_hint": "Baisse visuelle, douleur oculaire intense, stridor, dysphagie sévère, épistaxis abondante."
+    },
+    "Enrouement": {
+      "category": "eye_ent",
+      "diagnoses": [
+        {
+          "name": "Infection ORL ou oculaire",
+          "weight": 18
+        },
+        {
+          "name": "Cause allergique ou inflammatoire",
+          "weight": 14
+        },
+        {
+          "name": "Cause vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause tumorale / neurologique selon contexte",
+          "weight": 6
+        }
+      ],
+      "questions": [
+        "Unilatéral ou bilatéral ?",
+        "Fièvre, douleur, baisse d'audition ou de vision ?",
+        "Début brutal ou progressif ?",
+        "Traumatisme, exposition, contexte infectieux ?"
+      ],
+      "red_flag_hint": "Baisse visuelle, douleur oculaire intense, stridor, dysphagie sévère, épistaxis abondante."
+    },
+    "Douleurs pharyngées": {
+      "category": "eye_ent",
+      "diagnoses": [
+        {
+          "name": "Infection ORL ou oculaire",
+          "weight": 18
+        },
+        {
+          "name": "Cause allergique ou inflammatoire",
+          "weight": 14
+        },
+        {
+          "name": "Cause vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause tumorale / neurologique selon contexte",
+          "weight": 6
+        }
+      ],
+      "questions": [
+        "Unilatéral ou bilatéral ?",
+        "Fièvre, douleur, baisse d'audition ou de vision ?",
+        "Début brutal ou progressif ?",
+        "Traumatisme, exposition, contexte infectieux ?"
+      ],
+      "red_flag_hint": "Baisse visuelle, douleur oculaire intense, stridor, dysphagie sévère, épistaxis abondante."
+    },
+    "Epistaxis": {
+      "category": "eye_ent",
+      "diagnoses": [
+        {
+          "name": "Infection ORL ou oculaire",
+          "weight": 18
+        },
+        {
+          "name": "Cause allergique ou inflammatoire",
+          "weight": 14
+        },
+        {
+          "name": "Cause vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause tumorale / neurologique selon contexte",
+          "weight": 6
+        }
+      ],
+      "questions": [
+        "Unilatéral ou bilatéral ?",
+        "Fièvre, douleur, baisse d'audition ou de vision ?",
+        "Début brutal ou progressif ?",
+        "Traumatisme, exposition, contexte infectieux ?"
+      ],
+      "red_flag_hint": "Baisse visuelle, douleur oculaire intense, stridor, dysphagie sévère, épistaxis abondante."
+    },
+    "Obstruction nasale": {
+      "category": "eye_ent",
+      "diagnoses": [
+        {
+          "name": "Infection ORL ou oculaire",
+          "weight": 18
+        },
+        {
+          "name": "Cause allergique ou inflammatoire",
+          "weight": 14
+        },
+        {
+          "name": "Cause vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause tumorale / neurologique selon contexte",
+          "weight": 6
+        }
+      ],
+      "questions": [
+        "Unilatéral ou bilatéral ?",
+        "Fièvre, douleur, baisse d'audition ou de vision ?",
+        "Début brutal ou progressif ?",
+        "Traumatisme, exposition, contexte infectieux ?"
+      ],
+      "red_flag_hint": "Baisse visuelle, douleur oculaire intense, stridor, dysphagie sévère, épistaxis abondante."
+    },
+    "Rhinorrhée": {
+      "category": "eye_ent",
+      "diagnoses": [
+        {
+          "name": "Infection ORL ou oculaire",
+          "weight": 18
+        },
+        {
+          "name": "Cause allergique ou inflammatoire",
+          "weight": 14
+        },
+        {
+          "name": "Cause vestibulaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause tumorale / neurologique selon contexte",
+          "weight": 6
+        }
+      ],
+      "questions": [
+        "Unilatéral ou bilatéral ?",
+        "Fièvre, douleur, baisse d'audition ou de vision ?",
+        "Début brutal ou progressif ?",
+        "Traumatisme, exposition, contexte infectieux ?"
+      ],
+      "red_flag_hint": "Baisse visuelle, douleur oculaire intense, stridor, dysphagie sévère, épistaxis abondante."
+    },
+    "Anosmie": {
+      "category": "eye_ent",
+      "diagnoses": [
+        {
+          "name": "Infection virale ORL",
+          "weight": 25
+        },
+        {
+          "name": "COVID-19",
+          "weight": 20
+        },
+        {
+          "name": "Polypose nasale",
+          "weight": 12
+        },
+        {
+          "name": "Cause neurologique selon contexte",
+          "weight": 6
+        }
+      ],
+      "questions": [
+        "Brutale ou progressive ?",
+        "Obstruction nasale ou rhinorrhée ?",
+        "Ageusie associée ?",
+        "Traumatisme crânien ou récidive ?"
+      ],
+      "red_flag_hint": "Baisse visuelle, douleur oculaire intense, stridor, dysphagie sévère, épistaxis abondante."
+    },
+    "Ageusie": {
+      "category": "eye_ent",
+      "diagnoses": [
+        {
+          "name": "Infection virale ORL",
+          "weight": 22
+        },
+        {
+          "name": "COVID-19",
+          "weight": 20
+        },
+        {
+          "name": "Atteinte locale buccale",
+          "weight": 10
+        },
+        {
+          "name": "Cause neurologique ou médicamenteuse",
+          "weight": 6
+        }
+      ],
+      "questions": [
+        "Brutale ou progressive ?",
+        "Anosmie associée ?",
+        "Contexte viral récent ?",
+        "Médicaments, tabac, lésion buccale ?"
+      ],
+      "red_flag_hint": "Baisse visuelle, douleur oculaire intense, stridor, dysphagie sévère, épistaxis abondante."
+    },
+    "Polydipsie": {
+      "category": "endo_heme_vasc",
+      "diagnoses": [
+        {
+          "name": "Diabète",
+          "weight": 30
+        },
+        {
+          "name": "Déshydratation",
+          "weight": 12
+        },
+        {
+          "name": "Polydipsie primaire",
+          "weight": 10
+        },
+        {
+          "name": "Cause endocrinienne",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Polyurie associée ?",
+        "Perte de poids ou fatigue ?",
+        "Début récent ou chronique ?",
+        "Prise de diurétiques ou chaleur importante ?"
+      ],
+      "red_flag_hint": "Ischémie aiguë, œdème unilatéral douloureux, saignement actif, signes d'acidocétose."
+    },
+    "Polyphagie": {
+      "category": "endo_heme_vasc",
+      "diagnoses": [
+        {
+          "name": "Diabète",
+          "weight": 20
+        },
+        {
+          "name": "Hyperthyroïdie",
+          "weight": 16
+        },
+        {
+          "name": "Cause comportementale",
+          "weight": 12
+        },
+        {
+          "name": "Hypoglycémies",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Perte ou prise de poids ?",
+        "Soif importante ?",
+        "Palpitations ou tremblements ?",
+        "Médicaments ou épisodes d'hypoglycémie ?"
+      ],
+      "red_flag_hint": "Ischémie aiguë, œdème unilatéral douloureux, saignement actif, signes d'acidocétose."
+    },
+    "Goitre": {
+      "category": "endo_heme_vasc",
+      "diagnoses": [
+        {
+          "name": "Goitre simple",
+          "weight": 20
+        },
+        {
+          "name": "Hyperthyroïdie",
+          "weight": 18
+        },
+        {
+          "name": "Hypothyroïdie",
+          "weight": 16
+        },
+        {
+          "name": "Nodule thyroïdien",
+          "weight": 10
+        }
+      ],
+      "questions": [
+        "Palpitations, tremblements, amaigrissement ?",
+        "Fatigue, constipation, prise de poids ?",
+        "Gêne cervicale ou dysphagie ?",
+        "Antécédents thyroïdiens et bilan biologique ?"
+      ],
+      "red_flag_hint": "Ischémie aiguë, œdème unilatéral douloureux, saignement actif, signes d'acidocétose."
+    },
+    "Saignements anormaux": {
+      "category": "endo_heme_vasc",
+      "diagnoses": [
+        {
+          "name": "Cause endocrinienne",
+          "weight": 16
+        },
+        {
+          "name": "Cause hématologique",
+          "weight": 12
+        },
+        {
+          "name": "Cause vasculaire",
+          "weight": 12
+        },
+        {
+          "name": "Cause systémique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Évolution récente ou chronique ?",
+        "Amaigrissement, soif, faim, palpitations ?",
+        "Saignements, hématomes, ganglions, œdème ?",
+        "Douleur à l'effort, au repos, facteurs vasculaires ?"
+      ],
+      "red_flag_hint": "Ischémie aiguë, œdème unilatéral douloureux, saignement actif, signes d'acidocétose."
+    },
+    "Ecchymoses faciles": {
+      "category": "endo_heme_vasc",
+      "diagnoses": [
+        {
+          "name": "Cause endocrinienne",
+          "weight": 16
+        },
+        {
+          "name": "Cause hématologique",
+          "weight": 12
+        },
+        {
+          "name": "Cause vasculaire",
+          "weight": 12
+        },
+        {
+          "name": "Cause systémique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Évolution récente ou chronique ?",
+        "Amaigrissement, soif, faim, palpitations ?",
+        "Saignements, hématomes, ganglions, œdème ?",
+        "Douleur à l'effort, au repos, facteurs vasculaires ?"
+      ],
+      "red_flag_hint": "Ischémie aiguë, œdème unilatéral douloureux, saignement actif, signes d'acidocétose."
+    },
+    "Adénopathies": {
+      "category": "endo_heme_vasc",
+      "diagnoses": [
+        {
+          "name": "Cause endocrinienne",
+          "weight": 16
+        },
+        {
+          "name": "Cause hématologique",
+          "weight": 12
+        },
+        {
+          "name": "Cause vasculaire",
+          "weight": 12
+        },
+        {
+          "name": "Cause systémique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Évolution récente ou chronique ?",
+        "Amaigrissement, soif, faim, palpitations ?",
+        "Saignements, hématomes, ganglions, œdème ?",
+        "Douleur à l'effort, au repos, facteurs vasculaires ?"
+      ],
+      "red_flag_hint": "Ischémie aiguë, œdème unilatéral douloureux, saignement actif, signes d'acidocétose."
+    },
+    "Douleur au repos": {
+      "category": "endo_heme_vasc",
+      "diagnoses": [
+        {
+          "name": "Cause endocrinienne",
+          "weight": 16
+        },
+        {
+          "name": "Cause hématologique",
+          "weight": 12
+        },
+        {
+          "name": "Cause vasculaire",
+          "weight": 12
+        },
+        {
+          "name": "Cause systémique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Évolution récente ou chronique ?",
+        "Amaigrissement, soif, faim, palpitations ?",
+        "Saignements, hématomes, ganglions, œdème ?",
+        "Douleur à l'effort, au repos, facteurs vasculaires ?"
+      ],
+      "red_flag_hint": "Ischémie aiguë, œdème unilatéral douloureux, saignement actif, signes d'acidocétose."
+    },
+    "Douleur à l'effort": {
+      "category": "endo_heme_vasc",
+      "diagnoses": [
+        {
+          "name": "Cause endocrinienne",
+          "weight": 16
+        },
+        {
+          "name": "Cause hématologique",
+          "weight": 12
+        },
+        {
+          "name": "Cause vasculaire",
+          "weight": 12
+        },
+        {
+          "name": "Cause systémique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Évolution récente ou chronique ?",
+        "Amaigrissement, soif, faim, palpitations ?",
+        "Saignements, hématomes, ganglions, œdème ?",
+        "Douleur à l'effort, au repos, facteurs vasculaires ?"
+      ],
+      "red_flag_hint": "Ischémie aiguë, œdème unilatéral douloureux, saignement actif, signes d'acidocétose."
+    },
+    "Claudication intermittente": {
+      "category": "endo_heme_vasc",
+      "diagnoses": [
+        {
+          "name": "Cause endocrinienne",
+          "weight": 16
+        },
+        {
+          "name": "Cause hématologique",
+          "weight": 12
+        },
+        {
+          "name": "Cause vasculaire",
+          "weight": 12
+        },
+        {
+          "name": "Cause systémique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Évolution récente ou chronique ?",
+        "Amaigrissement, soif, faim, palpitations ?",
+        "Saignements, hématomes, ganglions, œdème ?",
+        "Douleur à l'effort, au repos, facteurs vasculaires ?"
+      ],
+      "red_flag_hint": "Ischémie aiguë, œdème unilatéral douloureux, saignement actif, signes d'acidocétose."
+    },
+    "Œdème des membres inférieurs": {
+      "category": "endo_heme_vasc",
+      "diagnoses": [
+        {
+          "name": "Cause endocrinienne",
+          "weight": 16
+        },
+        {
+          "name": "Cause hématologique",
+          "weight": 12
+        },
+        {
+          "name": "Cause vasculaire",
+          "weight": 12
+        },
+        {
+          "name": "Cause systémique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Évolution récente ou chronique ?",
+        "Amaigrissement, soif, faim, palpitations ?",
+        "Saignements, hématomes, ganglions, œdème ?",
+        "Douleur à l'effort, au repos, facteurs vasculaires ?"
+      ],
+      "red_flag_hint": "Ischémie aiguë, œdème unilatéral douloureux, saignement actif, signes d'acidocétose."
+    },
+    "Varices": {
+      "category": "endo_heme_vasc",
+      "diagnoses": [
+        {
+          "name": "Cause endocrinienne",
+          "weight": 16
+        },
+        {
+          "name": "Cause hématologique",
+          "weight": 12
+        },
+        {
+          "name": "Cause vasculaire",
+          "weight": 12
+        },
+        {
+          "name": "Cause systémique selon contexte",
+          "weight": 8
+        }
+      ],
+      "questions": [
+        "Évolution récente ou chronique ?",
+        "Amaigrissement, soif, faim, palpitations ?",
+        "Saignements, hématomes, ganglions, œdème ?",
+        "Douleur à l'effort, au repos, facteurs vasculaires ?"
+      ],
+      "red_flag_hint": "Ischémie aiguë, œdème unilatéral douloureux, saignement actif, signes d'acidocétose."
+    }
+  },
+  "combo_rules": [
+    {
+      "symptoms": [
+        "Fièvre",
+        "Toux",
+        "Anosmie",
+        "Ageusie"
+      ],
+      "disease": "COVID-19",
+      "score_bonus": 20,
+      "priority": "high",
+      "note": "Très évocateur en contexte épidémique."
+    },
+    {
+      "symptoms": [
+        "Fièvre",
+        "Toux grasse",
+        "Dyspnée"
+      ],
+      "disease": "Pneumonie",
+      "score_bonus": 20,
+      "priority": "high",
+      "note": "Renforcer si douleur thoracique ou désaturation."
+    },
+    {
+      "symptoms": [
+        "Fièvre",
+        "Brûlures mictionnelles",
+        "Douleurs lombaires"
+      ],
+      "disease": "Pyélonéphrite",
+      "score_bonus": 20,
+      "priority": "high",
+      "note": "Urgent si frissons ou vomissements."
+    },
+    {
+      "symptoms": [
+        "Brûlures mictionnelles",
+        "Mictions fréquentes"
+      ],
+      "disease": "Cystite",
+      "score_bonus": 18,
+      "priority": "medium",
+      "note": "Renforcer si douleur sus-pubienne."
+    },
+    {
+      "symptoms": [
+        "Douleur thoracique",
+        "Dyspnée",
+        "Hémoptysie"
+      ],
+      "disease": "Embolie pulmonaire",
+      "score_bonus": 25,
+      "priority": "critical",
+      "note": "Très évocateur surtout avec facteur thrombotique."
+    },
+    {
+      "symptoms": [
+        "Maux de tête",
+        "Fièvre",
+        "Confusion"
+      ],
+      "disease": "Méningite / infection du SNC",
+      "score_bonus": 25,
+      "priority": "critical",
+      "note": "Urgence médicale."
+    },
+    {
+      "symptoms": [
+        "Polydipsie",
+        "Polyphagie",
+        "Perte de poids"
+      ],
+      "disease": "Diabète",
+      "score_bonus": 20,
+      "priority": "high",
+      "note": "Encore plus évocateur si polyurie."
+    },
+    {
+      "symptoms": [
+        "Tremblements",
+        "Palpitations",
+        "Perte de poids"
+      ],
+      "disease": "Hyperthyroïdie",
+      "score_bonus": 20,
+      "priority": "medium",
+      "note": "Ajouter goitre si présent."
+    },
+    {
+      "symptoms": [
+        "Fatigue",
+        "Prise de poids",
+        "Constipation"
+      ],
+      "disease": "Hypothyroïdie",
+      "score_bonus": 20,
+      "priority": "medium",
+      "note": "Renforcer si goitre ou frilosité."
+    },
+    {
+      "symptoms": [
+        "Nausées",
+        "Vomissements",
+        "Aménorrhée"
+      ],
+      "disease": "Grossesse",
+      "score_bonus": 20,
+      "priority": "medium",
+      "note": "À confirmer biologiquement."
+    },
+    {
+      "symptoms": [
+        "Douleurs pelviennes",
+        "Saignements vaginaux",
+        "Aménorrhée"
+      ],
+      "disease": "Grossesse extra-utérine",
+      "score_bonus": 25,
+      "priority": "critical",
+      "note": "Urgence gynécologique."
+    },
+    {
+      "symptoms": [
+        "Sang dans les selles",
+        "Perte de poids",
+        "Douleurs abdominales"
+      ],
+      "disease": "Pathologie digestive organique",
+      "score_bonus": 20,
+      "priority": "high",
+      "note": "MICI ou néoplasie selon contexte."
+    },
+    {
+      "symptoms": [
+        "Jaunisse",
+        "Douleurs abdominales",
+        "Fièvre"
+      ],
+      "disease": "Angiocholite / infection biliaire",
+      "score_bonus": 25,
+      "priority": "critical",
+      "note": "Urgence potentielle."
+    },
+    {
+      "symptoms": [
+        "Éruption cutanée",
+        "Démangeaisons",
+        "Urticaire"
+      ],
+      "disease": "Réaction allergique",
+      "score_bonus": 18,
+      "priority": "medium",
+      "note": "Surveiller œdème laryngé."
+    },
+    {
+      "symptoms": [
+        "Œdème",
+        "Urticaire",
+        "Essoufflement"
+      ],
+      "disease": "Anaphylaxie",
+      "score_bonus": 30,
+      "priority": "critical",
+      "note": "Urgence absolue."
+    },
+    {
+      "symptoms": [
+        "Douleurs articulaires",
+        "Raideur matinale",
+        "Gonflement articulaire"
+      ],
+      "disease": "Polyarthrite inflammatoire",
+      "score_bonus": 20,
+      "priority": "medium",
+      "note": "Renforcer si atteinte symétrique."
+    },
+    {
+      "symptoms": [
+        "Toux",
+        "Sueurs nocturnes",
+        "Perte de poids"
+      ],
+      "disease": "Tuberculose",
+      "score_bonus": 20,
+      "priority": "high",
+      "note": "Surtout si contact ou zone endémique."
+    },
+    {
+      "symptoms": [
+        "Douleurs lombaires",
+        "Sang dans les urines"
+      ],
+      "disease": "Lithiase urinaire / colique néphrétique",
+      "score_bonus": 20,
+      "priority": "high",
+      "note": "Renforcer si douleur paroxystique."
+    },
+    {
+      "symptoms": [
+        "Obstruction nasale",
+        "Rhinorrhée",
+        "Anosmie"
+      ],
+      "disease": "Rhinite virale ou polypose",
+      "score_bonus": 15,
+      "priority": "medium",
+      "note": "À contextualiser selon durée."
+    },
+    {
+      "symptoms": [
+        "Douleurs pharyngées",
+        "Fièvre",
+        "Adénopathies"
+      ],
+      "disease": "Angine / mononucléose",
+      "score_bonus": 18,
+      "priority": "medium",
+      "note": "Renforcer si fatigue marquée."
+    },
+    {
+      "symptoms": [
+        "Rougeur oculaire",
+        "Douleurs oculaires",
+        "Troubles de la vision"
+      ],
+      "disease": "Atteinte ophtalmologique urgente",
+      "score_bonus": 25,
+      "priority": "critical",
+      "note": "Kératite, uvéite, glaucome, etc."
+    },
+    {
+      "symptoms": [
+        "Œdème des membres inférieurs",
+        "Dyspnée"
+      ],
+      "disease": "Insuffisance cardiaque ou embolie pulmonaire",
+      "score_bonus": 20,
+      "priority": "high",
+      "note": "Penser au caractère unilatéral ou bilatéral."
+    },
+    {
+      "symptoms": [
+        "Claudication intermittente",
+        "Douleur au repos"
+      ],
+      "disease": "Artériopathie sévère",
+      "score_bonus": 20,
+      "priority": "high",
+      "note": "Risque ischémique élevé."
+    },
+    {
+      "symptoms": [
+        "Ecchymoses faciles",
+        "Saignements anormaux"
+      ],
+      "disease": "Trouble de coagulation / thrombopénie",
+      "score_bonus": 20,
+      "priority": "high",
+      "note": "Bilan hématologique nécessaire."
+    },
+    {
+      "symptoms": [
+        "Goitre",
+        "Palpitations",
+        "Tremblements"
+      ],
+      "disease": "Hyperthyroïdie",
+      "score_bonus": 20,
+      "priority": "medium",
+      "note": "Très évocateur."
+    },
+    {
+      "symptoms": [
+        "Goitre",
+        "Fatigue",
+        "Prise de poids"
+      ],
+      "disease": "Hypothyroïdie",
+      "score_bonus": 20,
+      "priority": "medium",
+      "note": "Selon bilan thyroïdien."
+    },
+    {
+      "symptoms": [
+        "Insomnie",
+        "Anxiété",
+        "Palpitations"
+      ],
+      "disease": "Trouble anxieux",
+      "score_bonus": 18,
+      "priority": "medium",
+      "note": "Toujours éliminer une cause organique."
+    }
+  ]
+}

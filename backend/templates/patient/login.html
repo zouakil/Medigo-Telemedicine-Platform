@@ -1,0 +1,207 @@
+{% load i18n_patient_tags %}
+{% get_lang as lang %}
+{% get_dir as dir %}
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{{ dir }}">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/static/images/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medigo — {% t "enter_code" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root { --navy: #1a2a4a; --cyan: #00bcd4; --blue: #1976d2; --bg: #f0f4f8; --red: #e53935; --border: #e2e8f0; --text-muted: #7a8caa; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: {% if lang == 'ar' %}'Cairo'{% else %}'Plus Jakarta Sans'{% endif %}, sans-serif;
+            background: linear-gradient(160deg, var(--navy) 0%, #1e3a6e 50%, #0d47a1 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .lang-switcher {
+            position: fixed;
+            top: 1rem;
+            {% if dir == 'rtl' %}left: 1rem;{% else %}right: 1rem;{% endif %}
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            padding: 0.4rem 0.6rem;
+            display: flex;
+            gap: 0.3rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            z-index: 100;
+        }
+        .lang-switcher a {
+            color: white;
+            text-decoration: none;
+            padding: 0.4rem 0.85rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            transition: all 0.2s;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .lang-switcher a.active {
+            background: white;
+            color: var(--navy);
+        }
+        .lang-switcher a:not(.active):hover {
+            background: rgba(255,255,255,0.15);
+        }
+        .lang-switcher a.ar { font-family: 'Cairo', sans-serif; }
+        .flag-fr, .flag-ma {
+            display: inline-block;
+            width: 22px;
+            height: 16px;
+            border-radius: 3px;
+            border: 1px solid rgba(0,0,0,0.1);
+            vertical-align: middle;
+            background-size: cover;
+            background-position: center;
+        }
+        .flag-fr {
+            background: linear-gradient(to right, #002654 0%, #002654 33.33%, #FFFFFF 33.33%, #FFFFFF 66.66%, #ED2939 66.66%, #ED2939 100%);
+        }
+        .flag-ma {
+            background-color: #C1272D;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'><rect width='30' height='20' fill='%23C1272D'/><polygon points='15,7 16.5,11 20.5,11 17.5,13.5 18.5,17.5 15,15 11.5,17.5 12.5,13.5 9.5,11 13.5,11' fill='none' stroke='%23006233' stroke-width='0.6'/></svg>");
+            background-size: cover;
+        }
+        .login-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.5s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .login-logo { height: 64px; margin-bottom: 1.5rem; }
+        .login-title { font-size: 1.5rem; font-weight: 800; color: var(--navy); margin-bottom: 0.4rem; }
+        .login-sub { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
+        .code-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--navy);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            text-align: {% if dir == 'rtl' %}right{% else %}left{% endif %};
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .code-input-wrapper { position: relative; margin-bottom: 1.5rem; }
+        .code-input-wrapper i {
+            position: absolute;
+            {% if dir == 'rtl' %}right: 1rem;{% else %}left: 1rem;{% endif %}
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+        .code-input {
+            width: 100%;
+            padding: 1rem;
+            {% if dir == 'rtl' %}padding-right: 3rem;{% else %}padding-left: 3rem;{% endif %}
+            font-size: 1.8rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 0.6rem;
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            color: var(--navy);
+            background: var(--bg);
+            outline: none;
+            transition: all 0.2s;
+            direction: ltr;
+        }
+        .code-input:focus {
+            border-color: var(--cyan);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(0,188,212,0.12);
+        }
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--navy), #1e3a6e);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,42,74,0.35); }
+        .btn-login:active { transform: translateY(0); }
+        .error-msg {
+            background: #ffebee;
+            color: var(--red);
+            border-radius: 10px;
+            padding: 0.875rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+            border-{% if dir == 'rtl' %}right{% else %}left{% endif %}: 4px solid var(--red);
+            text-align: {% if dir == 'rtl' %}right{% else %}left{% endif %};
+        }
+        .help-text { margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <div class="lang-switcher">
+        <a href="{% url 'patient_change_lang' 'fr' %}" class="{% if lang == 'fr' %}active{% endif %}">
+            <span class="flag-fr"></span> FR
+        </a>
+        <a href="{% url 'patient_change_lang' 'ar' %}" class="ar {% if lang == 'ar' %}active{% endif %}">
+            <span class="flag-ma"></span> عربي
+        </a>
+    </div>
+
+    <div class="login-card">
+        <img src="/static/images/logo.png" alt="Medigo" class="login-logo">
+        <div class="login-title">{% t "welcome" %}</div>
+        <div class="login-sub">{% t "enter_code" %}</div>
+        {% if error %}
+        <div class="error-msg">
+            <i class="fa-solid fa-circle-xmark"></i> {{ error }}
+        </div>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <label class="code-label">{% t "unique_code" %}</label>
+            <div class="code-input-wrapper">
+                <i class="fa-solid fa-key"></i>
+                <input type="number" name="code" class="code-input" placeholder="000000" maxlength="6" autofocus required>
+            </div>
+            <button type="submit" class="btn-login">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i> {% t "login_btn" %}
+            </button>
+        </form>
+        <div class="help-text">
+            <i class="fa-solid fa-circle-info"></i>
+            {% if lang == 'ar' %}الرمز المقدم من طبيبك أو المؤسسة{% else %}Code fourni par votre médecin ou établissement{% endif %}
+        </div>
+    </div>
+</body>
+</html>

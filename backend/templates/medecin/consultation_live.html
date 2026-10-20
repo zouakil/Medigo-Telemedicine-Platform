@@ -1,0 +1,2184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/static/images/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultation — {{ patient }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --navy: #1a2a4a;
+            --cyan: #00bcd4;
+            --blue: #1976d2;
+            --green: #43a047;
+            --orange: #fb8c00;
+            --red: #e53935;
+            --teal: #00897b;
+            --bg: #f0f4f8;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --text: #1a2a4a;
+            --text-muted: #7a8caa;
+            --shadow: 0 4px 24px rgba(26,42,74,0.08);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --sidebar-w: 345px;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        .live-header {
+            height: 62px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            gap: 1rem;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(26,42,74,0.06);
+            z-index: 10;
+        }
+        .live-header img { height: 38px; }
+        .live-header-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+        .live-header-status {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--orange);
+            margin-left: 0.5rem;
+        }
+        .live-header-status.connected { color: var(--green); }
+        .header-btns { margin-left: auto; display: flex; gap: 0.75rem; }
+
+        /* MAIN LAYOUT */
+        .live-body {
+            flex: 1;
+            display: grid;
+            grid-template-columns: var(--sidebar-w) 1fr 320px;
+            overflow: hidden;
+        }
+
+        /* LEFT SIDEBAR */
+        .live-sidebar {
+            background: white;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .sidebar-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .sidebar-tab {
+            flex: 1;
+            padding: 0.75rem 0.25rem;
+            text-align: center;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .sidebar-tab.active {
+            color: var(--blue);
+            border-bottom-color: var(--blue);
+            background: var(--bg);
+        }
+        .sidebar-panel {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        .sidebar-panel.active { display: flex; flex-direction: column; gap: 0.75rem; }
+
+        .form-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.35rem;
+            display: block;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.6rem 0.875rem;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.875rem;
+            color: var(--text);
+            outline: none;
+            transition: all 0.2s;
+            background: var(--bg);
+        }
+        .form-input:focus {
+            border-color: var(--cyan);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0,188,212,0.1);
+        }
+        select.form-input { cursor: pointer; }
+
+        .imc-display {
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            color: white;
+            border-radius: var(--radius-sm);
+            padding: 0.75rem;
+            text-align: center;
+        }
+        .imc-value { font-size: 1.5rem; font-weight: 800; }
+        .imc-label { font-size: 0.75rem; opacity: 0.85; }
+
+        .save-btn {
+            width: 100%;
+            padding: 0.6rem;
+            background: var(--navy);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .save-btn:hover { background: var(--blue); }
+
+        /* SYMPTOMES */
+        .search-symptoms {
+            position: relative;
+        }
+        .search-symptoms input {
+            width: 100%;
+            padding: 0.6rem 0.875rem 0.6rem 2.25rem;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.82rem;
+            outline: none;
+            transition: all 0.2s;
+            background: var(--bg);
+        }
+        .search-symptoms input:focus { border-color: var(--cyan); background: white; }
+        .search-symptoms i {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        .symptoms-list {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg);
+            max-height: 280px;
+        }
+        .symptom-item {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            padding: 0.5rem 0.875rem;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-size: 0.82rem;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+        }
+        .symptom-item:hover { background: white; }
+        .symptom-item input[type=checkbox] { accent-color: var(--blue); cursor: pointer; }
+        .symptom-item.checked { background: var(--blue-light, #e3f2fd); font-weight: 600; color: var(--blue); }
+        .selected-count {
+            font-size: 0.78rem;
+            color: var(--blue);
+            font-weight: 600;
+            text-align: right;
+        }
+
+        /* MALADIES */
+        .maladies-list {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg);
+            max-height: 200px;
+        }
+
+        /* CENTER — VIDEO */
+        .live-center {
+            display: flex;
+            flex-direction: column;
+            padding: 0.75rem;
+            gap: 0.5rem;
+            overflow: hidden;
+        }
+        .video-main {
+            flex: 1;
+            position: relative;
+            background: #000;
+            border-radius: var(--radius);
+            overflow: hidden;
+            min-height: 0;
+        }
+        .video-pip {
+            position: absolute;
+            bottom: 0.75rem;
+            right: 0.875rem;
+            width: 160px;
+            aspect-ratio: 4/3;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+            z-index: 5;
+            background: #1a2a4a;
+        }
+        .video-pip video { width: 100%; height: 100%; object-fit: cover; }
+        .video-pip-label {
+            position: absolute;
+            bottom: 0.3rem;
+            left: 0.4rem;
+            background: rgba(0,0,0,0.55);
+            color: white;
+            padding: 0.15rem 0.5rem;
+            border-radius: 50px;
+            font-size: 0.68rem;
+            font-weight: 600;
+        }
+        .video-pip-controls {
+            position: absolute;
+            bottom: 0.3rem;
+            right: 0.4rem;
+            display: flex;
+            gap: 0.3rem;
+        }
+        .video-main video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+        .video-main-label {
+            position: absolute;
+            bottom: 0.75rem;
+            left: 0.875rem;
+            background: rgba(0,0,0,0.55);
+            color: white;
+            padding: 0.3rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        /* PIP medecin overlay */
+        .video-pip {
+            position: absolute;
+            bottom: 0.75rem;
+            right: 0.875rem;
+            width: 160px;
+            aspect-ratio: 4/3;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+            z-index: 5;
+            background: #1a2a4a;
+        }
+        .video-pip video { width: 100%; height: 100%; object-fit: cover; }
+        .video-pip-label {
+            position: absolute;
+            bottom: 0.3rem;
+            left: 0.4rem;
+            background: rgba(0,0,0,0.55);
+            color: white;
+            padding: 0.15rem 0.5rem;
+            border-radius: 50px;
+            font-size: 0.68rem;
+            font-weight: 600;
+        }
+        .video-pip-controls {
+            position: absolute;
+            bottom: 0.3rem;
+            right: 0.4rem;
+            display: flex;
+            gap: 0.3rem;
+        }
+        .ctrl-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.25);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            transition: background 0.2s;
+        }
+        .ctrl-btn:hover { background: rgba(255,255,255,0.45); }
+        .ctrl-btn.off { background: var(--red); }
+        /* VITALS BAR */
+        .vitals-bar {
+            display: flex;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+        .vital-card {
+            flex: 1;
+            border-radius: var(--radius-sm);
+            padding: 0.6rem;
+            text-align: center;
+            color: white;
+            font-weight: 800;
+        }
+        .vital-card.spo2 { background: linear-gradient(135deg, #1565c0, #1976d2); }
+        .vital-card.fc { background: linear-gradient(135deg, #c62828, #e53935); }
+        .vital-card.temp { background: linear-gradient(135deg, #e65100, #fb8c00); }
+        .vital-value { font-size: 1.3rem; line-height: 1; }
+        .vital-label { font-size: 0.68rem; opacity: 0.85; margin-top: 0.15rem; }
+
+        /* RIGHT PANEL */
+        .live-right {
+            background: white;
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .right-section {
+            padding: 0.875rem;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .right-section-title {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 0.625rem;
+        }
+        .sensor-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        .sensor-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--teal);
+            color: white;
+            padding: 0.4rem 0.875rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .switch {
+            display: inline-flex;
+            background: #eee;
+            border-radius: 50px;
+            padding: 0.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .switch-opt {
+            padding: 0.3rem 0.625rem;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            transition: all 0.3s;
+            color: var(--text-muted);
+        }
+        .switch.on .switch-on {
+            background: var(--green);
+            color: white;
+            box-shadow: 0 2px 6px rgba(67,160,71,0.4);
+        }
+        .switch.off .switch-off {
+            background: var(--red);
+            color: white;
+            box-shadow: 0 2px 6px rgba(229,57,53,0.35);
+        }
+
+        /* CHAT */
+        /* AI SUGGESTIONS */
+        .ai-suggestions {
+            padding: 0.75rem;
+            flex: 1;
+            overflow-y: auto;
+        }
+        .ai-box {
+            background: linear-gradient(135deg, #f8f9ff, #eef2ff);
+            border: 1px solid #c5cae9;
+            border-radius: var(--radius-sm);
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        .ai-box-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #5c6bc0;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .ai-disease {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.35rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            font-size: 0.82rem;
+        }
+        .ai-disease:last-child { border-bottom: none; }
+        .ai-disease-name { font-weight: 600; color: var(--navy); }
+        .ai-confidence {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.15rem 0.5rem;
+            border-radius: 20px;
+        }
+        .ai-confidence.high { background: #ffebee; color: #c62828; }
+        .ai-confidence.medium { background: #fff3e0; color: #e65100; }
+        .ai-confidence.low { background: #e8f5e9; color: #2e7d32; }
+        .ai-question {
+            font-size: 0.8rem;
+            color: var(--text);
+            padding: 0.3rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.4rem;
+        }
+        .ai-question i { color: #5c6bc0; font-size: 0.7rem; margin-top: 0.2rem; flex-shrink: 0; }
+        .ai-disclaimer {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            font-style: italic;
+            text-align: center;
+            padding: 0.4rem;
+            border-top: 1px solid var(--border);
+            margin-top: 0.5rem;
+        }
+        .ai-empty {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 2rem 1rem;
+            font-size: 0.85rem;
+        }
+        .ai-empty i { font-size: 1.5rem; opacity: 0.3; display: block; margin-bottom: 0.5rem; }
+        /* CHAT POPUP */
+        .chat-fab {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 20px rgba(25,118,210,0.4);
+            z-index: 200;
+            transition: all 0.2s;
+        }
+        .chat-fab:hover { transform: scale(1.1); }
+        .chat-fab-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--red);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 800;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .chat-popup {
+            position: fixed;
+            bottom: 5rem;
+            right: 1.5rem;
+            width: 340px;
+            max-height: 420px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
+            display: none;
+            flex-direction: column;
+            z-index: 199;
+            animation: chatSlideUp 0.3s ease;
+        }
+        .chat-popup.show { display: flex; }
+        @keyframes chatSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chat-popup-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg);
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+        .chat-popup-header-title { font-weight: 700; font-size: 0.9rem; color: var(--navy); }
+        .chat-popup-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; }
+        .chat-popup-close:hover { color: var(--red); }
+        .chat-popup-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.75rem;
+            max-height: 280px;
+        }
+        .chat-popup-input {
+            display: flex;
+            gap: 0.4rem;
+            padding: 0.6rem 0.75rem;
+            border-top: 1px solid var(--border);
+            align-items: center;
+        }
+        .chat-popup-input input {
+            flex: 1;
+            padding: 0.5rem 0.75rem;
+            border: 1.5px solid var(--border);
+            border-radius: 50px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.85rem;
+            outline: none;
+        }
+        .chat-popup-input input:focus { border-color: var(--cyan); }
+        .chat-popup-btn {
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+        .chat-popup-btn-send { background: var(--blue); color: white; }
+        .chat-popup-btn-img { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
+        .chat-msg { padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 0.85rem; }
+        .chat-msg img { max-width: 120px; border-radius: 6px; margin-top: 3px; display: block; cursor: pointer; }
+
+        .chat-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 0.875rem;
+        }
+        .chat-title {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 0.625rem;
+            flex-shrink: 0;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 0.75rem;
+            font-size: 0.82rem;
+            margin-bottom: 0.625rem;
+            min-height: 0;
+        }
+        .chat-msg { padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .chat-msg img { max-width: 120px; border-radius: 6px; margin-top: 3px; display: block; cursor: pointer; }
+        .chat-input-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .chat-input-row input {
+            flex: 1;
+            padding: 0.6rem 0.75rem;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.82rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .chat-input-row input:focus { border-color: var(--cyan); }
+        .chat-send {
+            padding: 0.6rem 0.875rem;
+            background: var(--navy);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: all 0.2s;
+        }
+        .chat-send:hover { background: var(--blue); }
+        .img-btn {
+            width: 32px;
+            height: 32px;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .img-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.5rem 1.1rem;
+            border-radius: 50px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .btn:hover { transform: translateY(-1px); }
+        .btn-success { background: var(--green); color: white; }
+        .btn-success:hover { box-shadow: 0 4px 12px rgba(67,160,71,0.35); }
+        .btn-danger { background: var(--red); color: white; }
+        .btn-danger:hover { box-shadow: 0 4px 12px rgba(229,57,53,0.35); }
+        .btn-primary { background: var(--blue); color: white; }
+
+        .spinner { width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .section-divider {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        .mobile-tab-bar {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid var(--border);
+            z-index: 100;
+            padding: 0.4rem 0;
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.1);
+        }
+        .mobile-tab-bar-inner {
+            display: flex;
+            justify-content: space-around;
+        }
+        .mob-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.15rem;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.3rem 0.5rem;
+            border: none;
+            background: none;
+            font-family: inherit;
+        }
+        .mob-tab.active { color: var(--blue); }
+        .mob-tab i { font-size: 1.1rem; }
+
+        @media (max-width: 1024px) {
+            .live-body {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr;
+            }
+            .live-sidebar {
+                display: none;
+                position: fixed;
+                top: 62px;
+                left: 0;
+                right: 0;
+                bottom: 50px;
+                z-index: 90;
+                border-right: none;
+            }
+            .live-sidebar.mob-visible {
+                display: flex;
+            }
+            .live-right {
+                display: none;
+                position: fixed;
+                top: 62px;
+                right: 0;
+                bottom: 50px;
+                width: 100%;
+                z-index: 90;
+            }
+            .live-right.mob-visible {
+                display: flex;
+            }
+            .live-center {
+                display: flex;
+                flex-direction: column;
+            }
+            .live-center.mob-hidden {
+                display: none;
+            }
+            .mobile-tab-bar {
+                display: block;
+            }
+            body {
+                padding-bottom: 50px;
+            }
+            .live-header {
+                padding: 0 0.75rem;
+                gap: 0.5rem;
+            }
+            .live-header-title {
+                font-size: 0.85rem;
+            }
+            .header-btns .btn {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.75rem;
+            }
+            .live-header img {
+                height: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .live-header {
+                height: 52px;
+            }
+            .live-sidebar {
+                top: 52px;
+            }
+            .live-right {
+                top: 52px;
+            }
+            .vitals-bar {
+                flex-direction: row;
+                gap: 0.5rem;
+            }
+            .vital-box {
+                padding: 0.5rem;
+                font-size: 0.8rem;
+            }
+            .vital-box .vital-value {
+                font-size: 1.2rem;
+            }
+            .local-video-wrapper {
+                width: 100px !important;
+                bottom: 0.5rem !important;
+                right: 0.5rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-btns .btn span.btn-text {
+                display: none;
+            }
+            .live-header-status {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="live-header">
+    <img src="/static/images/logo.png" alt="Medigo">
+    <div>
+        <div class="live-header-title">Consultation — {{ patient.prenom }} {{ patient.nom }}</div>
+    </div>
+    <span id="connection-status" class="live-header-status">En attente patient...</span>
+    <div class="header-btns">
+        <a href="{% url 'creer_ordonnance' consultation.id %}" class="btn btn-success" onclick="notifierPatientPreparation(event, this.href, true)">
+            <i class="fa-solid fa-prescription"></i> Clôturer Avec Ordonnance
+        </a>
+        <a href="{% url 'cloturer_consultation' consultation.id %}" class="btn btn-danger" onclick="notifierPatientPreparation(event, this.href, false)">
+            <i class="fa-solid fa-xmark"></i> Clôturer Sans Ordonnance
+        </a>
+    </div>
+</div>
+
+<!-- BODY -->
+<div class="live-body">
+
+    <!-- LEFT SIDEBAR -->
+    <div class="live-sidebar">
+        <div class="sidebar-tabs">
+            <div class="sidebar-tab active" onclick="showTab('patient')">
+                <i class="fa-solid fa-user"></i><br>Patient
+            </div>
+            <div class="sidebar-tab" onclick="showTab('mesures')">
+                <i class="fa-solid fa-ruler"></i><br>Mesures
+            </div>
+            <div class="sidebar-tab" onclick="showTab('symptomes')">
+                <i class="fa-solid fa-stethoscope"></i><br>Sympt.
+            </div>
+            <div class="sidebar-tab" onclick="showTab('maladies')">
+                <i class="fa-solid fa-virus"></i><br>Maladies
+            </div>
+        </div>
+
+        <!-- PATIENT PANEL -->
+        <div class="sidebar-panel active" id="panel-patient">
+            <!-- Info patient card -->
+            <div style="background:var(--bg);border-radius:var(--radius-sm);padding:0.6rem;font-size:0.8rem;border:1px solid var(--border);">
+                <div style="font-weight:700;color:var(--navy);margin-bottom:0.4rem;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;">
+                    <i class="fa-solid fa-circle-info" style="color:var(--blue);margin-right:0.3rem;"></i>Patient
+                </div>
+                <div style="color:var(--text-muted);line-height:1.7;font-size:0.78rem;">
+                    <strong>{{ patient.prenom }} {{ patient.nom }}</strong> · {{ patient.age }} ans · {{ patient.get_sexe_display|default:"—" }}<br>
+                    CIN: {{ patient.cin }} · Tél: {{ patient.telephone }}
+                </div>
+            </div>
+
+            <!-- Groupe sanguin -->
+            <div>
+                <label class="form-label">Groupe sanguin</label>
+                <select class="form-input" id="groupe-sanguin">
+                    <option value="">— Sélectionner —</option>
+                    <option {% if patient.groupe_sanguin == 'A+' %}selected{% endif %}>A+</option>
+                    <option {% if patient.groupe_sanguin == 'A-' %}selected{% endif %}>A-</option>
+                    <option {% if patient.groupe_sanguin == 'B+' %}selected{% endif %}>B+</option>
+                    <option {% if patient.groupe_sanguin == 'B-' %}selected{% endif %}>B-</option>
+                    <option {% if patient.groupe_sanguin == 'AB+' %}selected{% endif %}>AB+</option>
+                    <option {% if patient.groupe_sanguin == 'AB-' %}selected{% endif %}>AB-</option>
+                    <option {% if patient.groupe_sanguin == 'O+' %}selected{% endif %}>O+</option>
+                    <option {% if patient.groupe_sanguin == 'O-' %}selected{% endif %}>O-</option>
+                </select>
+            </div>
+
+            <!-- Allergies -->
+            <div>
+                <label class="form-label">Allergies</label>
+                <div class="search-symptoms" style="margin-bottom:0.4rem;">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Rechercher allergie..." oninput="filterAllergies(this.value)" id="allergie-search">
+                </div>
+                <div id="allergies-list" style="max-height:120px;overflow-y:auto;"></div>
+                <div id="add-allergie-box" style="display:none;margin-top:0.4rem;">
+                    <div style="display:flex;gap:0.4rem;">
+                        <input type="text" id="custom-allergie-input" placeholder="Autre allergie..." style="flex:1;padding:0.4rem 0.6rem;border:1.5px solid var(--cyan);border-radius:6px;font-size:0.82rem;font-family:inherit;">
+                        <button onclick="ajouterAllergieCustom()" style="background:var(--cyan);color:white;border:none;border-radius:6px;padding:0.4rem 0.6rem;cursor:pointer;font-size:0.82rem;"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+                <div id="selected-allergies" style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-top:0.4rem;"></div>
+            </div>
+
+            <!-- Tabac / Alcool / Activité -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                <div>
+                    <label class="form-label">Tabac</label>
+                    <select class="form-input" id="tabac" style="font-size:0.8rem;padding:0.45rem;">
+                        <option value="non_fumeur">Non fumeur</option>
+                        <option value="fumeur">Fumeur</option>
+                        <option value="ancien_fumeur">Ancien fumeur</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label">Alcool</label>
+                    <select class="form-input" id="alcool" style="font-size:0.8rem;padding:0.45rem;">
+                        <option value="jamais">Jamais</option>
+                        <option value="occasionnel">Occasionnel</option>
+                        <option value="regulier">Régulier</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="form-label">Activité physique</label>
+                <select class="form-input" id="activite-physique" style="font-size:0.8rem;padding:0.45rem;">
+                    <option value="sedentaire">Sédentaire</option>
+                    <option value="peu_actif">Peu actif</option>
+                    <option value="actif">Actif</option>
+                    <option value="tres_actif">Très actif</option>
+                </select>
+            </div>
+
+            <!-- Grossesse (visible si femme) -->
+            {% if patient.sexe == 'F' %}
+            <div>
+                <label class="form-label">Enceinte</label>
+                <div style="display:flex;gap:0.5rem;">
+                    <label style="display:flex;align-items:center;gap:0.3rem;font-size:0.85rem;cursor:pointer;">
+                        <input type="radio" name="enceinte" value="true" id="enceinte-oui"> Oui
+                    </label>
+                    <label style="display:flex;align-items:center;gap:0.3rem;font-size:0.85rem;cursor:pointer;">
+                        <input type="radio" name="enceinte" value="false" id="enceinte-non" checked> Non
+                    </label>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Maladie chronique -->
+            <div>
+                <label class="form-label">Maladie chronique ?</label>
+                <div style="display:flex;gap:0.5rem;margin-bottom:0.4rem;">
+                    <label style="display:flex;align-items:center;gap:0.3rem;font-size:0.85rem;cursor:pointer;">
+                        <input type="radio" name="chronique" value="oui" onclick="document.getElementById('chronique-list').style.display='block'"> Oui
+                    </label>
+                    <label style="display:flex;align-items:center;gap:0.3rem;font-size:0.85rem;cursor:pointer;">
+                        <input type="radio" name="chronique" value="non" checked onclick="document.getElementById('chronique-list').style.display='none'"> Non
+                    </label>
+                </div>
+                <div id="chronique-list" style="display:none;">
+                    <div class="search-symptoms" style="margin-bottom:0.3rem;">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Rechercher maladie chronique..." oninput="filterChroniques(this.value)" id="chronique-search">
+                    </div>
+                    <div id="chroniques-list-items" style="max-height:100px;overflow-y:auto;"></div>
+                    <div id="selected-chroniques" style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-top:0.4rem;"></div>
+                </div>
+            </div>
+
+            <button class="save-btn" onclick="sauvegarderPatient()">
+                <i class="fa-solid fa-floppy-disk"></i> Sauvegarder
+            </button>
+            <div id="patient-saved-msg" style="display:none;font-size:0.8rem;font-weight:700;margin-top:0.4rem;text-align:center;border-radius:6px;padding:0.35rem;"></div>
+        </div>
+
+        <!-- SYMPTOMES PANEL -->
+        <div class="sidebar-panel" id="panel-symptomes">
+            <div class="selected-count" id="symptomes-count">0 symptôme(s)</div>
+            <div class="search-symptoms">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Rechercher un symptôme..." oninput="filterSymptomes(this.value)" id="symptome-search">
+            </div>
+            <div class="symptoms-list" id="symptomes-list" style="max-height:360px;overflow-y:auto;"></div>
+            <div class="add-custom" id="add-symptome-box" style="display:none;margin:0.4rem 0;">
+                <div style="display:flex;gap:0.4rem;">
+                    <input type="text" id="custom-symptome-input" placeholder="Nouveau symptôme..." style="flex:1;padding:0.4rem 0.6rem;border:1.5px solid var(--cyan);border-radius:6px;font-size:0.82rem;font-family:inherit;">
+                    <button onclick="ajouterSymptomeCustom()" style="background:var(--cyan);color:white;border:none;border-radius:6px;padding:0.4rem 0.6rem;cursor:pointer;font-size:0.82rem;"><i class="fa-solid fa-plus"></i></button>
+                </div>
+            </div>
+            <!-- Symptômes sélectionnés avec intensité/évolution -->
+
+            <div style="margin-top:0.5rem;">
+                <button class="save-btn" style="width:100%;" onclick="sauvegarderSymptomes()">
+                    <i class="fa-solid fa-floppy-disk"></i> Sauvegarder
+                </button>
+                <div id="symptomes-saved-msg" style="display:none;color:#43a047;font-size:0.8rem;font-weight:700;margin-top:0.4rem;text-align:center;background:#e8f5e9;border-radius:6px;padding:0.35rem;"></div>
+            </div>
+        </div>
+
+        <!-- MALADIES PANEL -->
+        <div class="sidebar-panel" id="panel-maladies">
+            <div class="selected-count" id="maladies-count">0 maladie(s)</div>
+            <div class="search-symptoms">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Rechercher une maladie..." oninput="filterMaladies(this.value)" id="maladie-search">
+            </div>
+            <div class="maladies-list" id="maladies-list" style="max-height:250px;overflow-y:auto;"></div>
+            <div class="add-custom" id="add-maladie-box" style="display:none;margin:0.4rem 0;">
+                <div style="display:flex;gap:0.4rem;">
+                    <input type="text" id="custom-maladie-input" placeholder="Nouvelle maladie..." style="flex:1;padding:0.4rem 0.6rem;border:1.5px solid var(--cyan);border-radius:6px;font-size:0.82rem;font-family:inherit;">
+                    <button onclick="ajouterMaladieCustom()" style="background:var(--cyan);color:white;border:none;border-radius:6px;padding:0.4rem 0.6rem;cursor:pointer;font-size:0.82rem;"><i class="fa-solid fa-plus"></i></button>
+                </div>
+            </div>
+            <div style="margin-top:0.5rem;">
+                <button class="save-btn" style="width:100%;" onclick="sauvegarderMaladies()">
+                    <i class="fa-solid fa-floppy-disk"></i> Sauvegarder
+                </button>
+                <div id="maladies-saved-msg" style="display:none;color:#43a047;font-size:0.8rem;font-weight:700;margin-top:0.4rem;text-align:center;background:#e8f5e9;border-radius:6px;padding:0.35rem;"></div>
+            </div>
+        </div>
+
+        <!-- MESURES PANEL -->
+        <div class="sidebar-panel" id="panel-mesures">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                <div>
+                    <label class="form-label">Poids (kg)</label>
+                    <input type="number" class="form-input" id="poids" placeholder="70" step="0.1" min="1" max="300" oninput="calcIMC()">
+                </div>
+                <div>
+                    <label class="form-label">Taille (cm)</label>
+                    <input type="number" class="form-input" id="taille" placeholder="175" step="0.5" min="1" max="250" oninput="calcIMC()">
+                </div>
+            </div>
+            <div class="imc-display" id="imc-display" style="display:none;margin-top:0.5rem;">
+                <div class="imc-value" id="imc-value">--</div>
+                <div class="imc-label">IMC (kg/m²)</div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:0.5rem;">
+                <div>
+                    <label class="form-label">Tension SYS (mmHg)</label>
+                    <input type="number" class="form-input" id="tension-sys" placeholder="120" min="60" max="250" oninput="interpTension()">
+                </div>
+                <div>
+                    <label class="form-label">Tension DIA (mmHg)</label>
+                    <input type="number" class="form-input" id="tension-dia" placeholder="80" min="30" max="150" oninput="interpTension()">
+                </div>
+            </div>
+            <div id="tension-interp" style="display:none;font-size:0.78rem;font-weight:700;padding:0.3rem 0.6rem;border-radius:6px;margin-top:0.3rem;text-align:center;"></div>
+
+            <div style="margin-top:0.5rem;">
+                <label class="form-label">Glycémie (g/L)</label>
+                <input type="number" class="form-input" id="glycemie" placeholder="0.90" step="0.01" min="0" max="6" oninput="interpGlycemie()">
+            </div>
+            <div id="glycemie-interp" style="display:none;font-size:0.78rem;font-weight:700;padding:0.3rem 0.6rem;border-radius:6px;margin-top:0.3rem;text-align:center;"></div>
+
+            <button class="save-btn" style="margin-top:0.75rem;" onclick="sauvegarderMesures()">
+                <i class="fa-solid fa-floppy-disk"></i> Sauvegarder mesures
+            </button>
+            <div id="mesures-saved-msg2" style="display:none;font-size:0.8rem;font-weight:700;margin-top:0.4rem;text-align:center;border-radius:6px;padding:0.35rem;"></div>
+        </div>
+    </div>
+    <!-- CENTER VIDEO -->
+    <div class="live-center">
+        <div class="video-main">
+            <video id="remoteVideo" autoplay playsinline></video>
+            <div class="video-main-label">{{ patient.prenom }} {{ patient.nom }}</div>
+            <div id="remote-media-overlay" style="position:absolute;top:0.75rem;left:0.75rem;display:flex;gap:0.5rem;z-index:5;">
+                <div id="remote-mic-off" style="display:none;background:rgba(0,0,0,0.7);color:#ff5252;padding:0.35rem 0.6rem;border-radius:20px;font-size:0.75rem;font-weight:700;"><i class="fa-solid fa-microphone-slash"></i> Micro coupé</div>
+                <div id="remote-cam-off" style="display:none;background:rgba(0,0,0,0.7);color:#ff5252;padding:0.35rem 0.6rem;border-radius:20px;font-size:0.75rem;font-weight:700;"><i class="fa-solid fa-video-slash"></i> Caméra coupée</div>
+            </div>
+            <div class="video-pip">
+                <video id="localVideo" autoplay muted playsinline></video>
+                <div class="video-pip-label">Vous</div>
+                <div class="video-pip-controls">
+                    <button class="ctrl-btn" id="btn-mic" onclick="toggleMic()" title="Micro">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
+                    <button class="ctrl-btn" id="btn-cam" onclick="toggleCamera()" title="Caméra">
+                        <i class="fa-solid fa-video"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="vitals-bar">
+            <div class="vital-card spo2">
+                <div class="vital-value" id="spo2">OFF</div>
+                <div class="vital-label">SpO2 %</div>
+            </div>
+            <div class="vital-card fc">
+                <div class="vital-value" id="fc">OFF</div>
+                <div class="vital-label">Bpm</div>
+            </div>
+            <div class="vital-card temp">
+                <div class="vital-value" id="temp">OFF</div>
+                <div class="vital-label">Temp °C</div>
+            </div>
+        </div>
+    </div>
+    <!-- RIGHT PANEL -->
+    <div class="live-right">
+        <div class="right-section">
+            <div class="right-section-title">Contrôle Capteurs</div>
+            <div class="sensor-row">
+                <div class="sensor-label">
+                    <i class="fa-solid fa-heart-pulse"></i> Oxymètre
+                </div>
+                <div class="switch off" id="switch-spo2" onclick="toggleCapteur('spo2')">
+                    <span class="switch-opt switch-on">ON</span>
+                    <span class="switch-opt switch-off">OFF</span>
+                </div>
+            </div>
+            <div class="sensor-row">
+                <div class="sensor-label">
+                    <i class="fa-solid fa-thermometer"></i> Thermomètre
+                </div>
+                <div class="switch off" id="switch-temperature" onclick="toggleCapteur('temperature')">
+                    <span class="switch-opt switch-on">ON</span>
+                    <span class="switch-opt switch-off">OFF</span>
+                </div>
+            </div>
+            <div style="margin-top:0.75rem;">
+                <button class="save-btn" style="width:100%;margin:0;background:var(--green);" onclick="enregistrerMesures()">
+                    <i class="fa-solid fa-floppy-disk"></i> Enregistrer les mesures
+                </button>
+                <div id="mesures-saved-msg" style="display:none;font-size:0.8rem;font-weight:700;margin-top:0.4rem;text-align:center;border-radius:6px;padding:0.35rem;"></div>
+            </div>
+            <div id="mesures-enregistrees" style="margin-top:0.75rem;display:none;">
+                <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.05em;margin-bottom:0.4rem;">Mesures enregistrées</div>
+                <div style="display:flex;gap:0.4rem;">
+                    <div style="flex:1;text-align:center;padding:0.4rem;background:var(--bg);border-radius:6px;border:1px solid var(--border);">
+                        <div style="font-size:1rem;font-weight:800;color:var(--blue);" id="saved-spo2">--</div>
+                        <div style="font-size:0.65rem;color:var(--text-muted);">SpO2</div>
+                    </div>
+                    <div style="flex:1;text-align:center;padding:0.4rem;background:var(--bg);border-radius:6px;border:1px solid var(--border);">
+                        <div style="font-size:1rem;font-weight:800;color:var(--red);" id="saved-fc">--</div>
+                        <div style="font-size:0.65rem;color:var(--text-muted);">FC</div>
+                    </div>
+                    <div style="flex:1;text-align:center;padding:0.4rem;background:var(--bg);border-radius:6px;border:1px solid var(--border);">
+                        <div style="font-size:1rem;font-weight:800;color:var(--orange);" id="saved-temp">--</div>
+                        <div style="font-size:0.65rem;color:var(--text-muted);">Temp</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI SUGGESTIONS -->
+        <div class="ai-suggestions" id="ai-suggestions">
+            <div class="ai-empty">
+                <i class="fa-solid fa-robot"></i>
+                Sélectionnez des symptômes pour voir les suggestions
+            </div>
+        </div>
+    </div>
+
+<!-- CHAT FAB + POPUP -->
+<button class="chat-fab" onclick="toggleChatPopup()" id="chat-fab">
+    <i class="fa-solid fa-comment-dots"></i>
+    <div class="chat-fab-badge" id="chat-badge">0</div>
+</button>
+
+<div class="chat-popup" id="chat-popup">
+    <div class="chat-popup-header">
+        <div class="chat-popup-header-title"><i class="fa-solid fa-comment" style="color:var(--blue);margin-right:0.4rem;"></i> Messages</div>
+        <button class="chat-popup-close" onclick="toggleChatPopup()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="chat-popup-messages" id="chat-messages"></div>
+    <div class="chat-popup-input">
+        <input type="text" id="chat-input" placeholder="Écrire un message..." onkeypress="envoyerSiEnter(event)">
+        <label class="chat-popup-btn chat-popup-btn-img" title="Image">
+            <i class="fa-solid fa-image"></i>
+            <input type="file" accept="image/*" style="display:none;" onchange="envoyerImage(this)">
+        </label>
+        <button class="chat-popup-btn chat-popup-btn-send" onclick="envoyerMessage()">
+            <i class="fa-solid fa-paper-plane"></i>
+        </button>
+    </div>
+</div>
+</div>
+
+{{ webrtc_ice_servers|json_script:"webrtc-ice-servers" }}
+<script>
+var consultationId = '{{ consultation.id }}';
+var patientId = '{{ patient.id }}';
+var localStream = null;
+var peerConnection = null;
+var micOn = true;
+var camOn = true;
+var wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+var capteurStates = { spo2: false, temperature: false };
+var csrfToken = '{{ csrf_token }}';
+
+var STUN_SERVERS = {
+    iceServers: JSON.parse(document.getElementById("webrtc-ice-servers").textContent)
+};
+
+// ===== DATA =====
+var ALLERGIES = [
+    'Pénicilline','Amoxicilline','Sulfamides','Aspirine','Ibuprofène','Codéine','Morphine',
+    'Latex','Arachides','Fruits à coque','Lait de vache','Œufs','Gluten','Soja','Poisson',
+    'Crustacés','Fruits de mer','Sésame','Moutarde','Céleri','Lupin',
+    'Pollen','Acariens','Poils de chat','Poils de chien','Moisissures',
+    'Nickel','Chrome','Parfums','Colorants alimentaires',
+    'Anesthésiques locaux','Produits de contraste iodés','Anti-inflammatoires',
+    'Bétadine','Chlorhexidine','Parabènes',
+];
+
+var CHRONIQUES = [
+    'Diabète type 1','Diabète type 2','Hypertension artérielle','Asthme','BPCO',
+    'Insuffisance cardiaque','Fibrillation auriculaire','Coronaropathie',
+    'Insuffisance rénale chronique','Hypothyroïdie','Hyperthyroïdie',
+    'Épilepsie','Maladie de Parkinson','Sclérose en plaques',
+    'Polyarthrite rhumatoïde','Lupus','Goutte','Ostéoporose',
+    'Hépatite B chronique','Hépatite C chronique','Cirrhose',
+    'Maladie de Crohn','Rectocolite hémorragique',
+    'Psoriasis','Eczéma chronique','VIH/SIDA',
+    'Anémie falciforme','Thalassémie','Dépression chronique',
+    'Trouble bipolaire','Anxiété généralisée','Schizophrénie',
+    'Apnée du sommeil','Fibromyalgie','Cancer (en traitement)',
+];
+
+var SYMPTOMES = [];
+
+var MALADIES = [];
+var MALADIES_DATA = [];
+
+var selectedSymptomes = new Map(); // nom -> {intensite, evolution}
+var selectedMaladies = new Set();
+var selectedAllergies = new Set();
+var selectedChroniques = new Set();
+
+function initLists() {
+    renderSymptomes(SYMPTOMES);
+    renderMaladies(MALADIES);
+    renderAllergies(ALLERGIES);
+    renderChroniques(CHRONIQUES);
+}
+
+// ===== ALLERGIES =====
+function renderAllergies(list) {
+    var c = document.getElementById('allergies-list');
+    c.innerHTML = '';
+    list.forEach(function(a) {
+        var div = document.createElement('div');
+        div.className = 'symptom-item' + (selectedAllergies.has(a) ? ' checked' : '');
+        div.innerHTML = '<input type="checkbox" ' + (selectedAllergies.has(a) ? 'checked' : '') + '><span>' + a + '</span>';
+        div.onclick = function() {
+            if (selectedAllergies.has(a)) { selectedAllergies.delete(a); div.classList.remove('checked'); div.querySelector('input').checked=false; }
+            else { selectedAllergies.add(a); div.classList.add('checked'); div.querySelector('input').checked=true; }
+            renderSelectedAllergies();
+        };
+        c.appendChild(div);
+    });
+}
+function filterAllergies(q) {
+    var filtered = q ? ALLERGIES.filter(function(a) { return a.toLowerCase().includes(q.toLowerCase()); }) : ALLERGIES;
+    renderAllergies(filtered);
+    var box = document.getElementById('add-allergie-box');
+    box.style.display = (q && filtered.length === 0) ? 'block' : 'none';
+    if (q && filtered.length === 0) document.getElementById('custom-allergie-input').value = q;
+}
+function ajouterAllergieCustom() {
+    var val = document.getElementById('custom-allergie-input').value.trim();
+    if (!val) return;
+    if (!ALLERGIES.includes(val)) ALLERGIES.push(val);
+    selectedAllergies.add(val);
+    document.getElementById('allergie-search').value = '';
+    document.getElementById('add-allergie-box').style.display = 'none';
+    renderAllergies(ALLERGIES);
+    renderSelectedAllergies();
+}
+function renderSelectedAllergies() {
+    var c = document.getElementById('selected-allergies');
+    c.innerHTML = Array.from(selectedAllergies).map(function(a) {
+        return '<span style="display:inline-flex;align-items:center;gap:0.25rem;padding:0.2rem 0.5rem;background:#ffebee;color:#c62828;border-radius:20px;font-size:0.75rem;font-weight:600;">' + a + ' <span style="cursor:pointer;opacity:0.6;" onclick="selectedAllergies.delete(\'' + a.replace(/'/g,"\\'") + '\');renderSelectedAllergies();renderAllergies(ALLERGIES);">×</span></span>';
+    }).join('');
+}
+
+// ===== CHRONIQUES =====
+function renderChroniques(list) {
+    var c = document.getElementById('chroniques-list-items');
+    c.innerHTML = '';
+    list.forEach(function(ch) {
+        var div = document.createElement('div');
+        div.className = 'symptom-item' + (selectedChroniques.has(ch) ? ' checked' : '');
+        div.innerHTML = '<input type="checkbox" ' + (selectedChroniques.has(ch) ? 'checked' : '') + '><span>' + ch + '</span>';
+        div.onclick = function() {
+            if (selectedChroniques.has(ch)) { selectedChroniques.delete(ch); div.classList.remove('checked'); div.querySelector('input').checked=false; }
+            else { selectedChroniques.add(ch); div.classList.add('checked'); div.querySelector('input').checked=true; }
+            renderSelectedChroniques();
+        };
+        c.appendChild(div);
+    });
+}
+function filterChroniques(q) {
+    var filtered = q ? CHRONIQUES.filter(function(c) { return c.toLowerCase().includes(q.toLowerCase()); }) : CHRONIQUES;
+    renderChroniques(filtered);
+}
+function renderSelectedChroniques() {
+    var c = document.getElementById('selected-chroniques');
+    c.innerHTML = Array.from(selectedChroniques).map(function(ch) {
+        return '<span style="display:inline-flex;align-items:center;gap:0.25rem;padding:0.2rem 0.5rem;background:#e3f2fd;color:#1565c0;border-radius:20px;font-size:0.75rem;font-weight:600;">' + ch + ' <span style="cursor:pointer;opacity:0.6;" onclick="selectedChroniques.delete(\'' + ch.replace(/'/g,"\\'") + '\');renderSelectedChroniques();renderChroniques(CHRONIQUES);">×</span></span>';
+    }).join('');
+}
+
+// ===== SYMPTOMES =====
+function renderSymptomes(list) {
+    var c = document.getElementById('symptomes-list');
+    c.innerHTML = '';
+    list.forEach(function(s) {
+        var div = document.createElement('div');
+        div.className = 'symptom-item' + (selectedSymptomes.has(s) ? ' checked' : '');
+        div.innerHTML = '<input type="checkbox" ' + (selectedSymptomes.has(s) ? 'checked' : '') + '><span>' + s + '</span>';
+        div.onclick = function() { toggleSymptome(s, div); };
+        c.appendChild(div);
+    });
+}
+function toggleSymptome(s, el) {
+    if (selectedSymptomes.has(s)) {
+        selectedSymptomes.delete(s);
+        el.classList.remove('checked');
+        el.querySelector('input').checked = false;
+    } else {
+        selectedSymptomes.set(s, {intensite: 0, evolution: 'stable'});
+        el.classList.add('checked');
+        el.querySelector('input').checked = true;
+    }
+    document.getElementById('symptomes-count').textContent = selectedSymptomes.size + ' symptôme(s)';
+
+    updateAISuggestions();
+}
+function renderSymptomesDetails() {
+    var c = document.getElementById('symptomes-details');
+    if (selectedSymptomes.size === 0) { c.innerHTML = ''; return; }
+    var html = '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.3rem;">Détails symptômes</div>';
+    selectedSymptomes.forEach(function(data, nom) {
+        html += '<div style="background:var(--bg);border-radius:6px;padding:0.4rem 0.6rem;margin-bottom:0.3rem;border:1px solid var(--border);font-size:0.78rem;">' +
+            '<div style="font-weight:700;color:var(--navy);margin-bottom:0.3rem;">' + nom + '</div>' +
+            '<div style="display:flex;gap:0.4rem;align-items:center;">' +
+            '<label style="color:var(--text-muted);font-size:0.72rem;">Intensité:</label>' +
+            '<select onchange="updateSymptomeDetail(\'' + nom.replace(/'/g,"\\'") + '\',\'intensite\',this.value)" style="padding:0.2rem;border:1px solid var(--border);border-radius:4px;font-size:0.75rem;font-family:inherit;">' +
+            '<option value="0"' + (data.intensite==0?' selected':'') + '>0</option>' +
+            '<option value="1"' + (data.intensite==1?' selected':'') + '>1</option>' +
+            '<option value="2"' + (data.intensite==2?' selected':'') + '>2</option>' +
+            '<option value="3"' + (data.intensite==3?' selected':'') + '>3</option>' +
+            '<option value="4"' + (data.intensite==4?' selected':'') + '>4</option>' +
+            '<option value="5"' + (data.intensite==5?' selected':'') + '>5</option>' +
+            '</select>' +
+            '<label style="color:var(--text-muted);font-size:0.72rem;margin-left:0.3rem;">Évol:</label>' +
+            '<select onchange="updateSymptomeDetail(\'' + nom.replace(/'/g,"\\'") + '\',\'evolution\',this.value)" style="padding:0.2rem;border:1px solid var(--border);border-radius:4px;font-size:0.75rem;font-family:inherit;">' +
+            '<option value="stable"' + (data.evolution=='stable'?' selected':'') + '>Stable</option>' +
+            '<option value="aggravation"' + (data.evolution=='aggravation'?' selected':'') + '>Aggrav.</option>' +
+            '<option value="amelioration"' + (data.evolution=='amelioration'?' selected':'') + '>Amélior.</option>' +
+            '</select></div></div>';
+    });
+    c.innerHTML = html;
+}
+function updateSymptomeDetail(nom, field, value) {
+    var data = selectedSymptomes.get(nom);
+    if (data) { data[field] = field === 'intensite' ? parseInt(value) : value; }
+}
+function filterSymptomes(q) {
+    var filtered = q ? SYMPTOMES.filter(function(s) { return s.toLowerCase().includes(q.toLowerCase()); }) : SYMPTOMES;
+    renderSymptomes(filtered);
+    var box = document.getElementById('add-symptome-box');
+    box.style.display = (q && filtered.length === 0) ? 'block' : 'none';
+    if (q && filtered.length === 0) document.getElementById('custom-symptome-input').value = q;
+}
+function ajouterSymptomeCustom() {
+    var val = document.getElementById('custom-symptome-input').value.trim();
+    if (!val) return;
+    if (!SYMPTOMES.includes(val)) SYMPTOMES.push(val);
+    selectedSymptomes.set(val, {intensite: 0, evolution: 'stable'});
+    document.getElementById('symptome-search').value = '';
+    document.getElementById('add-symptome-box').style.display = 'none';
+    renderSymptomes(SYMPTOMES);
+    document.getElementById('symptomes-count').textContent = selectedSymptomes.size + ' symptôme(s)';
+
+    updateAISuggestions();
+}
+
+// ===== MALADIES =====
+function renderMaladies(list) {
+    var c = document.getElementById('maladies-list');
+    c.innerHTML = '';
+    list.forEach(function(m) {
+        var div = document.createElement('div');
+        div.className = 'symptom-item' + (selectedMaladies.has(m) ? ' checked' : '');
+        div.innerHTML = '<input type="checkbox" ' + (selectedMaladies.has(m) ? 'checked' : '') + '><span>' + m + '</span>';
+        div.onclick = function() { toggleMaladie(m, div); };
+        c.appendChild(div);
+    });
+}
+function toggleMaladie(m, el) {
+    if (selectedMaladies.has(m)) { selectedMaladies.delete(m); el.classList.remove('checked'); el.querySelector('input').checked=false; }
+    else { selectedMaladies.add(m); el.classList.add('checked'); el.querySelector('input').checked=true; }
+    document.getElementById('maladies-count').textContent = selectedMaladies.size + ' maladie(s)';
+}
+function filterMaladies(q) {
+    var filtered = q ? MALADIES.filter(function(m) { return m.toLowerCase().includes(q.toLowerCase()); }) : MALADIES;
+    renderMaladies(filtered);
+    var box = document.getElementById('add-maladie-box');
+    box.style.display = (q && filtered.length === 0) ? 'block' : 'none';
+    if (q && filtered.length === 0) document.getElementById('custom-maladie-input').value = q;
+}
+function ajouterMaladieCustom() {
+    var val = document.getElementById('custom-maladie-input').value.trim();
+    if (!val) return;
+    if (!MALADIES.includes(val)) MALADIES.push(val);
+    selectedMaladies.add(val);
+    document.getElementById('maladie-search').value = '';
+    document.getElementById('add-maladie-box').style.display = 'none';
+    renderMaladies(MALADIES);
+    document.getElementById('maladies-count').textContent = selectedMaladies.size + ' maladie(s)';
+}
+
+// ===== TABS =====
+function showTab(tab) {
+    var tabs = ['patient','mesures','symptomes','maladies'];
+    document.querySelectorAll('.sidebar-tab').forEach(function(t, i) {
+        t.classList.toggle('active', tabs[i] === tab);
+    });
+    document.querySelectorAll('.sidebar-panel').forEach(function(p) { p.classList.remove('active'); });
+    document.getElementById('panel-' + tab).classList.add('active');
+}
+
+// ===== IMC =====
+function calcIMC() {
+    var p = parseFloat(document.getElementById('poids').value);
+    var t = parseFloat(document.getElementById('taille').value);
+    if (p && t && t > 0) {
+        var imc = (p / Math.pow(t / 100, 2)).toFixed(1);
+        document.getElementById('imc-value').textContent = imc;
+        document.getElementById('imc-display').style.display = 'block';
+    }
+}
+
+// ===== TENSION INTERPRETATION =====
+function interpTension() {
+    var sys = parseInt(document.getElementById('tension-sys').value);
+    var dia = parseInt(document.getElementById('tension-dia').value);
+    var el = document.getElementById('tension-interp');
+    if (!sys || !dia) { el.style.display = 'none'; return; }
+    var label = '', color = '', bg = '';
+    if (sys < 90 || dia < 60) { label = 'Hypotension'; color = '#1565c0'; bg = '#e3f2fd'; }
+    else if (sys <= 120 && dia <= 80) { label = 'Normale'; color = '#2e7d32'; bg = '#e8f5e9'; }
+    else if (sys <= 139 || dia <= 89) { label = 'Pré-hypertension'; color = '#e65100'; bg = '#fff3e0'; }
+    else { label = 'Hypertension'; color = '#c62828'; bg = '#ffebee'; }
+    el.textContent = label + ' (' + sys + '/' + dia + ')';
+    el.style.color = color; el.style.background = bg; el.style.display = 'block';
+}
+
+// ===== GLYCEMIE INTERPRETATION =====
+function interpGlycemie() {
+    var g = parseFloat(document.getElementById('glycemie').value);
+    var el = document.getElementById('glycemie-interp');
+    if (!g) { el.style.display = 'none'; return; }
+    var label = '', color = '', bg = '';
+    // Glycémie à jeun en g/L
+    if (g < 0.70) { label = 'Hypoglycémie'; color = '#1565c0'; bg = '#e3f2fd'; }
+    else if (g <= 1.10) { label = 'Normal'; color = '#2e7d32'; bg = '#e8f5e9'; }
+    else if (g <= 1.26) { label = 'Prédiabète'; color = '#e65100'; bg = '#fff3e0'; }
+    else { label = 'Diabète'; color = '#c62828'; bg = '#ffebee'; }
+    el.textContent = label + ' (' + g.toFixed(2) + ' g/L)';
+    el.style.color = color; el.style.background = bg; el.style.display = 'block';
+}
+
+// ===== SAUVEGARDES =====
+function sauvegarderPatient() {
+    var gs = document.getElementById('groupe-sanguin').value;
+    // Sauvegarder infos patient
+    fetch('/api/consultation/infos-patient/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+        body: JSON.stringify({patient_id: patientId, groupe_sanguin: gs})
+    });
+    // Sauvegarder allergies
+    fetch('/api/consultation/allergies/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+        body: JSON.stringify({consultation_id: consultationId, allergies: Array.from(selectedAllergies)})
+    });
+    // Sauvegarder info clinique
+    var enceinte = null;
+    var enceinteOui = document.getElementById('enceinte-oui');
+    if (enceinteOui) enceinte = enceinteOui.checked;
+    fetch('/api/consultation/info-clinique/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+        body: JSON.stringify({
+            consultation_id: consultationId,
+            tabac: document.getElementById('tabac').value,
+            alcool: document.getElementById('alcool').value,
+            activite_physique: document.getElementById('activite-physique').value,
+            enceinte: enceinte,
+            maladies_chroniques: selectedChroniques.size > 0,
+        })
+    });
+    // Sauvegarder maladies chroniques comme PatientMaladie
+    if (selectedChroniques.size > 0) {
+        var chronList = Array.from(selectedChroniques).map(function(c) { return {nom: c, est_chronique: true}; });
+        fetch('/api/consultation/maladies/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+            body: JSON.stringify({consultation_id: consultationId, maladies: chronList})
+        });
+    }
+    var msg = document.getElementById('patient-saved-msg');
+    msg.innerHTML = '<i class="fa-solid fa-check"></i> Informations sauvegardées';
+    msg.style.color = '#43a047'; msg.style.background = '#e8f5e9'; msg.style.display = 'block';
+    setTimeout(function() { msg.style.display = 'none'; }, 3000);
+}
+
+function sauvegarderMesures() {
+    fetch('/api/consultation/mesures/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+        body: JSON.stringify({
+            consultation_id: consultationId,
+            poids_kg: document.getElementById('poids').value || null,
+            taille_cm: document.getElementById('taille').value || null,
+            tension_sys: document.getElementById('tension-sys').value || null,
+            tension_dia: document.getElementById('tension-dia').value || null,
+            glycemie: document.getElementById('glycemie').value || null,
+        })
+    }).then(function() {
+        var msg = document.getElementById('mesures-saved-msg2');
+        msg.innerHTML = '<i class="fa-solid fa-check"></i> Mesures sauvegardées';
+        msg.style.color = '#43a047'; msg.style.background = '#e8f5e9'; msg.style.display = 'block';
+        setTimeout(function() { msg.style.display = 'none'; }, 3000);
+    });
+}
+
+function sauvegarderSymptomes() {
+    var count = selectedSymptomes.size;
+    var symptList = [];
+    selectedSymptomes.forEach(function(data, nom) {
+        symptList.push({nom: nom, intensite: data.intensite, evolution: data.evolution});
+    });
+    fetch('/api/consultation/symptomes/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+        body: JSON.stringify({consultation_id: consultationId, symptomes: symptList})
+    }).then(function() {
+        var msg = document.getElementById('symptomes-saved-msg');
+        msg.innerHTML = '<i class="fa-solid fa-check"></i> ' + count + ' symptôme(s) sauvegardé(s)';
+        msg.style.display = 'block';
+        setTimeout(function() { msg.style.display = 'none'; }, 3000);
+    });
+}
+
+function sauvegarderMaladies() {
+    var count = selectedMaladies.size;
+    var malList = Array.from(selectedMaladies).map(function(m) { return {nom: m, est_chronique: false}; });
+    fetch('/api/consultation/maladies/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+        body: JSON.stringify({consultation_id: consultationId, maladies: malList})
+    }).then(function() {
+        var msg = document.getElementById('maladies-saved-msg');
+        msg.innerHTML = '<i class="fa-solid fa-check"></i> ' + count + ' maladie(s) sauvegardée(s)';
+        msg.style.display = 'block';
+        setTimeout(function() { msg.style.display = 'none'; }, 3000);
+    });
+}
+
+function enregistrerMesures() {
+    var spo2 = document.getElementById('spo2').textContent;
+    var fc = document.getElementById('fc').textContent;
+    var temp = document.getElementById('temp').textContent;
+    if (spo2 === 'OFF' && fc === 'OFF' && temp === 'OFF') {
+        var msg = document.getElementById('mesures-saved-msg');
+        msg.innerHTML = '<i class="fa-solid fa-exclamation-triangle"></i> Capteurs désactivés';
+        msg.style.color = 'var(--orange)'; msg.style.background = 'rgba(251,140,0,0.1)';
+        msg.style.display = 'block';
+        setTimeout(function() { msg.style.display = 'none'; }, 2000);
+        return;
+    }
+    if (spo2 === '--' && fc === '--' && temp === '--') {
+        var msg = document.getElementById('mesures-saved-msg');
+        msg.innerHTML = '<i class="fa-solid fa-exclamation-triangle"></i> Aucune mesure';
+        msg.style.color = 'var(--orange)'; msg.style.background = 'rgba(251,140,0,0.1)';
+        msg.style.display = 'block';
+        setTimeout(function() { msg.style.display = 'none'; }, 2000);
+        return;
+    }
+    fetch('/api/sensors/enregistrer-mesures/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+        body: JSON.stringify({
+            consultation_id: consultationId,
+            spo2: (spo2 !== '--' && spo2 !== 'OFF') ? parseFloat(spo2) : null,
+            frequence_cardiaque: (fc !== '--' && fc !== 'OFF') ? parseFloat(fc) : null,
+            temperature: (temp !== '--' && temp !== 'OFF') ? parseFloat(temp) : null
+        })
+    }).then(function(r) { return r.json(); })
+    .then(function() {
+        document.getElementById('saved-spo2').textContent = spo2;
+        document.getElementById('saved-fc').textContent = fc;
+        document.getElementById('saved-temp').textContent = temp;
+        document.getElementById('mesures-enregistrees').style.display = 'block';
+        var msg = document.getElementById('mesures-saved-msg');
+        msg.innerHTML = '<i class="fa-solid fa-check"></i> Mesures enregistrées';
+        msg.style.color = 'var(--green)'; msg.style.background = 'rgba(67,160,71,0.1)';
+        msg.style.display = 'block';
+        setTimeout(function() { msg.style.display = 'none'; }, 3000);
+    });
+}
+
+function notifierPatientPreparation(e, url, avecOrdonnance) {
+    e.preventDefault();
+    fetch('/api/consultation/notifier-fin/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+        body: JSON.stringify({consultation_id: consultationId, avec_ordonnance: avecOrdonnance})
+    }).finally(function() {
+        window.location.href = url;
+    });
+}
+
+var chatOpen = false;
+var unreadMessages = 0;
+
+function toggleChatPopup() {
+    chatOpen = !chatOpen;
+    document.getElementById('chat-popup').classList.toggle('show', chatOpen);
+    if (chatOpen) {
+        unreadMessages = 0;
+        document.getElementById('chat-badge').style.display = 'none';
+        document.getElementById('chat-input').focus();
+    }
+}
+
+function notifyChatMessage() {
+    if (!chatOpen) {
+        unreadMessages++;
+        var badge = document.getElementById('chat-badge');
+        badge.textContent = unreadMessages;
+        badge.style.display = 'flex';
+    }
+}
+
+// Fermer chat quand on clique ailleurs
+document.addEventListener('click', function(e) {
+    if (chatOpen && !e.target.closest('#chat-popup') && !e.target.closest('#chat-fab')) {
+        chatOpen = false;
+        document.getElementById('chat-popup').classList.remove('show');
+    }
+});
+
+// ===== MEDIGO IA — Chargement depuis API =====
+var _iaDebounceTimer = null;
+var _iaLoading = false;
+
+fetch('/api/medigo/symptomes/', {headers: {'X-CSRFToken': csrfToken}})
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        SYMPTOMES = [];
+        if (data.categories) {
+            Object.keys(data.categories).forEach(function(cat) {
+                data.categories[cat].forEach(function(s) {
+                    if (!SYMPTOMES.includes(s)) SYMPTOMES.push(s);
+                });
+            });
+        }
+        renderSymptomes(SYMPTOMES);
+        console.log('MEDIGO IA: ' + SYMPTOMES.length + ' symptômes');
+    }).catch(function(e) { console.warn('Fallback symptômes:', e); });
+
+fetch('/api/medigo/maladies/', {headers: {'X-CSRFToken': csrfToken}})
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.maladies) {
+            MALADIES_DATA = data.maladies;
+            MALADIES = data.maladies.map(function(m) { return m.nom; });
+            renderMaladies(MALADIES);
+            console.log('MEDIGO IA: ' + MALADIES.length + ' maladies');
+        }
+    }).catch(function(e) { console.warn('Fallback maladies:', e); });
+
+// ===== ANCIEN REFERENTIEL (désactivé) =====
+var REFERENTIEL = null;
+var COMBO_RULES = [];
+var RED_FLAGS = [];
+
+// referentiel.json désactivé — remplacé par API MEDIGO IA
+
+function updateAISuggestions() {
+    var container = document.getElementById('ai-suggestions');
+    if (selectedSymptomes.size === 0) {
+        container.innerHTML = '<div class="ai-empty"><i class="fa-solid fa-robot"></i>Sélectionnez des symptômes pour voir les suggestions IA</div>';
+        return;
+    }
+    if (_iaDebounceTimer) clearTimeout(_iaDebounceTimer);
+    _iaDebounceTimer = setTimeout(function() { _callIALive(); }, 600);
+}
+
+function _callIALive() {
+    var container = document.getElementById('ai-suggestions');
+    if (_iaLoading) return;
+    _iaLoading = true;
+    container.innerHTML = '<div class="ai-empty"><div class="spinner" style="margin:0 auto;border-color:rgba(92,107,192,0.2);border-top-color:#5c6bc0;width:24px;height:24px;"></div><div style="margin-top:0.5rem;">Analyse en cours...</div></div>';
+    var symptList = [];
+    selectedSymptomes.forEach(function(data, nom) {
+        symptList.push({nom: nom, intensite: data.intensite, evolution: data.evolution});
+    });
+    fetch('/api/consultation/symptomes/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+        body: JSON.stringify({consultation_id: consultationId, symptomes: symptList})
+    })
+    .then(function() {
+        return fetch('/api/consultation/' + consultationId + '/ia-live/', {headers: {'X-CSRFToken': csrfToken}});
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) { _iaLoading = false; _renderIAResults(data); })
+    .catch(function(e) {
+        _iaLoading = false;
+        container.innerHTML = '<div class="ai-empty"><i class="fa-solid fa-exclamation-triangle" style="color:var(--orange);"></i><div style="margin-top:0.3rem;">Erreur — réessayez</div></div>';
+    });
+}
+
+function _renderIAResults(data) {
+    var container = document.getElementById('ai-suggestions');
+    var html = '';
+    if (data.red_flags && data.red_flags.length > 0) {
+        html += '<div style="background:#ffebee;border:1.5px solid #e53935;border-radius:8px;padding:0.65rem;margin-bottom:0.5rem;">';
+        html += '<div style="font-size:0.72rem;font-weight:800;color:#c62828;text-transform:uppercase;margin-bottom:0.3rem;"><i class="fa-solid fa-triangle-exclamation"></i> Signaux d\'alerte</div>';
+        data.red_flags.forEach(function(rf) { html += '<div style="font-size:0.78rem;color:#c62828;padding:0.15rem 0;">' + rf.alerte + '</div>'; });
+        html += '</div>';
+    }
+    if (data.orientation && data.orientation.niveau !== 'orientation_standard') {
+        var tc = data.orientation.niveau === 'urgence_immediate' ? '#c62828' : '#e65100';
+        var tb = data.orientation.niveau === 'urgence_immediate' ? '#ffebee' : '#fff3e0';
+        html += '<div style="background:' + tb + ';border:1px solid ' + tc + ';border-radius:8px;padding:0.5rem;margin-bottom:0.5rem;font-size:0.78rem;color:' + tc + ';font-weight:600;"><i class="fa-solid fa-hospital"></i> ' + data.orientation.message + '</div>';
+    }
+    if (data.diagnostics && data.diagnostics.length > 0) {
+        html += '<div class="ai-box"><div class="ai-box-title"><i class="fa-solid fa-lightbulb"></i> Suggestions IA</div>';
+        data.diagnostics.slice(0, 4).forEach(function(d, idx) {
+            var pct = Math.round(d.score_final * 100);
+            var cls = pct >= 40 ? 'high' : pct >= 20 ? 'medium' : 'low';
+            var urg = d.urgence ? ' <span style="background:#c62828;color:white;font-size:0.6rem;padding:0.1rem 0.35rem;border-radius:10px;font-weight:800;">URGENT</span>' : '';
+            html += '<div class="ai-disease" style="flex-direction:column;align-items:stretch;padding:0.4rem 0;gap:0.2rem;">';
+            html += '<div style="display:flex;justify-content:space-between;align-items:center;"><span class="ai-disease-name">' + d.maladie + urg + '</span><span class="ai-confidence ' + cls + '">' + pct + '%</span></div>';
+            if (d.categorie) html += '<div style="font-size:0.7rem;color:#5c6bc0;font-weight:600;"><i class="fa-solid fa-tag" style="font-size:0.58rem;margin-right:0.2rem;"></i>' + d.categorie + '</div>';
+            if (d.explication && d.explication.raison_courte) html += '<div style="font-size:0.72rem;color:var(--text-muted);font-style:italic;">' + d.explication.raison_courte + '</div>';
+            html += '<div style="display:flex;gap:0.3rem;margin-top:0.15rem;">';
+            html += '<button onclick="selectionnerDiagnostic(\'' + d.maladie.replace(/'/g, "\'") + '\')" style="font-size:0.68rem;padding:0.2rem 0.5rem;background:var(--green);color:white;border:none;border-radius:4px;cursor:pointer;font-family:inherit;font-weight:600;"><i class="fa-solid fa-check"></i> Sélectionner</button>';
+            html += '<button onclick="voirPourquoi(' + idx + ')" style="font-size:0.68rem;padding:0.2rem 0.5rem;background:var(--bg);color:var(--blue);border:1px solid var(--border);border-radius:4px;cursor:pointer;font-family:inherit;font-weight:600;"><i class="fa-solid fa-circle-info"></i> Voir pourquoi</button>';
+            html += '</div></div>';
+        });
+        html += '</div>';
+    }
+    // Bloc "Questions à poser" supprimé
+    if (data.symptomes_inconnus && data.symptomes_inconnus.length > 0) {
+        html += '<div style="background:#fff3e0;border:1px solid #ffb74d;border-radius:8px;padding:0.5rem;margin-bottom:0.5rem;"><div style="font-size:0.68rem;font-weight:700;color:#e65100;margin-bottom:0.2rem;"><i class="fa-solid fa-question-circle"></i> Non reconnus</div>';
+        data.symptomes_inconnus.forEach(function(s) { html += '<div style="font-size:0.75rem;color:#e65100;">• ' + s + '</div>'; });
+        html += '</div>';
+    }
+    html += '<div class="ai-disclaimer"><i class="fa-solid fa-triangle-exclamation"></i> Aide au diagnostic — ne remplace pas le jugement clinique</div>';
+    container.innerHTML = html;
+    window._lastIAResults = data;
+}
+
+function selectionnerDiagnostic(nom) {
+    if (!MALADIES.includes(nom)) MALADIES.push(nom);
+    selectedMaladies.add(nom);
+    document.getElementById('maladies-count').textContent = selectedMaladies.size + ' maladie(s)';
+    renderMaladies(MALADIES);
+    var container = document.getElementById('ai-suggestions');
+    var msg = document.createElement('div');
+    msg.style.cssText = 'background:#e8f5e9;color:#2e7d32;padding:0.4rem;border-radius:6px;font-size:0.78rem;font-weight:600;text-align:center;margin-bottom:0.5rem;';
+    msg.innerHTML = '<i class="fa-solid fa-check-circle"></i> ' + nom + ' ajoutée';
+    container.insertBefore(msg, container.firstChild);
+    setTimeout(function() { if (msg.parentNode) msg.remove(); }, 2500);
+}
+
+function voirPourquoi(idx) {
+    if (!window._lastIAResults || !window._lastIAResults.diagnostics) return;
+    var d = window._lastIAResults.diagnostics[idx];
+    if (!d) return;
+    var old = document.getElementById('ia-popup-pourquoi');
+    if (old) old.remove();
+    var exp = d.explication || {};
+    var h = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;"><div style="font-weight:700;font-size:0.9rem;color:var(--navy);">' + d.maladie + '</div><button onclick="document.getElementById(\'ia-popup-pourquoi\').remove()" style="background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--text-muted);padding:0.2rem;">✕</button></div>';
+    if (exp.symptomes_correspondants && exp.symptomes_correspondants.length > 0) {
+        h += '<div style="font-size:0.72rem;font-weight:700;color:#43a047;margin-bottom:0.15rem;">✓ Symptômes qui correspondent</div>';
+        exp.symptomes_correspondants.forEach(function(s) { h += '<div style="font-size:0.78rem;padding:0.1rem 0 0.1rem 0.6rem;">• ' + s + '</div>'; });
+    }
+    if (exp.symptomes_importants_manquants && exp.symptomes_importants_manquants.length > 0) {
+        h += '<div style="font-size:0.72rem;font-weight:700;color:#fb8c00;margin-top:0.35rem;margin-bottom:0.15rem;">? À rechercher</div>';
+        exp.symptomes_importants_manquants.forEach(function(s) { h += '<div style="font-size:0.78rem;padding:0.1rem 0 0.1rem 0.6rem;">• ' + s + '</div>'; });
+    }
+    if (exp.facteurs_patient && exp.facteurs_patient.length > 0) {
+        h += '<div style="font-size:0.72rem;font-weight:700;color:#1976d2;margin-top:0.35rem;margin-bottom:0.15rem;">Contexte patient</div>';
+        exp.facteurs_patient.forEach(function(f) { h += '<div style="font-size:0.78rem;padding:0.1rem 0 0.1rem 0.6rem;">• ' + f + '</div>'; });
+    }
+    if (exp.red_flags_associes && exp.red_flags_associes.length > 0) {
+        h += '<div style="font-size:0.72rem;font-weight:700;color:#e53935;margin-top:0.35rem;margin-bottom:0.15rem;">Signaux d\'alerte</div>';
+        exp.red_flags_associes.forEach(function(r) { h += '<div style="font-size:0.78rem;padding:0.1rem 0 0.1rem 0.6rem;color:#c62828;">• ' + r + '</div>'; });
+    }
+    var popup = document.createElement('div');
+    popup.id = 'ia-popup-pourquoi';
+    popup.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;border-radius:14px;padding:1.1rem;box-shadow:0 16px 56px rgba(0,0,0,0.22);border:1px solid #e2e8f0;z-index:300;max-width:380px;width:92%;max-height:70vh;overflow-y:auto;';
+    popup.innerHTML = h;
+    document.body.appendChild(popup);
+    setTimeout(function() {
+        document.addEventListener('click', function handler(e) {
+            var p = document.getElementById('ia-popup-pourquoi');
+            if (p && !p.contains(e.target)) { p.remove(); document.removeEventListener('click', handler); }
+        });
+    }, 150);
+}
+
+var chatOpen = false;
+var unreadMessages = 0;
+
+function toggleChatPopup() {
+    chatOpen = !chatOpen;
+    document.getElementById('chat-popup').classList.toggle('show', chatOpen);
+    if (chatOpen) {
+        unreadMessages = 0;
+        document.getElementById('chat-badge').style.display = 'none';
+        document.getElementById('chat-input').focus();
+    }
+}
+
+function notifyChatMessage() {
+    if (!chatOpen) {
+        unreadMessages++;
+        var badge = document.getElementById('chat-badge');
+        badge.textContent = unreadMessages;
+        badge.style.display = 'flex';
+    }
+}
+
+// Fermer chat quand on clique ailleurs
+document.addEventListener('click', function(e) {
+    if (chatOpen && !e.target.closest('#chat-popup') && !e.target.closest('#chat-fab')) {
+        chatOpen = false;
+        document.getElementById('chat-popup').classList.remove('show');
+    }
+});
+
+// ===== WEBSOCKET =====
+var ws = new WebSocket(wsProtocol + window.location.host + '/ws/medecin/');
+ws.onopen = function() { console.log('WS connected'); };
+ws.onmessage = function(e) {
+    var data = JSON.parse(e.data);
+    if (data.type === 'chat_message') { ajouterMessage(data.message, data.expediteur); notifyChatMessage(); }
+    else if (data.type === 'signe_vital') updateVitals(data);
+    else if (data.type === 'alerte_urgente') showToast('🚨 Alerte urgente du patient !', 'error');
+    else if (data.type === 'media_state' && data.from === 'patient') {
+        document.getElementById('remote-mic-off').style.display = data.audio ? 'none' : 'block';
+        document.getElementById('remote-cam-off').style.display = data.video ? 'none' : 'block';
+    }
+    else if (data.type === 'patient_joined_live') {
+        document.getElementById('connection-status').textContent = 'Patient connecté ✓';
+        document.getElementById('connection-status').classList.add('connected');
+        // Relancer WebRTC si le patient rejoint/reprend
+        if (peerConnection) {
+            peerConnection.close();
+            peerConnection = null;
+        }
+        setTimeout(startCall, 1000);
+    }
+    else if (data.type === 'webrtc_answer') handleAnswer(data.data);
+    else if (data.type === 'webrtc_ice') handleIceCandidate(data.data);
+};
+
+// ===== WEBRTC =====
+navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    .then(function(stream) {
+        localStream = stream;
+        document.getElementById('localVideo').srcObject = stream;
+        setTimeout(startCall, 1500);
+    })
+    .catch(function(err) { console.log('Camera error:', err); });
+
+function startCall() {
+    peerConnection = new RTCPeerConnection(STUN_SERVERS);
+    if (localStream) localStream.getTracks().forEach(function(t) { peerConnection.addTrack(t, localStream); });
+    peerConnection.ontrack = function(e) { document.getElementById('remoteVideo').srcObject = e.streams[0]; var s = document.getElementById('connection-status'); s.innerHTML = '<i class="fas fa-circle" style="font-size:8px;margin-right:6px;"></i>Patient connecté'; s.classList.add('connected'); s.style.color = ''; };
+    peerConnection.onicecandidate = function(e) {
+        if (e.candidate) ws.send(JSON.stringify({action:'webrtc_ice',consultation_id:consultationId,data:e.candidate}));
+    };
+    peerConnection.createOffer()
+        .then(function(o) { return peerConnection.setLocalDescription(o).then(function(){return o;}); })
+        .then(function(o) { ws.send(JSON.stringify({action:'webrtc_offer',consultation_id:consultationId,data:o})); });
+}
+
+function handleAnswer(a) { if (peerConnection) peerConnection.setRemoteDescription(new RTCSessionDescription(a)); }
+function handleIceCandidate(c) {
+    if (peerConnection && c) peerConnection.addIceCandidate(new RTCIceCandidate(c)).catch(function(){});
+}
+
+function toggleMic() {
+    if (!localStream) return;
+    micOn = !micOn;
+    localStream.getAudioTracks().forEach(function(t) { t.enabled = micOn; });
+    ws.send(JSON.stringify({action: 'media_state', consultation_id: consultationId, audio: micOn, video: camOn}));
+    var btn = document.getElementById('btn-mic');
+    btn.classList.toggle('off', !micOn);
+    btn.innerHTML = '<i class="fa-solid fa-microphone' + (micOn ? '' : '-slash') + '"></i>';
+}
+
+function toggleCamera() {
+    if (!localStream) return;
+    camOn = !camOn;
+    localStream.getVideoTracks().forEach(function(t) { t.enabled = camOn; });
+    ws.send(JSON.stringify({action: 'media_state', consultation_id: consultationId, audio: micOn, video: camOn}));
+    var btn = document.getElementById('btn-cam');
+    btn.classList.toggle('off', !camOn);
+    btn.innerHTML = '<i class="fa-solid fa-video' + (camOn ? '' : '-slash') + '"></i>';
+}
+
+// ===== CAPTEURS =====
+function toggleCapteur(capteur) {
+    capteurStates[capteur] = !capteurStates[capteur];
+    var sw = document.getElementById('switch-' + capteur);
+    sw.classList.toggle('on', capteurStates[capteur]);
+    sw.classList.toggle('off', !capteurStates[capteur]);
+    if (!capteurStates[capteur]) {
+        if (capteur === 'spo2') { document.getElementById('spo2').textContent = 'OFF'; document.getElementById('fc').textContent = 'OFF'; }
+        else if (capteur === 'temperature') { document.getElementById('temp').textContent = 'OFF'; }
+        else document.getElementById('temp').textContent = '--';
+    }
+    if (capteurStates[capteur]) {
+        if (capteur === 'spo2') { document.getElementById('spo2').textContent = '--'; document.getElementById('fc').textContent = '--'; }
+        else if (capteur === 'temperature') { document.getElementById('temp').textContent = '--'; }
+    }
+    fetch('/api/sensors/controler/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+        body: JSON.stringify({consultation_id: consultationId, capteur: capteur, actif: capteurStates[capteur]})
+    });
+}
+
+function updateVitals(data) {
+    if (capteurStates['spo2']) {
+        if (data.spo2 != null) document.getElementById('spo2').textContent = data.spo2;
+        if (data.frequence_cardiaque != null) document.getElementById('fc').textContent = data.frequence_cardiaque;
+    }
+    if (capteurStates['temperature']) {
+        if (data.temperature != null) document.getElementById('temp').textContent = data.temperature;
+    }
+}
+
+// ===== CHAT =====
+function ajouterMessage(message, expediteur) {
+    var div = document.createElement('div');
+    div.className = 'chat-msg';
+    var color = expediteur === 'medecin' ? '#1976d2' : '#43a047';
+    var label = expediteur === 'medecin' ? 'Vous' : 'Patient';
+    var heading = document.createElement('strong');
+    heading.textContent = label + ': ';
+    div.appendChild(heading);
+    if (message.startsWith('[IMAGE]/media/chat/')) {
+        var url = message.slice(7);
+        if (/^\/media\/chat\/[a-f0-9-]+\.(png|jpe?g|gif|webp)$/i.test(url)) {
+            var img = document.createElement('img');
+            img.src = url;
+            img.alt = 'Image';
+            img.addEventListener('click', function() { window.open(img.src, '_blank', 'noopener'); });
+            div.appendChild(document.createElement('br'));
+            div.appendChild(img);
+        }
+    } else {
+        div.appendChild(document.createTextNode(message));
+    } else {
+        div.innerHTML = '<strong style="color:' + color + '">' + label + '</strong>: ' + message;
+    }
+    var msgs = document.getElementById('chat-messages');
+    msgs.appendChild(div);
+    msgs.scrollTop = 99999;
+}
+
+function envoyerMessage() {
+    var input = document.getElementById('chat-input');
+    var msg = input.value.trim();
+    if (!msg) return;
+    ws.send(JSON.stringify({action:'chat_message',consultation_id:consultationId,message:msg,expediteur:'medecin'}));
+    ajouterMessage(msg, 'medecin');
+    input.value = '';
+}
+
+function envoyerSiEnter(e) { if (e.key === 'Enter') envoyerMessage(); }
+
+function envoyerImage(input) {
+    var file = input.files[0];
+    if (!file) return;
+    var fd = new FormData();
+    fd.append('image', file);
+    fd.append('consultation_id', consultationId);
+    fd.append('expediteur', 'medecin');
+    fd.append('csrfmiddlewaretoken', csrfToken);
+    fetch('/api/chat/upload-image/', {method:'POST',body:fd})
+        .then(function(r){return r.json();})
+        .then(function(){});
+    input.value = '';
+}
+
+// ===== INIT =====
+initLists();
+
+// Pre-fill existing data
+// Allergies gérées par cases à cocher maintenant
+{% if patient.groupe_sanguin %}
+document.getElementById('groupe-sanguin').value = '{{ patient.groupe_sanguin }}';
+{% endif %}
+
+// Pre-select existing symptoms
+{% for s in consultation.symptomes.all %}
+selectedSymptomes.add('{{ s.nom_symptome|escapejs }}');
+{% endfor %}
+document.getElementById('symptomes-count').textContent = selectedSymptomes.size + ' symptôme(s) sélectionné(s)';
+
+// Pre-select existing maladies
+{% for m in consultation.maladies_set.all %}
+selectedMaladies.add('{{ m.nom_maladie|escapejs }}');
+{% endfor %}
+
+// Pre-fill mesures
+{% with consultation.mesures_anthropo.first as ma %}
+{% if ma %}
+{% if ma.poids_kg %}document.getElementById('poids').value = '{{ ma.poids_kg }}'; {% endif %}
+{% if ma.taille_cm %}document.getElementById('taille').value = '{{ ma.taille_cm }}'; {% endif %}
+calcIMC();
+{% endif %}
+{% endwith %}
+
+</script>
+<style>
+@keyframes slideIn { from {opacity:0;transform:translateX(100px);} to {opacity:1;transform:translateX(0);} }
+</style>
+
+<div class="mobile-tab-bar">
+    <div class="mobile-tab-bar-inner">
+        <button class="mob-tab active" onclick="showMobPanel('video')">
+            <i class="fa-solid fa-video"></i>
+            Vidéo
+        </button>
+        <button class="mob-tab" onclick="showMobPanel('infos')">
+            <i class="fa-solid fa-user"></i>
+            Infos
+        </button>
+        <button class="mob-tab" onclick="showMobPanel('chat')">
+            <i class="fa-solid fa-comment"></i>
+            Chat
+        </button>
+    </div>
+</div>
+
+<script>
+function showMobPanel(panel) {
+    var sidebar = document.querySelector('.live-sidebar');
+    var center = document.querySelector('.live-center');
+    var right = document.querySelector('.live-right');
+    var tabs = document.querySelectorAll('.mob-tab');
+
+    tabs.forEach(function(t) { t.classList.remove('active'); });
+    event.currentTarget.classList.add('active');
+
+    if (!sidebar || !center || !right) return;
+
+    sidebar.classList.remove('mob-visible');
+    center.classList.remove('mob-hidden');
+    right.classList.remove('mob-visible');
+
+    if (panel === 'infos') {
+        sidebar.classList.add('mob-visible');
+        center.classList.add('mob-hidden');
+    } else if (panel === 'chat') {
+        right.classList.add('mob-visible');
+        center.classList.add('mob-hidden');
+    }
+}
+</script>
+
+<style>
+.ia-popup-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(26,42,74,0.45);backdrop-filter:blur(4px);z-index:299;animation:fadeInIA .2s ease}
+.ia-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(26,42,74,0.25);z-index:300;max-width:400px;width:92%;max-height:75vh;overflow-y:auto;animation:popInIA .25s cubic-bezier(.34,1.56,.64,1)}
+.ia-popup-hdr{padding:1rem 1.2rem .6rem;border-bottom:1px solid #f0f0f5;display:flex;justify-content:space-between;align-items:flex-start;position:sticky;top:0;background:#fff;border-radius:16px 16px 0 0;z-index:1}
+.ia-popup-hdr h3{font-size:1rem;font-weight:700;color:#1a2a4a;margin:0;line-height:1.3}
+.ia-popup-x{width:28px;height:28px;border-radius:50%;border:none;background:#f0f4f8;color:#7a8caa;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.ia-popup-x:hover{background:#ffebee;color:#c62828}
+.ia-popup-bar-wrap{padding:.5rem 1.2rem;display:flex;align-items:center;gap:.75rem}
+.ia-popup-bar{flex:1;height:6px;background:#f0f0f5;border-radius:3px;overflow:hidden}
+.ia-popup-bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.ia-popup-pct{font-size:1.1rem;font-weight:800;min-width:40px;text-align:right}
+.ia-popup-body{padding:.4rem 1.2rem 1rem}
+.ia-popup-sec{margin-bottom:.55rem;border-radius:10px;padding:.55rem .7rem}
+.ia-popup-sec-t{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem;display:flex;align-items:center;gap:.35rem}
+.ia-popup-sec-i{font-size:.8rem;padding:.15rem 0 .15rem .4rem;display:flex;align-items:flex-start;gap:.3rem}
+
+@keyframes fadeInIA{from{opacity:0}to{opacity:1}}
+@keyframes popInIA{from{opacity:0;transform:translate(-50%,-50%) scale(.9)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+</style>
+
+<script>
+// Écrase la fonction voirPourquoi avec le design premium
+window.voirPourquoi = function(idx) {
+    if (!window._lastIAResults || !window._lastIAResults.diagnostics) return;
+    var d = window._lastIAResults.diagnostics[idx];
+    if (!d) return;
+    fermerPopupIA();
+    var pct = Math.round(d.score_final * 100);
+    var bc = pct >= 40 ? "#e53935" : pct >= 20 ? "#fb8c00" : "#43a047";
+    var exp = d.explication || {};
+    var h = "<div class='ia-popup-hdr'><div><h3>" + d.maladie + "</h3>";
+    if (d.categorie) h += "<div style='font-size:.72rem;color:#5c6bc0;font-weight:600;margin-top:.15rem'><i class='fa-solid fa-tag' style='font-size:.6rem'></i> " + d.categorie + "</div>";
+    if (d.urgence) h += "<div style='margin-top:.2rem'><span style='background:#c62828;color:#fff;font-size:.65rem;padding:.12rem .5rem;border-radius:12px;font-weight:700'>URGENT</span></div>";
+    h += "</div><button class='ia-popup-x' onclick='fermerPopupIA()'>✕</button></div>";
+    h += "<div class='ia-popup-bar-wrap'><div style='font-size:.72rem;color:#7a8caa;font-weight:600'>Confiance</div><div class='ia-popup-bar'><div class='ia-popup-bar-fill' style='width:" + pct + "%;background:" + bc + "'></div></div><div class='ia-popup-pct' style='color:" + bc + "'>" + pct + "%</div></div>";
+    h += "<div class='ia-popup-body'>";
+    if (exp.symptomes_correspondants && exp.symptomes_correspondants.length > 0) {
+        h += "<div class='ia-popup-sec' style='background:#e8f5e9'><div class='ia-popup-sec-t' style='color:#2e7d32'><i class='fa-solid fa-circle-check'></i> Symptômes qui correspondent</div>";
+        exp.symptomes_correspondants.forEach(function(s) { h += "<div class='ia-popup-sec-i' style='color:#2e7d32'>" + s + "</div>"; });
+        h += "</div>";
+    }
+    if (exp.symptomes_importants_manquants && exp.symptomes_importants_manquants.length > 0) {
+        h += "<div class='ia-popup-sec' style='background:#fff3e0'><div class='ia-popup-sec-t' style='color:#e65100'><i class='fa-solid fa-magnifying-glass'></i> À rechercher</div>";
+        exp.symptomes_importants_manquants.forEach(function(s) { h += "<div class='ia-popup-sec-i' style='color:#bf360c'>" + s + "</div>"; });
+        h += "</div>";
+    }
+    if (exp.facteurs_patient && exp.facteurs_patient.length > 0) {
+        h += "<div class='ia-popup-sec' style='background:#e3f2fd'><div class='ia-popup-sec-t' style='color:#1565c0'><i class='fa-solid fa-user-doctor'></i> Contexte patient</div>";
+        exp.facteurs_patient.forEach(function(f) { h += "<div class='ia-popup-sec-i' style='color:#0d47a1'>" + f + "</div>"; });
+        h += "</div>";
+    }
+    if (exp.red_flags_associes && exp.red_flags_associes.length > 0) {
+        h += "<div class='ia-popup-sec' style='background:#ffebee'><div class='ia-popup-sec-t' style='color:#c62828'><i class='fa-solid fa-triangle-exclamation'></i> Signaux d'alerte</div>";
+        exp.red_flags_associes.forEach(function(r) { h += "<div class='ia-popup-sec-i' style='color:#b71c1c'>" + r + "</div>"; });
+        h += "</div>";
+    }
+    h += "</div>";
+    var ov = document.createElement("div"); ov.id = "ia-popup-overlay"; ov.className = "ia-popup-overlay"; ov.onclick = fermerPopupIA; document.body.appendChild(ov);
+    var pp = document.createElement("div"); pp.id = "ia-popup-pourquoi"; pp.className = "ia-popup"; pp.innerHTML = h; document.body.appendChild(pp);
+};
+
+window.fermerPopupIA = function() {
+    var o = document.getElementById("ia-popup-overlay"); if (o) o.remove();
+    var p = document.getElementById("ia-popup-pourquoi"); if (p) p.remove();
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+{% extends 'base_patient.html' %}
+{% load i18n_patient_tags %}
+{% get_lang as lang %}
+{% get_dir as dir %}
+{% block title %}Medigo — {% t "prescription_label" %}{% endblock %}
+{% block header_title %}{% t "my_prescription" %}{% endblock %}
+{% block header_sub %}{{ ordonnance.creee_le|date:"d/m/Y" }}{% endblock %}
+{% block extra_css %}
+.prescription-box {
+    background: #f8fff8;
+    border: 2px solid var(--green);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    white-space: pre-line;
+    line-height: 1.8;
+    font-size: 0.95rem;
+    color: var(--text);
+    position: relative;
+}
+.prescription-box::before {
+    content: 'Rx';
+    position: absolute;
+    top: 0.75rem;
+    {% if dir == 'rtl' %}left: 1rem;{% else %}right: 1rem;{% endif %}
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--green);
+    opacity: 0.15;
+    font-style: italic;
+}
+{% endblock %}
+{% block content %}
+<div class="p-card">
+    <div class="p-info-row">
+        <span class="p-info-label"><i class="fa-solid fa-user-doctor" style="margin-right:0.3rem;margin-left:0.3rem;"></i> {% t "doctor" %}</span>
+        <span class="p-info-value">{{ ordonnance.consultation.medecin }}</span>
+    </div>
+    <div class="p-info-row">
+        <span class="p-info-label"><i class="fa-solid fa-calendar" style="margin-right:0.3rem;margin-left:0.3rem;"></i> {% t "date" %}</span>
+        <span class="p-info-value">{{ ordonnance.creee_le|date:"d/m/Y" }}</span>
+    </div>
+</div>
+<div class="p-card">
+    <div class="p-card-title"><i class="fa-solid fa-prescription"></i> {% t "prescription" %}</div>
+    <div class="prescription-box">{{ ordonnance.contenu }}</div>
+</div>
+{% if ordonnance.qr_code_key %}
+<div class="p-card" style="text-align:center;">
+    <div class="p-card-title" style="justify-content:center;"><i class="fa-solid fa-qrcode"></i> {% t "qr_code" %}</div>
+    <img src="/media/{{ ordonnance.qr_code_key }}" alt="QR Code"
+         style="width:180px;height:180px;border:2px solid var(--border);border-radius:var(--radius);padding:0.5rem;background:white;margin-bottom:1rem;">
+    <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1rem;">{% t "scan_to_download" %}</div>
+</div>
+{% endif %}
+<a href="/ordonnance/{{ ordonnance.id }}/pdf/{% if verified_code %}?code={{ verified_code }}{% endif %}" class="p-btn p-btn-primary" style="margin-bottom:0.75rem;">
+    <i class="fa-solid fa-file-pdf"></i> {% t "download_pdf" %}
+</a>
+{% if not verified_code %}
+<a href="{% url 'patient_menu' %}" class="p-btn p-btn-outline">
+    <i class="fa-solid fa-arrow-{% if lang == 'ar' %}right{% else %}left{% endif %}"></i> {% t "back_to_menu" %}
+</a>
+{% endif %}
+{% endblock %}

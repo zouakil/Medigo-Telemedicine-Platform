@@ -1,0 +1,47 @@
+{% extends 'base_patient.html' %}
+{% load i18n_patient_tags %}
+{% block title %}Medigo — {% t "history" %}{% endblock %}
+{% block header_title %}{% t "my_history" %}{% endblock %}
+{% block header_sub %}{{ patient.prenom }} {{ patient.nom }}{% endblock %}
+{% block content %}
+{% for consultation in consultations %}
+<div class="p-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+        <span style="font-weight:700;">{{ consultation.cloturee_le|date:"d/m/Y" }}</span>
+        <span class="p-badge p-badge-green"><i class="fa-solid fa-circle-check"></i> {% t "closed" %}</span>
+    </div>
+    <div style="font-size:0.875rem;color:var(--text-muted);margin-bottom:0.75rem;">
+        <i class="fa-solid fa-user-doctor" style="margin-right:0.3rem;margin-left:0.3rem;"></i> {{ consultation.medecin }}
+    </div>
+    {% if consultation.symptomes.all %}
+    <div style="margin-bottom:0.5rem;">
+        <div style="font-size:0.75rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.4rem;">{% t "symptoms" %}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
+            {% for s in consultation.symptomes.all %}
+            <span style="display:inline-block;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.78rem;font-weight:600;background:var(--blue-light);color:var(--blue);">{{ s.nom_symptome }}</span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% if consultation.maladies.all %}
+    <div>
+        <div style="font-size:0.75rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.4rem;">{% t "diagnosed_diseases" %}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
+            {% for m in consultation.maladies.all %}
+            <span style="display:inline-block;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.78rem;font-weight:600;background:var(--red-light);color:var(--red);">{{ m.nom_maladie }}</span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% if not consultation.symptomes.all and not consultation.maladies.all %}
+    <div style="font-size:0.85rem;color:var(--text-muted);font-style:italic;">{% t "no_symptoms_diseases" %}</div>
+    {% endif %}
+</div>
+{% empty %}
+<div class="p-empty">
+    <i class="fa-solid fa-clock-rotate-left"></i>
+    <div class="p-empty-text">{% t "no_past_consultations" %}</div>
+    <div class="p-empty-sub">{% t "history_will_appear" %}</div>
+</div>
+{% endfor %}
+{% endblock %}

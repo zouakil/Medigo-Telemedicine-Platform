@@ -1,0 +1,357 @@
+{
+  "Grippe / syndrome viral": {
+    "medicaments": [
+      {"dci": "Paracetamol", "raison": "Antipyrétique et antalgique — fièvre et douleurs", "categorie": "Antalgique"},
+      {"dci": "Ibuprofene", "raison": "Anti-inflammatoire — douleurs et fièvre résistante", "categorie": "Anti-inflammatoire"},
+      {"dci": "Acetylcysteine", "raison": "Mucolytique — fluidifie les sécrétions bronchiques", "categorie": "Mucolytique"},
+      {"dci": "Carbocisteine", "raison": "Mucolytique — toux grasse productive", "categorie": "Mucolytique"},
+      {"dci": "Vitamine C", "raison": "Soutien immunitaire", "categorie": "Vitamine"}
+    ]
+  },
+  "Pneumonie": {
+    "medicaments": [
+      {"dci": "Amoxicilline", "raison": "Antibiotique 1ère intention — infection pulmonaire bactérienne", "categorie": "Antibiotique"},
+      {"dci": "Amoxicilline // Acide Clavulanique", "raison": "Antibiotique — pneumonie résistante", "categorie": "Antibiotique"},
+      {"dci": "Azithromycine", "raison": "Antibiotique — germes atypiques", "categorie": "Antibiotique"},
+      {"dci": "Paracetamol", "raison": "Antipyrétique — contrôle de la fièvre", "categorie": "Antalgique"}
+    ]
+  },
+  "Infection urinaire": {
+    "medicaments": [
+      {"dci": "Ciprofloxacine", "raison": "Antibiotique — infection urinaire non compliquée", "categorie": "Antibiotique"},
+      {"dci": "Amoxicilline // Acide Clavulanique", "raison": "Antibiotique large spectre — cystite", "categorie": "Antibiotique"},
+      {"dci": "Paracetamol", "raison": "Antalgique — douleurs mictionnelles", "categorie": "Antalgique"},
+      {"dci": "Phloroglucinol", "raison": "Antispasmodique — douleurs vésicales", "categorie": "Antispasmodique"}
+    ]
+  },
+  "Cystite": {
+    "medicaments": [
+      {"dci": "Ciprofloxacine", "raison": "Antibiotique — cystite aiguë", "categorie": "Antibiotique"},
+      {"dci": "Ofloxacine", "raison": "Antibiotique — alternative fluoroquinolone", "categorie": "Antibiotique"},
+      {"dci": "Phloroglucinol", "raison": "Antispasmodique — soulage les spasmes vésicaux", "categorie": "Antispasmodique"}
+    ]
+  },
+  "Pyélonéphrite": {
+    "medicaments": [
+      {"dci": "Ciprofloxacine", "raison": "Antibiotique — pyélonéphrite non compliquée", "categorie": "Antibiotique"},
+      {"dci": "Ceftriaxone", "raison": "Antibiotique injectable — forme sévère", "categorie": "Antibiotique"},
+      {"dci": "Paracetamol", "raison": "Antipyrétique — fièvre", "categorie": "Antalgique"}
+    ]
+  },
+  "Gastrite / dyspepsie": {
+    "medicaments": [
+      {"dci": "Omeprazole", "raison": "IPP — réduit l'acidité gastrique", "categorie": "Anti-ulcéreux"},
+      {"dci": "Esomeprazole", "raison": "IPP — protection gastrique", "categorie": "Anti-ulcéreux"},
+      {"dci": "Lansoprazole", "raison": "IPP — alternative", "categorie": "Anti-ulcéreux"},
+      {"dci": "Domperidone", "raison": "Antiémétique — nausées et vomissements", "categorie": "Antiémétique"},
+      {"dci": "Diosmectite", "raison": "Protecteur gastrique — diarrhée associée", "categorie": "Antidiarrhéique"}
+    ]
+  },
+  "Infection digestive": {
+    "medicaments": [
+      {"dci": "Metronidazole", "raison": "Antibiotique — infection digestive bactérienne/parasitaire", "categorie": "Antibiotique"},
+      {"dci": "Ciprofloxacine", "raison": "Antibiotique — diarrhée bactérienne", "categorie": "Antibiotique"},
+      {"dci": "Loperamide", "raison": "Antidiarrhéique — ralentit le transit", "categorie": "Antidiarrhéique"},
+      {"dci": "Diosmectite", "raison": "Adsorbant — protège la muqueuse digestive", "categorie": "Antidiarrhéique"},
+      {"dci": "Paracetamol", "raison": "Antalgique — douleurs abdominales et fièvre", "categorie": "Antalgique"}
+    ]
+  },
+  "Bronchite": {
+    "medicaments": [
+      {"dci": "Amoxicilline", "raison": "Antibiotique — surinfection bactérienne", "categorie": "Antibiotique"},
+      {"dci": "Acetylcysteine", "raison": "Mucolytique — fluidifie les expectorations", "categorie": "Mucolytique"},
+      {"dci": "Carbocisteine", "raison": "Mucolytique — toux productive", "categorie": "Mucolytique"},
+      {"dci": "Paracetamol", "raison": "Antipyrétique et antalgique", "categorie": "Antalgique"}
+    ]
+  },
+  "Asthme": {
+    "medicaments": [
+      {"dci": "Salbutamol", "raison": "Bronchodilatateur — crise d'asthme, soulagement rapide", "categorie": "Bronchodilatateur"},
+      {"dci": "Budesonide", "raison": "Corticoïde inhalé — traitement de fond", "categorie": "Corticoïde"},
+      {"dci": "Montelukast", "raison": "Antileucotriène — prévention des crises", "categorie": "Antileucotriène"},
+      {"dci": "Prednisolone", "raison": "Corticoïde oral — exacerbation sévère", "categorie": "Corticoïde"}
+    ]
+  },
+  "Hypertension artérielle": {
+    "medicaments": [
+      {"dci": "Amlodipine", "raison": "Antihypertenseur — inhibiteur calcique", "categorie": "Antihypertenseur"},
+      {"dci": "Perindopril", "raison": "IEC — protection cardiovasculaire", "categorie": "IEC"},
+      {"dci": "Losartan", "raison": "ARA II — alternative à l'IEC", "categorie": "ARA II"},
+      {"dci": "Hydrochlorothiazide", "raison": "Diurétique — réduit la volémie", "categorie": "Diurétique"},
+      {"dci": "Atenolol", "raison": "Bêtabloquant — ralentit le cœur", "categorie": "Bêtabloquant"}
+    ]
+  },
+  "Diabète": {
+    "medicaments": [
+      {"dci": "Metformine", "raison": "Antidiabétique 1ère intention — réduit la glycémie", "categorie": "Antidiabétique"},
+      {"dci": "Gliclazide", "raison": "Sulfamide — stimule la sécrétion d'insuline", "categorie": "Antidiabétique"},
+      {"dci": "Glimepiride", "raison": "Sulfamide — alternative", "categorie": "Antidiabétique"},
+      {"dci": "Sitagliptine", "raison": "Inhibiteur DPP-4 — contrôle glycémique", "categorie": "Antidiabétique"}
+    ]
+  },
+  "Diabète type 2": {
+    "medicaments": [
+      {"dci": "Metformine", "raison": "1ère intention — diminue la résistance à l'insuline", "categorie": "Antidiabétique"},
+      {"dci": "Gliclazide", "raison": "Sulfamide — si metformine insuffisante", "categorie": "Antidiabétique"},
+      {"dci": "Sitagliptine", "raison": "iDPP4 — en association", "categorie": "Antidiabétique"},
+      {"dci": "Insuline Glargine", "raison": "Insuline basale — stade avancé", "categorie": "Insuline"}
+    ]
+  },
+  "Diabète type 1": {
+    "medicaments": [
+      {"dci": "Insuline Glargine", "raison": "Insuline basale — couverture 24h", "categorie": "Insuline"},
+      {"dci": "Insuline Asparte", "raison": "Insuline rapide — bolus aux repas", "categorie": "Insuline"}
+    ]
+  },
+  "Hypothyroïdie": {
+    "medicaments": [
+      {"dci": "Levothyroxine", "raison": "Hormone thyroïdienne — substitution", "categorie": "Hormone thyroïdienne"}
+    ]
+  },
+  "Hyperthyroïdie": {
+    "medicaments": [
+      {"dci": "Carbimazole", "raison": "Antithyroïdien — réduit la production hormonale", "categorie": "Antithyroïdien"},
+      {"dci": "Propranolol", "raison": "Bêtabloquant — contrôle palpitations et tremblements", "categorie": "Bêtabloquant"}
+    ]
+  },
+  "Insuffisance cardiaque": {
+    "medicaments": [
+      {"dci": "Furosemide", "raison": "Diurétique — réduit la surcharge hydrique", "categorie": "Diurétique"},
+      {"dci": "Ramipril", "raison": "IEC — protection cardiaque", "categorie": "IEC"},
+      {"dci": "Bisoprolol", "raison": "Bêtabloquant — ralentit et protège le cœur", "categorie": "Bêtabloquant"},
+      {"dci": "Spironolactone", "raison": "Diurétique épargneur de K+ — insuffisance modérée à sévère", "categorie": "Diurétique"}
+    ]
+  },
+  "Fibrillation auriculaire": {
+    "medicaments": [
+      {"dci": "Acenocoumarol", "raison": "Anticoagulant oral — prévention AVC", "categorie": "Anticoagulant"},
+      {"dci": "Digoxine", "raison": "Contrôle de la fréquence cardiaque", "categorie": "Digitalique"},
+      {"dci": "Amiodarone", "raison": "Antiarythmique — maintien du rythme sinusal", "categorie": "Antiarythmique"}
+    ]
+  },
+  "Coronaropathie": {
+    "medicaments": [
+      {"dci": "Aspirine", "raison": "Antiagrégant — prévention thrombose", "categorie": "Antiagrégant"},
+      {"dci": "Clopidogrel", "raison": "Antiagrégant — en association ou alternative", "categorie": "Antiagrégant"},
+      {"dci": "Atorvastatine", "raison": "Statine — contrôle du cholestérol", "categorie": "Statine"},
+      {"dci": "Bisoprolol", "raison": "Bêtabloquant — protection myocardique", "categorie": "Bêtabloquant"}
+    ]
+  },
+  "Anémie ferriprive": {
+    "medicaments": [
+      {"dci": "Fer", "raison": "Supplément en fer — corrige la carence", "categorie": "Supplément"},
+      {"dci": "Acide Folique", "raison": "Vitamine B9 — soutien de l'hématopoïèse", "categorie": "Vitamine"},
+      {"dci": "Vitamine C", "raison": "Améliore l'absorption du fer", "categorie": "Vitamine"}
+    ]
+  },
+  "Migraine": {
+    "medicaments": [
+      {"dci": "Paracetamol", "raison": "Antalgique 1ère intention — crise légère", "categorie": "Antalgique"},
+      {"dci": "Ibuprofene", "raison": "AINS — crise modérée", "categorie": "Anti-inflammatoire"},
+      {"dci": "Sumatriptan", "raison": "Triptan — crise migraineuse sévère", "categorie": "Antimigraineux"},
+      {"dci": "Metoclopramide", "raison": "Antiémétique — nausées associées", "categorie": "Antiémétique"}
+    ]
+  },
+  "Épilepsie": {
+    "medicaments": [
+      {"dci": "Valproate De Sodium", "raison": "Antiépileptique large spectre", "categorie": "Antiépileptique"},
+      {"dci": "Carbamazepine", "raison": "Antiépileptique — crises partielles", "categorie": "Antiépileptique"},
+      {"dci": "Levetiracetam", "raison": "Antiépileptique — bonne tolérance", "categorie": "Antiépileptique"}
+    ]
+  },
+  "Dépression": {
+    "medicaments": [
+      {"dci": "Escitalopram", "raison": "ISRS — antidépresseur 1ère intention", "categorie": "Antidépresseur"},
+      {"dci": "Fluoxetine", "raison": "ISRS — alternative", "categorie": "Antidépresseur"},
+      {"dci": "Paroxetine", "raison": "ISRS — avec composante anxieuse", "categorie": "Antidépresseur"},
+      {"dci": "Amitriptyline", "raison": "Tricyclique — dépression avec douleurs", "categorie": "Antidépresseur"}
+    ]
+  },
+  "Anxiété généralisée": {
+    "medicaments": [
+      {"dci": "Escitalopram", "raison": "ISRS — traitement de fond de l'anxiété", "categorie": "Antidépresseur"},
+      {"dci": "Bromazepam", "raison": "Benzodiazépine — soulagement rapide (court terme)", "categorie": "Anxiolytique"},
+      {"dci": "Alprazolam", "raison": "Benzodiazépine — crises anxieuses (court terme)", "categorie": "Anxiolytique"},
+      {"dci": "Hydroxyzine", "raison": "Anxiolytique non benzodiazépine", "categorie": "Anxiolytique"}
+    ]
+  },
+  "Trouble anxieux": {
+    "medicaments": [
+      {"dci": "Escitalopram", "raison": "ISRS — traitement de fond", "categorie": "Antidépresseur"},
+      {"dci": "Bromazepam", "raison": "Anxiolytique — soulagement court terme", "categorie": "Anxiolytique"},
+      {"dci": "Hydroxyzine", "raison": "Anxiolytique — alternative non benzo", "categorie": "Anxiolytique"}
+    ]
+  },
+  "Polyarthrite rhumatoïde": {
+    "medicaments": [
+      {"dci": "Methotrexate", "raison": "Immunomodulateur — traitement de fond", "categorie": "Immunomodulateur"},
+      {"dci": "Prednisolone", "raison": "Corticoïde — poussée inflammatoire", "categorie": "Corticoïde"},
+      {"dci": "Ibuprofene", "raison": "AINS — douleur et inflammation", "categorie": "Anti-inflammatoire"}
+    ]
+  },
+  "Goutte": {
+    "medicaments": [
+      {"dci": "Colchicine", "raison": "Anti-goutteux — crise aiguë", "categorie": "Anti-goutteux"},
+      {"dci": "Allopurinol", "raison": "Hypo-uricémiant — traitement de fond", "categorie": "Anti-goutteux"},
+      {"dci": "Diclofenac", "raison": "AINS — douleur et inflammation de la crise", "categorie": "Anti-inflammatoire"}
+    ]
+  },
+  "Arthrose": {
+    "medicaments": [
+      {"dci": "Paracetamol", "raison": "Antalgique 1ère intention", "categorie": "Antalgique"},
+      {"dci": "Diclofenac", "raison": "AINS — douleur inflammatoire", "categorie": "Anti-inflammatoire"},
+      {"dci": "Tramadol", "raison": "Antalgique palier 2 — douleur sévère", "categorie": "Antalgique opioïde"}
+    ]
+  },
+  "Réaction allergique": {
+    "medicaments": [
+      {"dci": "Cetirizine", "raison": "Antihistaminique H1 — symptômes allergiques", "categorie": "Antihistaminique"},
+      {"dci": "Desloratadine", "raison": "Antihistaminique — rhinite/urticaire", "categorie": "Antihistaminique"},
+      {"dci": "Prednisolone", "raison": "Corticoïde — réaction allergique sévère", "categorie": "Corticoïde"},
+      {"dci": "Betamethasone", "raison": "Corticoïde topique — réaction cutanée", "categorie": "Corticoïde topique"}
+    ]
+  },
+  "Eczéma": {
+    "medicaments": [
+      {"dci": "Betamethasone", "raison": "Corticoïde topique — inflammation cutanée", "categorie": "Dermocorticoïde"},
+      {"dci": "Cetirizine", "raison": "Antihistaminique — démangeaisons", "categorie": "Antihistaminique"}
+    ]
+  },
+  "Psoriasis": {
+    "medicaments": [
+      {"dci": "Betamethasone", "raison": "Corticoïde topique — plaques inflammatoires", "categorie": "Dermocorticoïde"},
+      {"dci": "Methotrexate", "raison": "Immunomodulateur — formes modérées à sévères", "categorie": "Immunomodulateur"}
+    ]
+  },
+  "Tuberculose": {
+    "medicaments": [
+      {"dci": "Isoniazide", "raison": "Antituberculeux — traitement standard", "categorie": "Antituberculeux"},
+      {"dci": "Rifampicine", "raison": "Antituberculeux — association obligatoire", "categorie": "Antituberculeux"},
+      {"dci": "Ethambutol", "raison": "Antituberculeux — phase initiale", "categorie": "Antituberculeux"},
+      {"dci": "Pyrazinamide", "raison": "Antituberculeux — phase initiale", "categorie": "Antituberculeux"}
+    ]
+  },
+  "Paludisme selon voyage": {
+    "medicaments": [
+      {"dci": "Artemether // Lumefantrine", "raison": "Antipaludéen — traitement curatif", "categorie": "Antipaludéen"},
+      {"dci": "Quinine", "raison": "Antipaludéen — forme sévère", "categorie": "Antipaludéen"}
+    ]
+  },
+  "COVID-19": {
+    "medicaments": [
+      {"dci": "Paracetamol", "raison": "Antipyrétique — fièvre et douleurs", "categorie": "Antalgique"},
+      {"dci": "Dexamethasone", "raison": "Corticoïde — forme sévère avec oxygénothérapie", "categorie": "Corticoïde"}
+    ]
+  },
+  "Angine / mononucléose": {
+    "medicaments": [
+      {"dci": "Amoxicilline", "raison": "Antibiotique — angine bactérienne streptococcique", "categorie": "Antibiotique"},
+      {"dci": "Paracetamol", "raison": "Antalgique et antipyrétique", "categorie": "Antalgique"}
+    ]
+  },
+  "Sinusite": {
+    "medicaments": [
+      {"dci": "Amoxicilline // Acide Clavulanique", "raison": "Antibiotique — sinusite bactérienne", "categorie": "Antibiotique"},
+      {"dci": "Paracetamol", "raison": "Antalgique — douleurs faciales", "categorie": "Antalgique"},
+      {"dci": "Mometasone", "raison": "Corticoïde nasal — décongestion", "categorie": "Corticoïde nasal"}
+    ]
+  },
+  "Otite": {
+    "medicaments": [
+      {"dci": "Amoxicilline", "raison": "Antibiotique — otite moyenne aiguë", "categorie": "Antibiotique"},
+      {"dci": "Paracetamol", "raison": "Antalgique — douleur auriculaire", "categorie": "Antalgique"}
+    ]
+  },
+  "Conjonctivite": {
+    "medicaments": [
+      {"dci": "Tobramycine", "raison": "Antibiotique ophtalmique — infection bactérienne", "categorie": "Collyre antibiotique"},
+      {"dci": "Cetirizine", "raison": "Antihistaminique — conjonctivite allergique", "categorie": "Antihistaminique"}
+    ]
+  },
+  "Rhinite virale ou polypose": {
+    "medicaments": [
+      {"dci": "Mometasone", "raison": "Corticoïde nasal — inflammation nasale", "categorie": "Corticoïde nasal"},
+      {"dci": "Cetirizine", "raison": "Antihistaminique — rhinite allergique", "categorie": "Antihistaminique"},
+      {"dci": "Desloratadine", "raison": "Antihistaminique — rhinite persistante", "categorie": "Antihistaminique"}
+    ]
+  },
+  "Ulcère gastrique": {
+    "medicaments": [
+      {"dci": "Omeprazole", "raison": "IPP — cicatrisation de l'ulcère", "categorie": "Anti-ulcéreux"},
+      {"dci": "Amoxicilline", "raison": "Antibiotique — éradication H. pylori", "categorie": "Antibiotique"},
+      {"dci": "Clarithromycine", "raison": "Antibiotique — trithérapie anti-H. pylori", "categorie": "Antibiotique"}
+    ]
+  },
+  "Syndrome côlon irritable": {
+    "medicaments": [
+      {"dci": "Phloroglucinol", "raison": "Antispasmodique — douleurs abdominales", "categorie": "Antispasmodique"},
+      {"dci": "Trimebutine", "raison": "Régulateur du transit — ballonnements", "categorie": "Antispasmodique"},
+      {"dci": "Loperamide", "raison": "Antidiarrhéique — forme diarrhéique", "categorie": "Antidiarrhéique"},
+      {"dci": "Macrogol", "raison": "Laxatif osmotique — forme constipée", "categorie": "Laxatif"}
+    ]
+  },
+  "Insuffisance rénale": {
+    "medicaments": [
+      {"dci": "Furosemide", "raison": "Diurétique — gestion de la surcharge", "categorie": "Diurétique"},
+      {"dci": "Erythropoietine", "raison": "EPO — anémie rénale", "categorie": "Facteur de croissance"}
+    ]
+  },
+  "Ostéoporose": {
+    "medicaments": [
+      {"dci": "Alendronate", "raison": "Bisphosphonate — prévention fractures", "categorie": "Bisphosphonate"},
+      {"dci": "Calcium", "raison": "Supplément calcique — renforcement osseux", "categorie": "Supplément"},
+      {"dci": "Vitamine D3", "raison": "Vitamine D — absorption du calcium", "categorie": "Vitamine"}
+    ]
+  },
+  "Apnée du sommeil": {
+    "medicaments": [
+      {"dci": "Acetazolamide", "raison": "Stimulant respiratoire — cas spécifiques", "categorie": "Diurétique"}
+    ]
+  },
+  "Infection virale ou bactérienne": {
+    "medicaments": [
+      {"dci": "Paracetamol", "raison": "Antipyrétique et antalgique", "categorie": "Antalgique"},
+      {"dci": "Ibuprofene", "raison": "Anti-inflammatoire — fièvre et douleurs", "categorie": "Anti-inflammatoire"},
+      {"dci": "Amoxicilline", "raison": "Antibiotique — si origine bactérienne suspectée", "categorie": "Antibiotique"}
+    ]
+  },
+  "Cause métabolique ou endocrinienne": {
+    "medicaments": [
+      {"dci": "Levothyroxine", "raison": "Hormone thyroïdienne — hypothyroïdie", "categorie": "Hormone thyroïdienne"},
+      {"dci": "Metformine", "raison": "Antidiabétique — diabète type 2", "categorie": "Antidiabétique"}
+    ]
+  },
+  "Lithiase urinaire / colique néphrétique": {
+    "medicaments": [
+      {"dci": "Ketoprofene", "raison": "AINS — douleur de colique néphrétique", "categorie": "Anti-inflammatoire"},
+      {"dci": "Phloroglucinol", "raison": "Antispasmodique — spasme urétéral", "categorie": "Antispasmodique"},
+      {"dci": "Tramadol", "raison": "Antalgique — douleur sévère", "categorie": "Antalgique opioïde"}
+    ]
+  },
+  "Embolie pulmonaire": {
+    "medicaments": [
+      {"dci": "Enoxaparine", "raison": "HBPM — anticoagulation urgente", "categorie": "Anticoagulant"},
+      {"dci": "Acenocoumarol", "raison": "AVK — relais anticoagulant oral", "categorie": "Anticoagulant"}
+    ]
+  },
+  "Méningite / infection du SNC": {
+    "medicaments": [
+      {"dci": "Ceftriaxone", "raison": "Antibiotique — méningite bactérienne urgente", "categorie": "Antibiotique"},
+      {"dci": "Amoxicilline", "raison": "Antibiotique — association listeria", "categorie": "Antibiotique"},
+      {"dci": "Dexamethasone", "raison": "Corticoïde — réduction de l'inflammation méningée", "categorie": "Corticoïde"}
+    ]
+  },
+  "Grossesse": {
+    "medicaments": [
+      {"dci": "Acide Folique", "raison": "Prévention malformations du tube neural", "categorie": "Vitamine"},
+      {"dci": "Fer", "raison": "Prévention anémie gravidique", "categorie": "Supplément"}
+    ]
+  },
+  "Anaphylaxie": {
+    "medicaments": [
+      {"dci": "Adrenaline", "raison": "Traitement d'urgence — choc anaphylactique", "categorie": "Urgence"},
+      {"dci": "Methylprednisolone", "raison": "Corticoïde IV — prévention récidive", "categorie": "Corticoïde"},
+      {"dci": "Cetirizine", "raison": "Antihistaminique — complément", "categorie": "Antihistaminique"}
+    ]
+  }
+}

@@ -1,0 +1,132 @@
+{% extends 'base_medecin.html' %}
+{% block title %}Ordonnance — {{ patient }}{% endblock %}
+
+{% block extra_css %}
+.ordonnance-header {
+    background: linear-gradient(135deg, #1a6b3c, #2e7d32);
+    border-radius: var(--radius);
+    padding: 1.75rem 2rem;
+    color: white;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+.ordonnance-icon {
+    width: 56px;
+    height: 56px;
+    background: rgba(255,255,255,0.2);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+.prescription-box {
+    background: #f8fff8;
+    border: 2px solid var(--green);
+    border-radius: var(--radius);
+    padding: 1.5rem 2rem;
+    line-height: 1.9;
+    font-size: 1rem;
+    color: var(--text);
+    white-space: pre-line;
+    position: relative;
+}
+.prescription-box::before {
+    content: 'Rx';
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--green);
+    opacity: 0.15;
+    font-style: italic;
+}
+.qr-section {
+    text-align: center;
+    padding: 1.5rem;
+}
+.qr-section img {
+    width: 180px;
+    height: 180px;
+    border: 3px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.5rem;
+    background: white;
+}
+{% endblock %}
+
+{% block content %}
+<div style="max-width:760px;margin:0 auto;">
+    <div class="ordonnance-header">
+        <div class="ordonnance-icon"><i class="fa-solid fa-prescription"></i></div>
+        <div>
+            <div style="font-size:1.3rem;font-weight:800;margin-bottom:0.25rem;">Ordonnance générée</div>
+            <div style="opacity:0.8;font-size:0.9rem;">
+                Patient : {{ patient.prenom }} {{ patient.nom }}
+                &nbsp;·&nbsp;
+                {{ ordonnance.creee_le|date:"d/m/Y H:i" }}
+            </div>
+        </div>
+        <span style="margin-left:auto;background:rgba(255,255,255,0.2);padding:0.4rem 1rem;border-radius:50px;font-size:0.85rem;font-weight:600;">
+            <i class="fa-solid fa-circle-check"></i> PDF créé
+        </span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr auto;gap:1.5rem;align-items:start;">
+        <div>
+            <div class="card" style="margin-bottom:1.25rem;">
+                <div class="section-title" style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:0.875rem;display:flex;align-items:center;gap:0.5rem;">
+                    <i class="fa-solid fa-user" style="color:var(--blue);"></i> Informations
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                    <div style="background:var(--bg);padding:0.875rem;border-radius:var(--radius-sm);">
+                        <div style="font-size:0.75rem;color:var(--text-muted);font-weight:600;margin-bottom:0.25rem;">MÉDECIN</div>
+                        <div style="font-weight:700;color:var(--navy);">{{ ordonnance.consultation.medecin }}</div>
+                    </div>
+                    <div style="background:var(--bg);padding:0.875rem;border-radius:var(--radius-sm);">
+                        <div style="font-size:0.75rem;color:var(--text-muted);font-weight:600;margin-bottom:0.25rem;">DATE</div>
+                        <div style="font-weight:700;color:var(--navy);">{{ ordonnance.creee_le|date:"d/m/Y" }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="section-title" style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:0.875rem;display:flex;align-items:center;gap:0.5rem;">
+                    <i class="fa-solid fa-prescription" style="color:var(--green);"></i> Prescription
+                </div>
+                <div class="prescription-box">{{ ordonnance.contenu }}</div>
+            </div>
+        </div>
+
+        <div style="width:240px;">
+            {% if ordonnance.qr_code_key %}
+            <div class="card">
+                <div class="qr-section">
+                    <div style="font-size:0.82rem;font-weight:600;color:var(--text-muted);margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.06em;">QR Code patient</div>
+                    <img src="/media/{{ ordonnance.qr_code_key }}" alt="QR Code">
+                    <div style="font-size:0.78rem;color:var(--text-muted);margin-top:0.75rem;line-height:1.5;">Le patient scanne ce code pour télécharger l'ordonnance</div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:1rem;">
+                <a href="/ordonnance/{{ ordonnance.id }}/pdf/" class="btn btn-primary" style="justify-content:center;">
+                    <i class="fa-solid fa-file-pdf"></i> Télécharger PDF
+                </a>
+                {% if ordonnance.consultation.statut != 'cloturee' %}
+                <a href="{% url 'cloturer_consultation' ordonnance.consultation.id %}" class="btn btn-success" style="justify-content:center;">
+                    <i class="fa-solid fa-check"></i> Clôturer
+                </a>
+                {% else %}
+                <a href="{% url 'voir_consultation' ordonnance.consultation.id %}" class="btn btn-outline" style="justify-content:center;">
+                    <i class="fa-solid fa-arrow-left"></i> Retour consultation
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

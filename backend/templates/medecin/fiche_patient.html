@@ -1,0 +1,212 @@
+{% extends 'base_medecin.html' %}
+{% block title %}{{ patient.prenom }} {{ patient.nom }} — Fiche patient{% endblock %}
+{% block extra_css %}
+.fp-header {
+    background: linear-gradient(135deg, var(--navy), #1e3a6e);
+    border-radius: var(--radius); padding: 1.75rem 2rem;
+    color: white; margin-bottom: 1.5rem;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+}
+.fp-avatar { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--cyan), var(--blue)); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 800; color: white; flex-shrink: 0; }
+.fp-avatar.f { background: linear-gradient(135deg, #f48fb1, #e91e63); }
+.fp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; align-items: start; }
+.fp-grid-full { margin-top: 1.25rem; }
+.consult-timeline { display: flex; flex-direction: column; gap: 0.5rem; }
+.consult-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--blue);
+    border-radius: 10px;
+    padding: 1rem;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: all 0.2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.consult-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); transform: translateY(-2px); }
+.consult-date { font-size: 0.95rem; font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; }
+.consult-icons { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.consult-icon-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+.consult-icon-badge.ordo { background: #e8f5e9; color: #2e7d32; }
+.consult-icon-badge.images { background: #e3f2fd; color: #1565c0; }
+.consult-icon-badge.mesures { background: #fff3e0; color: #e65100; }
+.consult-icon-badge.diag { background: #fce4ec; color: #c62828; }
+.fp-card { background: white; border-radius: var(--radius); border: 1px solid var(--border); padding: 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+.fp-card-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+.fp-card-title i { color: var(--cyan); }
+.fp-info-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.875rem; }
+.fp-info-row:last-child { border-bottom: none; }
+.fp-info-label { color: var(--text-muted); }
+.fp-info-value { font-weight: 700; }
+.tag { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.3rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin: 0.2rem; }
+.tag-allergie { background: #fff3e0; color: #e65100; }
+.tag-chronique { background: #f3e5f5; color: #7b1fa2; }
+.info-chip { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.82rem; font-weight: 600; background: var(--bg); border: 1px solid var(--border); margin: 0.2rem; }
+.consult-item { padding: 0.75rem; border-left: 3px solid var(--blue); background: var(--bg); border-radius: 0 8px 8px 0; margin-bottom: 0.5rem; cursor: pointer; text-decoration: none; color: inherit; display: block; transition: background 0.15s; }
+.consult-item:hover { background: #e3f2fd; }
+.vital-mini { display: flex; gap: 0.5rem; }
+.vital-mini-item { flex: 1; background: var(--bg); border-radius: 8px; padding: 0.6rem; text-align: center; border: 1px solid var(--border); }
+.vital-mini-val { font-size: 1.1rem; font-weight: 800; }
+.vital-mini-lbl { font-size: 0.7rem; color: var(--text-muted); }
+.empty-state { color: var(--text-muted); font-size: 0.875rem; font-style: italic; text-align: center; padding: 1rem 0; }
+{% endblock %}
+
+{% block content %}
+<div class="fp-header">
+    <div style="display:flex;align-items:center;gap:1.25rem;">
+        <div class="fp-avatar {% if patient.sexe == 'F' %}f{% endif %}">{{ patient.prenom.0 }}{{ patient.nom.0 }}</div>
+        <div>
+            <div style="font-size:1.4rem;font-weight:800;">{{ patient.prenom }} {{ patient.nom }}</div>
+            <div style="opacity:0.75;font-size:0.9rem;">
+                {{ patient.age }} ans · {{ patient.get_sexe_display|default:"—" }} · CIN: {{ patient.cin }}
+            </div>
+        </div>
+    </div>
+    <a href="{% url 'mes_patients' %}" class="btn btn-outline" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.3);color:white;">
+        <i class="fa-solid fa-arrow-left"></i> Retour
+    </a>
+</div>
+
+<div class="fp-grid">
+    <!-- INFOS PATIENT -->
+    <div class="fp-card">
+        <div class="fp-card-title"><i class="fa-solid fa-circle-info"></i> Informations</div>
+        <div class="fp-info-row"><span class="fp-info-label">Téléphone</span><span class="fp-info-value">{{ patient.telephone }}</span></div>
+        <div class="fp-info-row"><span class="fp-info-label">Date naissance</span><span class="fp-info-value">{{ patient.date_naissance|date:"d/m/Y" }}</span></div>
+        <div class="fp-info-row"><span class="fp-info-label">Groupe sanguin</span><span class="fp-info-value">{{ patient.groupe_sanguin|default:"—" }}</span></div>
+        <div class="fp-info-row"><span class="fp-info-label">Code unique</span><span class="fp-info-value" style="color:var(--blue);">{{ patient.code_unique }}</span></div>
+        {% if mesures %}
+        <div class="fp-info-row"><span class="fp-info-label">Poids</span><span class="fp-info-value">{{ mesures.poids_kg|default:"—" }} kg</span></div>
+        <div class="fp-info-row"><span class="fp-info-label">Taille</span><span class="fp-info-value">{{ mesures.taille_cm|default:"—" }} cm</span></div>
+        {% endif %}
+    </div>
+
+    <!-- PROFIL CLINIQUE -->
+    <div class="fp-card">
+        <div class="fp-card-title"><i class="fa-solid fa-user-doctor"></i> Profil clinique</div>
+        {% if info_clinique %}
+        <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.75rem;">
+            <span class="info-chip"><i class="fa-solid fa-smoking" style="font-size:0.75rem;"></i>
+                {% if info_clinique.tabac == 'non_fumeur' %}Non fumeur{% elif info_clinique.tabac == 'fumeur' %}Fumeur{% else %}Ancien fumeur{% endif %}
+            </span>
+            <span class="info-chip"><i class="fa-solid fa-wine-glass" style="font-size:0.75rem;"></i>
+                {% if info_clinique.alcool == 'jamais' %}Jamais{% elif info_clinique.alcool == 'occasionnel' %}Occasionnel{% else %}Régulier{% endif %}
+            </span>
+            <span class="info-chip"><i class="fa-solid fa-person-running" style="font-size:0.75rem;"></i>
+                {% if info_clinique.activite_physique == 'sedentaire' %}Sédentaire{% elif info_clinique.activite_physique == 'peu_actif' %}Peu actif{% elif info_clinique.activite_physique == 'actif' %}Actif{% else %}Très actif{% endif %}
+            </span>
+            {% if info_clinique.enceinte %}
+            <span class="info-chip" style="background:#fce4ec;border-color:#f48fb1;color:#c62828;">
+                <i class="fa-solid fa-baby" style="font-size:0.75rem;"></i> Enceinte
+            </span>
+            {% endif %}
+        </div>
+        {% else %}
+        <p class="empty-state">Aucune donnée clinique</p>
+        {% endif %}
+
+        {% if allergies %}
+        <div style="margin-top:0.5rem;">
+            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.4rem;">Allergies</div>
+            {% for a in allergies %}<span class="tag tag-allergie"><i class="fa-solid fa-triangle-exclamation" style="font-size:0.65rem;"></i> {{ a.nom_allergie }}</span>{% endfor %}
+        </div>
+        {% endif %}
+
+        {% if maladies_chroniques %}
+        <div style="margin-top:0.5rem;">
+            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.4rem;">Maladies chroniques</div>
+            {% for mc in maladies_chroniques %}<span class="tag tag-chronique">{{ mc }}</span>{% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- DERNIERS SIGNES VITAUX -->
+    <div class="fp-card">
+        <div class="fp-card-title"><i class="fa-solid fa-heart-pulse"></i> Derniers signes vitaux</div>
+        {% if derniers_signes %}
+        {% with sv=derniers_signes.0 %}
+        <div class="vital-mini">
+            <div class="vital-mini-item">
+                <div class="vital-mini-val" style="color:var(--blue);">{{ sv.spo2|default:"--" }}</div>
+                <div class="vital-mini-lbl">SpO2 %</div>
+            </div>
+            <div class="vital-mini-item">
+                <div class="vital-mini-val" style="color:var(--red);">{{ sv.frequence_cardiaque|default:"--" }}</div>
+                <div class="vital-mini-lbl">FC bpm</div>
+            </div>
+            <div class="vital-mini-item">
+                <div class="vital-mini-val" style="color:var(--orange);">{{ sv.temperature|default:"--" }}</div>
+                <div class="vital-mini-lbl">Temp °C</div>
+            </div>
+        </div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;text-align:right;">
+            <i class="fa-regular fa-clock"></i> {{ sv.mesure_le|date:"d/m/Y H:i" }}
+        </div>
+        {% endwith %}
+        {% else %}
+        <p class="empty-state">Aucune mesure</p>
+        {% endif %}
+    </div>
+
+</div>
+
+<!-- HISTORIQUE CONSULTATIONS - PLEINE LARGEUR -->
+<div class="fp-grid-full">
+    <div class="fp-card">
+        <div class="fp-card-title" style="margin-bottom:1.25rem;">
+            <i class="fa-solid fa-clock-rotate-left"></i> Historique consultations
+            <span style="font-size:0.75rem;font-weight:500;color:var(--text-muted);margin-left:0.5rem;">
+                {{ consultations|length }} consultation{{ consultations|length|pluralize }}
+            </span>
+        </div>
+        {% if consultations %}
+        <div class="consult-timeline">
+            {% for c in consultations %}
+            <a href="{% url 'voir_consultation' c.id %}" class="consult-card">
+                <div class="consult-date">
+                    <i class="fa-regular fa-calendar" style="color:var(--cyan);margin-right:0.4rem;font-size:0.85rem;"></i>
+                    {{ c.cloturee_le|date:"l d F Y"|capfirst }}
+                </div>
+                <div class="consult-icons">
+                    {% if c.a_ordonnance %}
+                    <span class="consult-icon-badge ordo">
+                        <i class="fa-solid fa-prescription"></i> Ordonnance
+                    </span>
+                    {% endif %}
+                    {% if c.a_images %}
+                    <span class="consult-icon-badge images">
+                        <i class="fa-solid fa-images"></i> Images
+                    </span>
+                    {% endif %}
+                    {% if c.a_mesures %}
+                    <span class="consult-icon-badge mesures">
+                        <i class="fa-solid fa-heart-pulse"></i> Mesures
+                    </span>
+                    {% endif %}
+                    {% if c.a_maladies %}
+                    <span class="consult-icon-badge diag">
+                        <i class="fa-solid fa-stethoscope"></i> Diagnostic
+                    </span>
+                    {% endif %}
+                    {% if not c.a_ordonnance and not c.a_images and not c.a_mesures and not c.a_maladies %}
+                    <span style="font-size:0.78rem;color:var(--text-muted);font-style:italic;">Aucun enregistrement</span>
+                    {% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-state">Aucune consultation enregistrée</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

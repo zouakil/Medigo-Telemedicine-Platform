@@ -1,0 +1,378 @@
+{% extends 'base_medecin.html' %}
+{% block title %}Debriefing — {{ patient }}{% endblock %}
+{% block extra_css %}
+.debrief-header {
+    background: linear-gradient(135deg, var(--navy), #1e3a6e);
+    border-radius: var(--radius);
+    padding: 1.5rem 2rem;
+    color: white;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.debrief-avatar {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--cyan), var(--blue));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; font-weight: 800; color: white;
+}
+.card {
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+.section-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.section-title i { color: var(--cyan); }
+.vitals-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+}
+.vital-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem;
+    text-align: center;
+}
+.vital-val { font-size: 1.25rem; font-weight: 800; }
+.vital-lbl { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.15rem; }
+.info-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem;
+}
+.info-lbl {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+.info-val { font-size: 0.95rem; font-weight: 600; color: var(--navy); }
+.btn-retour {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.history-card {
+    display: block;
+    background: white;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--cyan);
+    border-radius: 8px;
+    padding: 0.9rem;
+    margin-bottom: 0.6rem;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.history-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+.history-card.ordonnance { border-left-color: var(--green); }
+.tag-maladie {
+    background: #fce4ec;
+    color: #c62828;
+    padding: 0.25rem 0.65rem;
+    border-radius: 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border: 1px solid #f8bbd0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin: 0.15rem;
+}
+.tag-chronique {
+    background: #f3e5f5;
+    color: #7b1fa2;
+    padding: 0.35rem 0.8rem;
+    border-radius: 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid #e1bee7;
+    margin: 0.15rem;
+    display: inline-block;
+}
+.tag-allergie {
+    background: #fff3e0;
+    color: #e65100;
+    padding: 0.35rem 0.8rem;
+    border-radius: 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid #ffcc80;
+    margin: 0.15rem;
+    display: inline-block;
+}
+.resume-section { margin-bottom: 1.2rem; }
+.resume-section:last-child { margin-bottom: 0; }
+.resume-lbl {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+.empty-state {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 2rem 0;
+    font-size: 0.875rem;
+}
+.empty-state i { opacity: 0.2; font-size: 2.5rem; display: block; margin-bottom: 0.8rem; }
+{% endblock %}
+
+{% block content %}
+<!-- HEADER -->
+<div class="debrief-header">
+    <div style="display:flex;align-items:center;gap:1rem;">
+        <div class="debrief-avatar">{{ patient.prenom.0 }}{{ patient.nom.0 }}</div>
+        <div>
+            <div style="font-size:1.3rem;font-weight:800;">{{ patient.prenom }} {{ patient.nom }}</div>
+            <div style="opacity:0.75;font-size:0.875rem;">
+                {% if patient.date_naissance %}<i class="fa-regular fa-calendar" style="margin-right:0.3rem;"></i>{{ patient.date_naissance|date:"d/m/Y" }}{% endif %}
+            </div>
+        </div>
+    </div>
+    <a href="{% url 'demarrer_consultation' consultation.id %}" style="background:var(--green);color:white;padding:0.75rem 1.5rem;border-radius:8px;text-decoration:none;font-weight:700;font-size:0.95rem;display:inline-flex;align-items:center;gap:0.5rem;box-shadow:0 2px 8px rgba(46,125,50,0.3);transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 16px rgba(46,125,50,0.4)';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 2px 8px rgba(46,125,50,0.3)';">
+        <i class="fa-solid fa-video"></i> Démarrer la consultation →
+    </a>
+</div>
+
+<!-- INFOS PATIENT + SIGNES VITAUX -->
+<div style="display:grid;grid-template-columns:1.5fr 1fr;gap:1.25rem;margin-bottom:1.5rem;">
+    <div class="card">
+        <div class="section-title">
+            <i class="fa-solid fa-circle-info"></i>
+            Informations patient
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;">
+            <div class="info-box">
+                <div class="info-lbl"><i class="fa-solid fa-phone" style="font-size:0.65rem;margin-right:0.2rem;"></i>Téléphone</div>
+                <div class="info-val">{{ patient.telephone|default:"—" }}</div>
+            </div>
+            <div class="info-box">
+                <div class="info-lbl"><i class="fa-solid fa-id-card" style="font-size:0.65rem;margin-right:0.2rem;"></i>CIN</div>
+                <div class="info-val">{{ patient.cin|default:"—" }}</div>
+            </div>
+            <div class="info-box">
+                <div class="info-lbl"><i class="fa-solid fa-cake-candles" style="font-size:0.65rem;margin-right:0.2rem;"></i>Âge</div>
+                <div class="info-val">{% if patient.age %}{{ patient.age }} ans{% elif patient.date_naissance %}{{ patient.date_naissance|date:"d/m/Y" }}{% else %}—{% endif %}</div>
+            </div>
+            <div class="info-box">
+                <div class="info-lbl"><i class="fa-solid fa-venus-mars" style="font-size:0.65rem;margin-right:0.2rem;"></i>Sexe</div>
+                <div class="info-val">{% if patient.sexe == "M" %}Masculin{% elif patient.sexe == "F" %}Féminin{% else %}—{% endif %}</div>
+            </div>
+            <div class="info-box">
+                <div class="info-lbl"><i class="fa-solid fa-location-dot" style="font-size:0.65rem;margin-right:0.2rem;"></i>Ville</div>
+                <div class="info-val">{{ patient.ville|default:"—" }}</div>
+            </div>
+            <div class="info-box">
+                <div class="info-lbl"><i class="fa-solid fa-hashtag" style="font-size:0.65rem;margin-right:0.2rem;"></i>Code unique</div>
+                <div class="info-val" style="color:var(--cyan);">{{ patient.code_unique|default:"—" }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="section-title">
+            <i class="fa-solid fa-heart-pulse" style="color:var(--red);"></i>
+            Derniers signes vitaux
+        </div>
+        {% if derniers_signes %}
+        {% with derniers_signes.0 as signe %}
+        <div class="vitals-grid">
+            <div class="vital-box">
+                <div class="vital-val" style="color:var(--blue);">{{ signe.spo2|default:"--" }}</div>
+                <div class="vital-lbl">SpO2 %</div>
+            </div>
+            <div class="vital-box">
+                <div class="vital-val" style="color:var(--red);">{{ signe.bpm|default:"--" }}</div>
+                <div class="vital-lbl">FC bpm</div>
+            </div>
+            <div class="vital-box">
+                <div class="vital-val" style="color:var(--orange);">{{ signe.temperature|default:"--" }}</div>
+                <div class="vital-lbl">Temp °C</div>
+            </div>
+        </div>
+        <div style="text-align:right;font-size:0.72rem;color:var(--text-muted);margin-top:0.5rem;">
+            <i class="fa-regular fa-clock"></i> {{ signe.mesure_le|date:"d/m/Y H:i" }}
+        </div>
+        {% endwith %}
+        {% else %}
+        <div class="empty-state" style="padding:1rem 0;">
+            <i class="fa-solid fa-heart-pulse"></i>
+            Aucune mesure disponible
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- RÉSUMÉ PATIENT -->
+{% if resume %}
+<div class="card" style="margin-bottom:1.5rem;">
+    <div class="section-title">
+        <i class="fa-solid fa-user-doctor" style="color:var(--teal);"></i>
+        Résumé patient global
+        <span style="font-size:0.7rem;font-weight:500;color:var(--text-muted);margin-left:0.5rem;">
+            {{ resume.nb_consultations }} consultation{{ resume.nb_consultations|pluralize }}
+        </span>
+    </div>
+
+    {% if resume.chroniques %}
+    <div class="resume-section">
+        <div class="resume-lbl" style="color:#7b1fa2;">
+            <i class="fa-solid fa-notes-medical" style="font-size:0.65rem;margin-right:0.3rem;"></i>PATHOLOGIES CHRONIQUES
+        </div>
+        <div>
+            {% for c in resume.chroniques %}<span class="tag-chronique">{{ c }}</span>{% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if resume.allergies %}
+    <div class="resume-section">
+        <div class="resume-lbl" style="color:#e65100;">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size:0.65rem;margin-right:0.3rem;"></i>ALLERGIES CONNUES
+        </div>
+        <div>
+            {% for a in resume.allergies %}<span class="tag-allergie">⚠ {{ a }}</span>{% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if resume.diagnostics_uniques %}
+    <div class="resume-section">
+        <div class="resume-lbl" style="color:#c62828;">
+            <i class="fa-solid fa-disease" style="font-size:0.65rem;margin-right:0.3rem;"></i>PATHOLOGIES DIAGNOSTIQUÉES
+        </div>
+        <div style="font-size:0.9rem;color:var(--text);line-height:1.6;">
+            {{ resume.diagnostics_uniques|slice:":10"|join:", " }}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if resume.recurrents %}
+    <div class="resume-section">
+        <div class="resume-lbl" style="color:#00897b;">
+            <i class="fa-solid fa-repeat" style="font-size:0.65rem;margin-right:0.3rem;"></i>SYMPTÔMES RÉCURRENTS
+        </div>
+        <div style="font-size:0.9rem;color:var(--text);line-height:1.6;">{{ resume.recurrents|join:", " }}</div>
+    </div>
+    {% endif %}
+
+    {% if resume.derniers_meds %}
+    <div class="resume-section">
+        <div class="resume-lbl" style="color:#2e7d32;">
+            <i class="fa-solid fa-pills" style="font-size:0.65rem;margin-right:0.3rem;"></i>DERNIER TRAITEMENT PRESCRIT
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.3rem;">
+            {% for med in resume.derniers_meds|slice:":5" %}
+            {% if med %}
+            <div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0.75rem;background:#e8f5e9;border-radius:6px;font-size:0.85rem;">
+                <i class="fa-solid fa-circle" style="color:#2e7d32;font-size:0.35rem;"></i>
+                <span style="font-weight:600;color:#1b5e20;">{{ med }}</span>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<!-- HISTORIQUE + ORDONNANCES -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+    <!-- HISTORIQUE -->
+    <div class="card">
+        <div class="section-title">
+            <i class="fa-solid fa-clock-rotate-left" style="color:var(--teal);"></i>
+            Historique consultations
+            <span style="font-size:0.7rem;font-weight:500;color:var(--text-muted);margin-left:0.5rem;">
+                {{ historique|length }} dernière{{ historique|length|pluralize }}
+            </span>
+        </div>
+        {% for h in historique %}
+        <a href="{% url 'voir_consultation' h.id %}" target="_blank" class="history-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                <div style="font-size:0.88rem;font-weight:700;color:var(--cyan);">
+                    <i class="fa-solid fa-calendar-day" style="font-size:0.75rem;margin-right:0.4rem;"></i>{{ h.cloturee_le|date:"d/m/Y à H:i" }}
+                </div>
+                <i class="fa-solid fa-arrow-right" style="color:var(--cyan);font-size:0.85rem;"></i>
+            </div>
+            {% if h.maladies_list %}
+            <div>
+                {% for m in h.maladies_list %}
+                <span class="tag-maladie">
+                    <i class="fa-solid fa-disease" style="font-size:0.7rem;"></i>{{ m }}
+                </span>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div style="color:var(--text-muted);font-size:0.82rem;font-style:italic;">Aucun diagnostic renseigné</div>
+            {% endif %}
+        </a>
+        {% empty %}
+        <div class="empty-state">
+            <i class="fa-solid fa-folder-open"></i>
+            <div style="font-weight:600;">Aucun antécédent</div>
+            <div style="font-size:0.8rem;margin-top:0.3rem;">Première consultation</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- ORDONNANCES -->
+    <div class="card">
+        <div class="section-title">
+            <i class="fa-solid fa-prescription" style="color:var(--green);"></i>
+            Ordonnances récentes
+            <span style="font-size:0.7rem;font-weight:500;color:var(--text-muted);margin-left:0.5rem;">
+                {{ ordonnances|length }} ordonnance{{ ordonnances|length|pluralize }}
+            </span>
+        </div>
+        {% for o in ordonnances %}
+        <a href="{% url 'voir_ordonnance' o.id %}" target="_blank" class="history-card ordonnance">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div style="font-size:0.88rem;font-weight:700;color:var(--green);">
+                    <i class="fa-solid fa-calendar-day" style="font-size:0.75rem;margin-right:0.4rem;"></i>{{ o.creee_le|date:"d/m/Y" }}
+                </div>
+                <i class="fa-solid fa-external-link-alt" style="color:var(--green);font-size:0.85rem;"></i>
+            </div>
+        </a>
+        {% empty %}
+        <div class="empty-state">
+            <i class="fa-solid fa-prescription"></i>
+            <div style="font-weight:600;">Aucune ordonnance</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
